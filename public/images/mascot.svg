@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#35bfab"/>
+      <stop offset="100%" style="stop-color:#2da99b"/>
+    </linearGradient>
+    <linearGradient id="screenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8faf8"/>
+      <stop offset="100%" style="stop-color:#d0f5f0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#e8f8f5"/>
+
+  <!-- Robot body (torso) -->
+  <rect x="58" y="118" width="84" height="56" rx="12" fill="url(#bodyGrad)"/>
+
+  <!-- Antenna -->
+  <line x1="100" y1="32" x2="100" y2="52" stroke="#35bfab" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="100" cy="27" r="7" fill="#35bfab"/>
+  <circle cx="100" cy="27" r="4" fill="white" opacity="0.8"/>
+
+  <!-- Head -->
+  <rect x="62" y="52" width="76" height="68" rx="16" fill="url(#bodyGrad)"/>
+
+  <!-- Screen/face area -->
+  <rect x="72" y="62" width="56" height="42" rx="8" fill="url(#screenGrad)"/>
+
+  <!-- Eyes: screen pixels / code-like display -->
+  <!-- Left eye group -->
+  <rect x="80" y="70" width="16" height="12" rx="4" fill="#35bfab" opacity="0.25"/>
+  <rect x="83" y="73" width="10" height="6" rx="2" fill="#35bfab" opacity="0.7"/>
+
+  <!-- Right eye group -->
+  <rect x="104" y="70" width="16" height="12" rx="4" fill="#35bfab" opacity="0.25"/>
+  <rect x="107" y="73" width="10" height="6" rx="2" fill="#35bfab" opacity="0.7"/>
+
+  <!-- Smile / code line -->
+  <path d="M82 90 Q100 100 118 90" stroke="#35bfab" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Ears (side bolts) -->
+  <circle cx="62" cy="85" r="7" fill="#2da99b"/>
+  <circle cx="62" cy="85" r="3" fill="white" opacity="0.5"/>
+  <circle cx="138" cy="85" r="7" fill="#2da99b"/>
+  <circle cx="138" cy="85" r="3" fill="white" opacity="0.5"/>
+
+  <!-- Body details: chest panel -->
+  <rect x="72" y="128" width="56" height="34" rx="8" fill="white" opacity="0.2"/>
+  <!-- Chest icons -->
+  <circle cx="88" cy="140" r="5" fill="white" opacity="0.7"/>
+  <circle cx="100" cy="140" r="5" fill="white" opacity="0.5"/>
+  <circle cx="112" cy="140" r="5" fill="white" opacity="0.3"/>
+  <!-- Chest code line -->
+  <rect x="78" y="152" width="44" height="4" rx="2" fill="white" opacity="0.4"/>
+
+  <!-- Arms -->
+  <rect x="38" y="122" width="22" height="38" rx="11" fill="url(#bodyGrad)"/>
+  <rect x="140" y="122" width="22" height="38" rx="11" fill="url(#bodyGrad)"/>
+
+  <!-- Hand left (wave) -->
+  <circle cx="49" cy="165" r="10" fill="#2da99b"/>
+  <line x1="42" y1="158" x2="38" y2="152" stroke="#2da99b" stroke-width="3" stroke-linecap="round"/>
+  <line x1="49" y1="156" x2="48" y2="149" stroke="#2da99b" stroke-width="3" stroke-linecap="round"/>
+  <line x1="56" y1="158" x2="60" y2="153" stroke="#2da99b" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Hand right (holding book) -->
+  <circle cx="151" cy="165" r="10" fill="#2da99b"/>
+  <!-- Mini book -->
+  <rect x="156" y="154" width="18" height="22" rx="3" fill="#334f52" opacity="0.6"/>
+  <rect x="158" y="158" width="14" height="3" rx="1" fill="white" opacity="0.5"/>
+  <rect x="158" y="163" width="10" height="3" rx="1" fill="white" opacity="0.4"/>
+  <rect x="158" y="168" width="12" height="3" rx="1" fill="white" opacity="0.3"/>
+
+  <!-- Legs -->
+  <rect x="74" y="170" width="20" height="20" rx="6" fill="#2da99b"/>
+  <rect x="106" y="170" width="20" height="20" rx="6" fill="#2da99b"/>
+
+  <!-- Feet -->
+  <rect x="70" y="186" width="26" height="10" rx="5" fill="#35bfab"/>
+  <rect x="104" y="186" width="26" height="10" rx="5" fill="#35bfab"/>
+</svg>
