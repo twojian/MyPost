@@ -1,0 +1,192 @@
+---
+title: "🛠️ 4.5 训练技巧：优化器、初始化、正则化与超参数"
+date: "2026-06-10"
+summary: "让深层网络真正训练得动、训练得好的关键技巧：从 SGD 到 AdamW 的优化器演进、He/Xavier 初始化、BN/LN、Dropout、超参数搜索。"
+tags: ["深度学习", "优化器", "Adam", "BatchNorm", "Dropout", "权重初始化"]
+categories: ["深度学习"]
+---
+
+> 来源：《深度学习笔记》— 4.5 训练技巧
+
+SGD 虽然简单，但在非均向的损失地形上会走"之"字形路线，收敛缓慢。本章系统介绍让深层网络真正训练得动、训练得好的关键技巧。
+
+---
+
+## 一、优化器演进：从 SGD 到 AdamW
+
+### 1. Momentum（动量法）
+
+模拟物理中的惯性，让参数更新像小球滚下山坡——累积历史梯度方向，抑制震荡：
+
+$$
+v \leftarrow \alpha v - \eta \frac{\partial L}{\partial W}, \quad W \leftarrow W + v
+$$
+
+其中 $\alpha$（通常 0.9）控制惯性大小。在"细长山谷"地形中，y 轴方向的震荡梯度互相抵消，x 轴方向的一致梯度不断累积，更新路径明显比 SGD 平滑。
+
+```python
+class Momentum:
+    def __init__(self, lr=0.01, momentum=0.9):
+        self.lr = lr
+        self.momentum = momentum
+        self.v = None
+
+    def update(self, params, grads):
+        if self.v is None:
+            self.v = {k: np.zeros_like(v) for k, v in params.items()}
+        for key in params.keys():
+            self.v[key] = self.momentum * self.v[key] - self.lr * grads[key]
+            params[key] += self.v[key]
+```
+
+### 2. AdaGrad（自适应学习率）
+
+为每个参数维护独立的学习率——历史梯度大的参数学习率衰减快：
+
+$$
+h \leftarrow h + \frac{\partial L}{\partial W} \odot \frac{\partial L}{\partial W}, \quad W \leftarrow W - \eta \frac{1}{\sqrt{h} + \epsilon} \frac{\partial L}{\partial W}
+$$
+
+**缺点**：$h$ 单调递增，训练后期学习率趋近于 0，可能过早停止学习。
+
+### 3. RMSProp
+
+对 AdaGrad 的改进：用**指数移动平均**代替累加，"遗忘"久远的梯度历史：
+
+$$
+h \leftarrow \rho h + (1 - \rho) \frac{\partial L}{\partial W} \odot \frac{\partial L}{\partial W}
+$$
+
+### 4. Adam（Momentum + RMSProp 的融合）
+
+同时维护梯度的一阶矩（动量方向）和二阶矩（自适应学习率），并做偏差修正，是目前最常用的默认优化器。典型超参数：`lr=0.001, β₁=0.9, β₂=0.999`。
+
+### 5. AdamW（解耦权重衰减）
+
+Adam 中 L2 正则化与自适应学习率耦合会削弱正则化效果。AdamW 将权重衰减从梯度计算中解耦出来直接作用于参数，是训练 **Transformer / 大模型** 的标准选择。
+
+### 优化器对比
+
+| 优化器 | 解决的问题 | 典型场景 |
+|--------|-----------|---------|
+| SGD (+Momentum) | 之字形震荡 | CV 任务、配合学习率调度可达最优精度 |
+| AdaGrad | 各参数梯度尺度不一 | 稀疏特征 |
+| RMSProp | AdaGrad 学习率衰减过快 | RNN 时代常用 |
+| Adam | 兼顾方向与步长自适应 | 通用默认 |
+| AdamW | Adam 正则化失效 | Transformer / 大模型预训练 |
+
+---
+
+## 二、权重初始化
+
+初始化不当会直接导致梯度消失或表达能力丧失：
+
+- **全 0 / 相同值初始化**：所有神经元学到相同的东西（对称性无法打破），网络退化
+- **标准差过大**（如 1.0 的高斯）：Sigmoid 输出集中在 0/1 两端的饱和区，梯度消失
+- **标准差过小**（如 0.01）：各层激活值集中在 0.5 附近，神经元高度同质化
+
+### Xavier 初始化
+
+适用于 Sigmoid / Tanh，前一层节点数为 $n$ 时使用标准差 $\sqrt{1/n}$ 的分布，使各层激活值方差保持一致。
+
+### He 初始化
+
+适用于 ReLU。因为 ReLU 把负半轴置零，需要 2 倍方差补偿，使用标准差 $\sqrt{2/n}$。
+
+> **经验法则**：ReLU 系激活函数 → He 初始化；Sigmoid/Tanh → Xavier 初始化。现代框架（PyTorch）默认已采用合理初始化，但理解原理对调试至关重要。
+
+---
+
+## 三、Batch Normalization 与 Layer Normalization
+
+### Batch Normalization
+
+对每个 mini-batch，在层与层之间将激活值强制规整为均值 0、方差 1，再用可学习的缩放 $\gamma$ 与平移 $\beta$ 恢复表达能力：
+
+$$
+\hat{x}_i = \frac{x_i - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}, \quad y_i = \gamma \hat{x}_i + \beta
+$$
+
+**好处**：
+
+- 可以使用更大的学习率（加速训练）
+- 对初始值不再敏感
+- 自带轻微正则化效果（batch 统计量的噪声类似 Dropout）
+
+**注意**：推理时使用训练期间累积的移动平均统计量，而不是当前 batch。
+
+### Layer Normalization
+
+BN 依赖 batch 维度统计量，在 batch 很小或序列长度可变（NLP）时失效。LN 改为在**单个样本的特征维度**上归一化，与 batch 无关——这正是 Transformer 中使用 LN 而非 BN 的原因。
+
+|  | 归一化维度 | 适用场景 |
+|--|----------|---------|
+| BatchNorm | 跨样本（batch 维） | CNN / 大 batch |
+| LayerNorm | 单样本内（特征维） | Transformer / RNN / 小 batch |
+
+---
+
+## 四、正则化：对抗过拟合
+
+过拟合的两大主因：**模型参数多、表达能力强**；**训练数据少**。
+
+### 1. 权重衰减（L2 正则化）
+
+在损失函数上加 $\frac{1}{2} \lambda W^2$ 惩罚项，抑制权重变大。
+
+直觉：过拟合往往伴随某些权重被放得很大去"硬记"训练样本。
+
+### 2. Dropout
+
+训练时以概率 $p$（常用 0.5）随机"删除"神经元，每个 mini-batch 都训练一个不同的子网络；推理时使用全部神经元。
+
+可以理解为一种廉价的**集成学习**——隐式地训练并平均了指数量级个子网络。
+
+```python
+class Dropout:
+    def __init__(self, dropout_ratio=0.5):
+        self.dropout_ratio = dropout_ratio
+        self.mask = None
+
+    def forward(self, x, train_flg=True):
+        if train_flg:
+            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+            return x * self.mask
+        else:
+            return x * (1.0 - self.dropout_ratio)
+
+    def backward(self, dout):
+        return dout * self.mask
+```
+
+### 3. 早停（Early Stopping）与数据增强
+
+- **早停**：监控验证集损失，连续若干轮不再下降就停止训练
+- **数据增强**：对图像做随机裁剪、翻转、色彩抖动等，是 CV 中性价比最高的正则化手段
+
+---
+
+## 五、超参数搜索
+
+超参数（学习率、batch size、隐藏层规模、权重衰减系数等）**不能用测试集来调**——否则超参数会对测试集过拟合。
+
+正确做法是从训练数据中再划分出**验证集（validation set）**。
+
+### 实践流程
+
+1. 设定超参数的对数尺度搜索范围（如学习率 $10^{-6} \sim 10^{-2}$）
+2. **随机采样**（随机搜索通常优于网格搜索，因为重要超参数能被更密集地探索）
+3. 用小 epoch 数快速评估验证集精度
+4. 逐步缩小范围，重复 2-3
+
+> 更进阶的方法：贝叶斯优化（Bayesian Optimization）、Hyperband、Population-Based Training。
+
+---
+
+## 小结
+
+- **优化器**：理解 SGD → Momentum → AdaGrad → RMSProp → Adam → AdamW 的演化逻辑，比记住公式更重要
+- **初始化**：He（ReLU）/ Xavier（Sigmoid），核心是保持各层激活值方差稳定
+- **BN/LN**：让深网可训练的关键组件；BN 跨样本、LN 单样本
+- **正则化**：权重衰减、Dropout、早停、数据增强组合使用
+- **超参数**：用验证集 + 对数尺度随机搜索
