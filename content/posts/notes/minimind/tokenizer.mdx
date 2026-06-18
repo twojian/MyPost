@@ -1,0 +1,352 @@
+---
+title: "🖥️ 基石：关于 Tokenizer 你所需要知道的一切"
+date: 2026-06-16
+summary: "从 BPE、WordPiece、Unigram 的算法对比，到 GPT-2 / GPT-4 分词器的工程演进，再到 Tokenizer 对大模型能力边界的深远影响"
+categories:
+  - "AI Infra"
+tags:
+  - "LLM"
+  - "Tokenizer"
+  - "BPE"
+  - "MiniMind"
+---
+
+> 写给读者：初学者请着重看 1, 2, 3, 6 章节
+
+## 1. 引言：连接人类认知与机器智能的桥梁
+
+**为什么电脑能读懂你写的字？**
+
+在当今人工智能的宏大叙事中，大语言模型（Large Language Models, LLMs）如 GPT-4、Claude 3 和 Llama 3 等，以其惊人的生成能力和逻辑推理能力占据了舞台的中心。然而，在这些参数量高达数千亿的神经网络开始处理任何信息之前，必须先经过一道至关重要的、却往往被忽视的工序——**分词（Tokenization）**。
+
+分词器（Tokenizer）是连接人类自然语言与机器二进制世界的第一道关卡，它将连续的文本流转化为离散的数字序列（Token IDs），使得计算机能够进行计算、统计和理解。
+
+尽管在表面上，分词似乎只是一个简单的字符串预处理步骤，但其背后的数学原理、算法选择以及工程实现细节，对最终模型的性能、推理成本、多语言支持能力甚至安全性都有着深远的影响。分词策略的微小差异，可能导致模型在处理 Python 代码时缩进混乱，在进行数学运算时位数错误，或者对某些非拉丁语系语言表现出极高的"Token 通胀率"。
+
+本文将从最基础的文本表示概念讲起，深入探讨 Byte-Pair Encoding (BPE)、WordPiece 和 Unigram 三种主流算法的数学原理与异同；以一份标准的 BPE 代码实现为蓝本，逐行解析其 Python 代码逻辑；并深入对比 GPT-2 与 GPT-4 分词器的演进。
+
+## 2. 文本表示的演变：从字符到子词的必然选择
+
+### 2.1 词级别（Word-level）分词的局限
+
+早期的 NLP 系统采用**词级别分词**，以空格或标点为界切分句子。
+
+- **机制**：将 "I love AI." 切分为 `["I", "love", "AI", "."]`
+- **优点**：保留了词的语义完整性
+- **缺陷**：
+  - **词表爆炸**：一个词根可生成成千上万种变体
+  - **未登录词 (OOV) 问题**：未见过的词只能映射为 `<UNK>`，导致信息丢失
+
+### 2.2 字符级别（Character-level）分词的尝试
+
+将文本拆解为单个字符。
+
+- **优点**：词表极小（仅 100-1000），消灭了 OOV 问题
+- **缺陷**：
+  1. **计算成本**：Transformer 注意力机制时间复杂度为 $O(N^2)$，序列变长 5-10 倍
+  2. **语义缺失**：单个字符不承载独立语义信息
+
+### 2.3 子词（Subword）分词的崛起
+
+子词分词的核心哲学是：**常用词保持完整，罕见词拆分为有意义的子部件**。
+
+例如 "tokenization" 可能被拆分为 "token" + "ization"。这种机制使得模型既能高效处理常见词，又能通过组合词根词缀来泛化理解未见过的复合词。
+
+目前主流的三巨头：
+
+1. **BPE (Byte-Pair Encoding)**：基于频率合并，用于 GPT 系列、Llama、RoBERTa
+2. **WordPiece**：基于概率（似然度）合并，起源于 BERT
+3. **Unigram**：基于概率剪枝，用于 SentencePiece (ALBERT, T5)
+
+## 3. 深度解析：BPE 算法与代码实现
+
+BPE 最初由 Philip Gage 在 1994 年提出，作为**数据压缩算法**。Sennrich 等人于 2015 年将其引入 NLP 领域。
+
+### 3.1 算法核心逻辑
+
+1. **初始化**：将所有文本拆解为基础单元（通常是字节）
+2. **统计**：统计所有相邻单元对的频率
+3. **合并**：找到频率最高的对，合并为新符号并分配新 ID
+4. **迭代**：重复，直到达到预设词表大小
+
+### 3.2 代码详解：统计频率 (`get_stats`)
+
+```python
+def get_stats(ids):
+    """
+    输入: ids (list of integers): 当前的 Token ID 列表
+    输出: counts (dict): 映射 (id1, id2) -> frequency
+    """
+    counts = {}
+    # zip(ids, ids[1:]) 生成所有相邻对
+    for pair in zip(ids, ids[1:]):
+        counts[pair] = counts.get(pair, 0) + 1
+    return counts
+```
+
+**关键洞察**：现代 LLM 使用**字节级 BPE**，`ids` 的初始状态是 UTF-8 编码后的字节序列（0-255）。这种设计保证了 Tokenizer 可以处理任何 Unicode 字符串，因为一切皆为字节。
+
+### 3.3 代码详解：执行合并 (`merge`)
+
+```python
+def merge(ids, pair, idx):
+    """
+    将所有 pair 替换为新的 idx
+    """
+    newids = []
+    i = 0
+    while i < len(ids):
+        if i < len(ids) - 1 and ids[i] == pair[0] and ids[i+1] == pair[1]:
+            newids.append(idx)
+            i += 2
+        else:
+            newids.append(ids[i])
+            i += 1
+    return newids
+```
+
+**贪心算法**：BPE 是贪婪的，每次都在全局范围内替换所有实例。
+
+### 3.4 训练主循环
+
+```python
+def train(text, vocab_size, verbose=False):
+    assert vocab_size >= 256
+    num_merges = vocab_size - 256
+
+    text_bytes = text.encode("utf-8")
+    ids = list(text_bytes)
+    merges = {}
+
+    for i in range(num_merges):
+        stats = get_stats(ids)
+        if not stats:
+            break
+
+        pair = max(stats, key=stats.get)
+        idx = 256 + i
+        ids = merge(ids, pair, idx)
+        merges[pair] = idx
+
+    return merges
+```
+
+**核心产物**：训练结束后，最重要的产物是 `merges` 字典，它定义了 Tokenizer 的"知识"。`tokenizer.json` 或 `merges.txt` 存储的就是这个字典。
+
+**词表大小的权衡**：
+- **太小**：序列过长，无法捕捉长距离依赖
+- **太大**：Embedding 矩阵参数量激增，稀有词训练不充分
+
+### 3.5 推理阶段的编码
+
+```python
+def encode(text, merges):
+    ids = list(text.encode("utf-8"))
+
+    while len(ids) >= 2:
+        stats = get_stats(ids)
+
+        # 寻找"在 merges 规则表中存在，且 ID 最小（最早训练出来）"的对
+        pair_to_merge = None
+        min_rank = float("inf")
+
+        for pair in stats:
+            if pair in merges:
+                rank = merges[pair]
+                if rank < min_rank:
+                    min_rank = rank
+                    pair_to_merge = pair
+
+        if pair_to_merge is None:
+            break
+
+        ids = merge(ids, pair_to_merge, min_rank)
+
+    return ids
+```
+
+**优先级逻辑至关重要**。推理时必须严格按训练时确定的优先级（即 ID 越小，优先级越高）顺序合并，否则会破坏 BPE 的构造一致性。
+
+### 3.6 解码
+
+```python
+def decode(ids, vocab):
+    tokens = b"".join(vocab[idx] for idx in ids)
+    text = tokens.decode("utf-8", errors="replace")
+    return text
+```
+
+`errors="replace"` 是关键：大模型有时会生成不完整的 Token 序列（如中文 3 字节只输出了 2 个），使用 `replace` 策略可以防止程序崩溃，并输出 替换字符。
+
+## 4. 算法三巨头深度对比
+
+### 4.1 WordPiece：从频率到概率的跨越
+
+WordPiece（BERT 使用）流程与 BPE 类似，但选择合并对的标准不同。
+
+- **BPE 标准**：选择**频次**最高的对
+- **WordPiece 标准**：选择合并后能使**似然度**增加最多的对
+
+WordPiece 得分公式：
+
+$$
+\text{Score}(A, B) = \frac{P(AB)}{P(A) \times P(B)}
+$$
+
+**为什么 PMI 比频率更优？**
+
+假设 A="the"、B="book" 都是极高频词，BPE 中可能会合并它们。但 WordPiece 中分母 $P(\text{"the"}) \times P(\text{"book"})$ 非常大，Score 被拉低，防止两个本该独立的常见词被意外合并。
+
+**结论**：WordPiece 倾向于合并那些**内在关联性强**（比随机组合更紧密）的词对。
+
+### 4.2 Unigram：基于概率图模型的自顶向下剪枝
+
+Unigram 思路与前两者相反，是**自顶向下**的构造。
+
+Unigram 模型假设每个 Subword 独立出现：
+
+$$
+P(\mathbf{x}) = \prod_{i=1}^{m} P(x_i)
+$$
+
+**训练流程（EM 算法）**：
+
+1. **初始化**：构建极其巨大的词表（几百万个候选）
+2. **E-step**：用 Viterbi 算法计算每个句子的最优切分路径
+3. **M-step**：重新计算每个子词的概率 $P(x_i)$
+4. **计算 Loss 并剪枝**：移除对总似然度贡献最小的 Token
+5. **循环**：直到词表缩小到预定大小
+
+**独特优势：子词正则化**
+
+Unigram 本身是一个微型语言模型，可以根据概率**采样**不同的切分方式：
+
+- 对 "New York"，有时输出 `["New", " York"]`，有时输出 `["N", "ew", " Yo", "rk"]`
+- 这种数据增强迫使模型学习不同切分下的语义，提升鲁棒性
+
+### 4.3 算法特性对比
+
+| 特性 | BPE | WordPiece | Unigram |
+|---|---|---|---|
+| **构建方向** | 自底向上 | 自底向上 | 自顶向下 |
+| **核心指标** | 频率 | 似然度增益 / PMI | 似然度损失 |
+| **训练复杂度** | 较低 | 高 | 较高 |
+| **OOV 处理** | 字节回退 | 字符回退 (需 UNK) | 字符回退 |
+| **分词确定性** | 确定性 | 确定性 | 概率性 |
+| **适用场景** | 生成式模型 | 理解式模型 | 需正则化的任务 |
+| **代表模型** | GPT, Llama | BERT | T5, ALBERT |
+
+## 5. GPT 分词器的演进：从 GPT-2 到 GPT-4
+
+### 5.1 预分词与 Regex 的秘密
+
+BPE 算法本身是"盲目"的，可能跨越标点和单词的边界合并。因此在 BPE 之前需要用正则切分文本。
+
+**GPT-2 Regex 缺陷**：处理多空格效率低，对代码缩进处理差；大小写处理不一致。
+
+**GPT-4 (`cl100k_base`) 重大改进**：
+
+1. **大小写不敏感**：`(?i:...)` 解决了 `Don't` vs `DON'T` 的不一致
+2. **数字合并策略 `\p{N}{2,}`**：要求数字至少两位，提升数学计算能力
+3. **空格与代码优化**：允许合并更多连续空格，对 Python 缩进至关重要
+
+### 5.2 字节级 BPE 的精妙实现 (`bytes_to_unicode`)
+
+**核心痛点**：很多字节是不可见的（如 `\n`、`\t`、`0x00`），调试和打印会乱码。
+
+**解决方案**：构建一个**可逆的映射表**，给不可见字符穿上"可视化外衣"。
+
+**最经典案例：空格**
+- **原始字节**：`32 (0x20)` — 不可见
+- **映射结果**：`Ġ` (U+0120) — 可见
+- **目的**：让空格在分词结果中清晰可见。这就是为什么 GPT 的 Token 列表中总是 `Ġworld` 而不是 `world`。
+
+**数据生命周期**：
+
+| 阶段 | 数据形态 | 说明 |
+|---|---|---|
+| 原始输入 | `b'Hi world'` | 空格是 `0x20` |
+| 映射转换 | `"HiĠworld"` | 字节 `0x20` 被替换为 `Ġ` |
+| 词表存储 | `{"Ġworld": 12345}` | 以 `Ġ` 形式真实存储 |
+| 解码还原 | `b'Hi world'` | `Ġ` 还原回 `0x20` |
+| 最终展示 | `"Hi world"` | 用户看到的正常文本 |
+
+### 5.3 词表大小的演进
+
+| 模型 | 词表大小 | 影响 |
+|---|---|---|
+| GPT-2 | 50,257 | 英语为主，其他语言效率低 |
+| GPT-4 | 100,277 | 显著提升多语言压缩率 |
+| Llama 3 | 128,000 | 进一步优化多语言支持 |
+
+**为什么词表越来越大？**
+- 优点：推理更快、上下文更大、多语言公平性
+- 代价：Embedding 层参数量剧增，稀疏 Token 嵌入训练不充分
+
+## 6. 特殊 Token 的工程处理
+
+**为什么不能用普通 BPE 处理 `<|endoftext|>`？**
+
+如果当作普通文本，BPE 会把它切分为 `['<', '|', 'endo', 'ft', 'ext', '|', '>']`，模型无法识别为停止信号。
+
+**Tiktoken 的处理方式**：要求显式传递 `allowed_special` 参数。
+
+- **Prompt 注入防御**：如果不允许特殊 Token，用户输入 `Hello <|endoftext|>` 时强制按普通文本分词，防止伪造系统指令。
+
+```python
+def encode(text, special_tokens):
+    # 1. 创建正则匹配所有特殊 Token
+    special_pattern = create_pattern(special_tokens.keys())
+
+    # 2. 切分为"普通部分"和"特殊部分"
+    splits = re.split(special_pattern, text)
+
+    final_ids = []
+    for part in splits:
+        if part in special_tokens:
+            final_ids.append(special_tokens[part])
+        else:
+            final_ids.extend(bpe_encode(part))
+
+    return final_ids
+```
+
+## 7. 分词对模型性能的深远影响
+
+### 7.1 算术与数字的"盲区"
+
+- `1000` 可能是一个 Token
+- `1001` 可能切分为 `["100", "1"]`
+- `1002` 可能切分为 `["10", "02"]`
+
+由于切分不规律，模型很难学习位值规则。
+
+### 7.2 编程语言的缩进处理
+
+GPT-2 中 4 个空格 = 4 个 `Ġ` Token，消耗大量上下文。GPT-4 通过合并连续空格大幅缓解。
+
+### 7.3 "Glitch Tokens" 故障 Token
+
+研究人员发现某些 Token（如 `SolidGoldMagikarp`）会导致模型乱码。
+
+**原因**：这些词来自 Reddit 等论坛的用户名，被 BPE 统计为高频词并加入词表，但后续训练时被过滤掉。Token 存在于词表中，但 Embedding 层从未被更新过（处于初始随机状态），推理时激活随机向量导致输出崩坏。
+
+## 8. 性能与生态对比
+
+| 库 | 核心语言 | 算法 | 特点 | 适用模型 |
+|---|---|---|---|---|
+| **Tiktoken** (OpenAI) | Rust | BPE | 极速（比 HF 快 3-6 倍），仅推理 | GPT-3.5/4 |
+| **SentencePiece** (Google) | C++ | BPE, Unigram | 无损处理，多语言支持极好 | Llama, T5 |
+| **Tokenizers** (HF) | Rust | All | 大一统，功能最全 | BERT, Mistral |
+
+**SentencePiece 的空格处理**：将空格视为普通字符（用 `▁` 表示），保留所有信息。这是为什么 Llama 等模型可以直接处理原始文本。
+
+## 9. 结论与未来展望
+
+**未来方向**：
+
+1. **Token-free Models**：直接在字节层面训练（MegaByte, MambaByte）。配合 Flash Attention 等线性注意力机制，将彻底消灭 Tokenizer 带来的所有偏见。
+
+2. **多模态融合**：GPT-4o 等模型不仅处理文本，还要处理图像 Patch 和音频帧。未来 Tokenizer 将是"万物皆 Token"的统一体。
+
+通过理解 Tokenizer 的每一个字节、每一行代码、每一个正则符号，我们不仅是在学习一个预处理工具，更是在窥探大语言模型认知世界的"第一眼"。**这一眼，决定了它能看多远。**
