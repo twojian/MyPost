@@ -1,0 +1,357 @@
+---
+title: "🦼 4. 误差反向传播法"
+date: "2026-06-09"
+summary: "用计算图直观理解链式法则：从加法、乘法节点到 ReLU/Sigmoid/Affine/Softmax-with-Loss 层的完整反向传播实现。"
+tags: ["深度学习", "反向传播", "计算图", "链式法则", "梯度"]
+categories: ["深度学习"]
+---
+
+> 来源：《深度学习笔记》— 4. 误差反向传播法
+
+数值微分虽然简单，但计算上比较费时间。本章学习一个能高效计算权重参数梯度的方法——**误差反向传播法**。
+
+---
+
+## 4.1 计算图（Computational Graph）
+
+计算图是将计算过程用图形表示出来的数据结构，由节点和边组成。
+
+- **正向传播**（Forward Propagation）：从输入到输出的传递过程
+- **反向传播**（Backward Propagation）：沿相反方向传播导数的过程
+
+> 使用计算图最大的原因：**可以通过局部计算（Local Gradient）高效地求出所有变量的导数**。
+
+### 计算图的优点
+
+1. **局部计算**：通过局部计算使各个节点专注于简单的计算。无论全局发生了什么，都能只根据与自身相关的信息输出接下来的结果。
+2. **保存中间结果**：可将中间的计算结果全部保存起来。
+3. **支持反向传播高效计算导数**（核心）。
+
+---
+
+## 4.2 链式法则（Chain Rule）
+
+链式法则是反向传播算法的数学基础。
+
+### 4.2.1 复合函数的导数
+
+如果 $z = g(t)$，$t = f(x)$，则复合函数 $z = g(f(x))$ 对 $x$ 的导数为：
+
+$$
+\frac{\partial z}{\partial x} = \frac{\partial z}{\partial t} \cdot \frac{\partial t}{\partial x}
+$$
+
+**例**：设 $z = (x + y)^2$，令 $t = x + y$，则 $z = t^2$，
+
+$$
+\frac{\partial z}{\partial x} = \frac{\partial z}{\partial t} \cdot \frac{\partial t}{\partial x} = 2t \cdot 1 = 2(x + y)
+$$
+
+### 4.2.2 链式法则与反向传播
+
+反向传播的本质就是 **将链式法则拆解为逐节点的局部梯度相乘**。信号从右向左传播时，每经过一个节点就乘上该节点的局部导数。这一机制使整个网络只需存储正向传播的中间结果，就能高效地一次性计算所有参数的梯度。
+
+---
+
+## 4.3 各层的反向传播
+
+### 4.3.1 加法节点
+
+**正向**：$z = x + y$
+
+**反向**：
+
+$$
+\frac{\partial z}{\partial x} = 1, \quad \frac{\partial z}{\partial y} = 1
+$$
+
+加法节点将上游传来的梯度**原封不动地分别传给每个输入**。
+
+```python
+class AddLayer:
+    def forward(self, x, y):
+        return x + y
+
+    def backward(self, dout):
+        dx = dout * 1
+        dy = dout * 1
+        return dx, dy
+```
+
+### 4.3.2 乘法节点
+
+**正向**：$z = x \cdot y$
+
+**反向**：
+
+$$
+\frac{\partial z}{\partial x} = y, \quad \frac{\partial z}{\partial y} = x
+$$
+
+乘法节点将上游梯度**乘以正向传播时另一个输入的值**——因此乘法层在正向时需要保存输入。
+
+```python
+class MulLayer:
+    def __init__(self):
+        self.x = None
+        self.y = None
+
+    def forward(self, x, y):
+        self.x = x
+        self.y = y
+        return x * y
+
+    def backward(self, dout):
+        dx = dout * self.y  # 翻转 x 和 y
+        dy = dout * self.x
+        return dx, dy
+```
+
+### 4.3.3 ReLU 层
+
+**正向**：
+
+$$
+y = \begin{cases} x, & x > 0 \\ 0, & x \le 0 \end{cases}
+$$
+
+**反向**：
+
+$$
+\frac{\partial y}{\partial x} = \begin{cases} 1, & x > 0 \\ 0, & x \le 0 \end{cases}
+$$
+
+```python
+class Relu:
+    def __init__(self):
+        self.mask = None
+
+    def forward(self, x):
+        self.mask = (x <= 0)
+        out = x.copy()
+        out[self.mask] = 0
+        return out
+
+    def backward(self, dout):
+        dout[self.mask] = 0
+        return dout
+```
+
+### 4.3.4 Sigmoid 层
+
+**正向**：
+
+$$
+y = \frac{1}{1 + e^{-x}}
+$$
+
+**反向**（优雅的性质：导数完全可以用输出值表示）：
+
+$$
+\frac{\partial y}{\partial x} = y(1 - y)
+$$
+
+```python
+class Sigmoid:
+    def __init__(self):
+        self.out = None
+
+    def forward(self, x):
+        out = 1 / (1 + np.exp(-x))
+        self.out = out
+        return out
+
+    def backward(self, dout):
+        dx = dout * self.out * (1.0 - self.out)
+        return dx
+```
+
+### 4.3.5 Affine 层
+
+**正向**（批量版本，$X$ 形状 $(N, D)$，$W$ 形状 $(D, M)$）：
+
+$$
+\mathbf{Y} = \mathbf{X}\mathbf{W} + \mathbf{b}
+$$
+
+**反向**：
+
+$$
+\frac{\partial L}{\partial \mathbf{X}} = \frac{\partial L}{\partial \mathbf{Y}} \cdot \mathbf{W}^T
+$$
+
+$$
+\frac{\partial L}{\partial \mathbf{W}} = \mathbf{X}^T \cdot \frac{\partial L}{\partial \mathbf{Y}}
+$$
+
+$$
+\frac{\partial L}{\partial \mathbf{b}} = \sum_{n} \frac{\partial L}{\partial \mathbf{Y}_n}
+$$
+
+```python
+class Affine:
+    def __init__(self, W, b):
+        self.W = W
+        self.b = b
+        self.x = None
+        self.dW = None
+        self.db = None
+
+    def forward(self, x):
+        self.x = x
+        return np.dot(x, self.W) + self.b
+
+    def backward(self, dout):
+        dx = np.dot(dout, self.W.T)
+        self.dW = np.dot(self.x.T, dout)
+        self.db = np.sum(dout, axis=0)
+        return dx
+```
+
+### 4.3.6 Softmax-with-Loss 层
+
+在分类问题中，Softmax 与交叉熵损失通常合并为一个层——二者组合在数学上会产生极其简洁的反向传播公式。
+
+**正向**：
+
+$$
+a_k = \text{softmax}(z_k) = \frac{e^{z_k}}{\sum_j e^{z_j}}, \quad L = -\sum_k t_k \log a_k
+$$
+
+**反向**：
+
+$$
+\frac{\partial L}{\partial z_k} = a_k - t_k
+$$
+
+> **softmax 输出减去正确标签**（one-hot）就是该层的输入梯度——这个结果优雅得令人惊叹。
+
+- 对正确类别：梯度为负（输出概率偏低时梯度大，驱动提升）
+- 对错误类别：梯度为正（输出概率偏高时梯度大，驱动压制）
+
+```python
+class SoftmaxWithLoss:
+    def __init__(self):
+        self.loss = None
+        self.y = None
+        self.t = None
+
+    def forward(self, x, t):
+        self.t = t
+        x = x - np.max(x, axis=-1, keepdims=True)
+        self.y = np.exp(x) / np.sum(np.exp(x), axis=-1, keepdims=True)
+        batch_size = self.t.shape[0]
+        self.loss = -np.sum(self.t * np.log(self.y + 1e-7)) / batch_size
+        return self.loss
+
+    def backward(self, dout=1):
+        batch_size = self.t.shape[0]
+        dx = (self.y - self.t) / batch_size
+        return dx
+```
+
+---
+
+## 4.4 误差反向传播法的完整实现
+
+### 4.4.1 TwoLayerNet 完整实现
+
+```python
+import numpy as np
+from collections import OrderedDict
+
+class TwoLayerNet:
+    def __init__(self, input_size, hidden_size, output_size, weight_init_std=0.01):
+        self.params = {
+            'W1': weight_init_std * np.random.randn(input_size, hidden_size),
+            'b1': np.zeros(hidden_size),
+            'W2': weight_init_std * np.random.randn(hidden_size, output_size),
+            'b2': np.zeros(output_size)
+        }
+
+        # 用 OrderedDict 保证反向顺序
+        self.layers = OrderedDict()
+        self.layers['Affine1'] = Affine(self.params['W1'], self.params['b1'])
+        self.layers['Relu1']   = Relu()
+        self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
+        self.lastLayer = SoftmaxWithLoss()
+
+    def predict(self, x):
+        for layer in self.layers.values():
+            x = layer.forward(x)
+        return x
+
+    def loss(self, x, t):
+        y = self.predict(x)
+        return self.lastLayer.forward(y, t)
+
+    def accuracy(self, x, t):
+        y = self.predict(x)
+        y = np.argmax(y, axis=1)
+        t = np.argmax(t, axis=1)
+        return np.sum(y == t) / float(x.shape[0])
+
+    def gradient(self, x, t):
+        # 正向
+        self.loss(x, t)
+
+        # 反向
+        dout = self.lastLayer.backward(dout=1)
+        layers = list(self.layers.values())
+        layers.reverse()
+        for layer in layers:
+            dout = layer.backward(dout)
+
+        return {
+            'W1': self.layers['Affine1'].dW,
+            'b1': self.layers['Affine1'].db,
+            'W2': self.layers['Affine2'].dW,
+            'b2': self.layers['Affine2'].db
+        }
+```
+
+### 4.4.2 训练流程
+
+```python
+x_train, t_train, x_test, t_test = load_mnist(normalize=True, one_hot_label=True)
+network = TwoLayerNet(input_size=784, hidden_size=50, output_size=10)
+optimizer = SGD(lr=0.1)
+
+batch_size = 100
+train_size = x_train.shape[0]
+
+for i in range(10000):
+    batch_mask = np.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+
+    grads = network.gradient(x_batch, t_batch)  # 反向传播比数值微分快约 1000 倍
+    optimizer.update(network.params, grads)
+
+    if i % 100 == 0:
+        loss = network.loss(x_batch, t_batch)
+        acc = network.accuracy(x_test, t_test)
+        print(f"iter {i:5d} | loss: {loss:.4f} | test acc: {acc:.4f}")
+```
+
+### 4.4.3 数值微分 vs 误差反向传播
+
+| 对比维度 | 数值微分 | 误差反向传播法 |
+|---------|---------|---------------|
+| 计算速度 | 极慢（需对每个参数单独扰动） | 极快（一次正向 + 一次反向） |
+| 实现难度 | 简单，几乎不会出错 | 较复杂，容易出现 bug |
+| 用途 | 用于**验证**反向传播的正确性 | 用于**实际训练** |
+| 精度 | 有截断误差 | 精确（解析解） |
+
+### 4.4.4 梯度确认（Gradient Check）
+
+实践中，通常用数值微分计算梯度，再与反向传播结果对比，差异应在 $10^{-5}$ 量级以下：
+
+```python
+grad_numerical = network.numerical_gradient(x_batch, t_batch)
+grad_backprop  = network.gradient(x_batch, t_batch)
+
+for key in grad_numerical:
+    diff = np.mean(np.abs(grad_backprop[key] - grad_numerical[key]))
+    print(f"{key}: {diff:.10f}")  # 差值应接近 0
+```

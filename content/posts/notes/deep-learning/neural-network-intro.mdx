@@ -1,0 +1,321 @@
+---
+title: "⌨️ 2. 神经网络的引入"
+date: "2026-01-17"
+summary: "从感知机到神经网络：网络结构、激活函数（阶跃/Sigmoid/ReLU/恒等/Softmax）对比与神经网络推理代码实现。"
+tags: ["深度学习", "神经网络", "激活函数", "Sigmoid", "ReLU", "Softmax"]
+categories: ["深度学习"]
+---
+
+> 来源：《深度学习笔记》— 2. 神经网络的引入
+
+**神经网络**是一种由大量简单处理单元（人工神经元）互连而成的**多层前馈计算模型**，通过调整连接权值和偏置，实现对输入到输出映射关系的近似——即用数学函数去逼近未知映射关系。
+
+---
+
+## 2.1 神经网络的构成
+
+### 2.1.1 网络结构
+
+把最左边的一列称为输入层，最右边的一列称为输出层，中间的一列称为中间层（也称隐藏层）。
+
+> 网络若由 3 层神经元构成，但实质上只有 2 层神经元有权重，因此称为"2 层网络"。根据**实质上拥有权重的层数**（总数减 1）来命名。
+
+- **输入层**（Input Layer）：接收原始数据
+- **隐藏层**（Hidden Layer）：进行特征提取和转换
+- **输出层**（Output Layer）：产生最终的预测结果
+
+层与层之间全连接，层内无连接。典型结构是：
+
+$$
+\text{输入} \to \text{线性变换} \to \text{非线性} \to \text{线性变换} \to \cdots \to \text{输出}
+$$
+
+### 2.1.2 数学形式
+
+一个最基本的人工神经元可以写成：
+
+$$
+y = f\left( \sum_{i=1}^{n} w_i x_i + b \right)
+$$
+
+从计算机角度看，这就是 **一次向量内积 + 非线性映射**。
+
+### 2.1.3 向量形式表达（标准写法）
+
+对第 $l$ 层：
+
+$$
+\mathbf{z}^{(l)} = \mathbf{W}^{(l)} \mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}
+$$
+
+$$
+\mathbf{a}^{(l)} = f(\mathbf{z}^{(l)})
+$$
+
+---
+
+## 2.2 激活函数的概念
+
+激活函数是指将神经元输入信号的加权总和转换为输出信号的函数。核心要素包括：
+
+1. **输入信号的加权总和**：$a = b + w_1 x_1 + w_2 x_2$
+2. **非线性映射过程**：$y = h(a)$
+
+### 关键特性
+
+- **信号转换性**：将线性组合转化为具有特定含义的输出
+- **非线性**：最本质属性，用于打破层级间的线性简并
+- **连续性**：现代激活函数多具有连续可导的特性
+- **单调性**：多数激活函数在定义域内单调递增
+- **阈值逻辑**：源自早期感知机的阶跃逻辑
+- **导数特性**：决定误差信号在反向传播中的缩减或保持
+
+### 因果关系
+
+**若使用线性激活函数，无论加深多少层，网络都等同于单层线性变换。** 因此必须引入非线性激活函数，才能使多层神经网络具备处理非线性问题的表现力。
+
+### 历史演进
+
+- **1960s 感知机时代**：阶跃函数统治，仅能解决线性可分问题
+- **1980s 早期神经网络**：Sigmoid 函数成为主流，引入平滑性和反向传播
+- **现代深度学习**：ReLU 因计算简单且能缓解梯度消失而成为主流
+
+> 神经网络只不过被重新包装为"深度学习"。因为"神经网络"这个词当时名声不太好。——杨立昆
+
+---
+
+## 2.3 神经网络使用的激活函数
+
+### 2.3.1 阶跃函数（仅感知机使用）
+
+> Step 意为"阶跃"，表示函数输出在某一阈值处发生突变。
+
+$$
+f(x) = \begin{cases} 0, & x \le 0 \\ 1, & x > 0 \end{cases}
+$$
+
+阶跃函数实现的是"是否激活"的硬判定机制。但存在两个致命缺陷：
+
+- 函数在 0 处不可导，其余位置导数为 0
+- 输出不连续
+
+这意味着在基于梯度的优化方法中无法使用反向传播算法。
+
+### 2.3.2 Sigmoid 函数
+
+> Sigmoid 源自拉丁语 *sigmoides*，意为"S 形"。
+
+$$
+h(x) = \frac{1}{1 + e^{-x}}
+$$
+
+将任意实数压缩到 $(0, 1)$ 区间，输出可被解释为概率。其导数为：
+
+$$
+\sigma'(x) = \sigma(x)(1 - \sigma(x))
+$$
+
+**问题**：当输入绝对值较大时进入饱和区，梯度趋近于 0，容易导致**梯度消失**。
+
+### 2.3.3 ReLU 函数（Rectified Linear Unit）
+
+> Rectified 意为"矫正"，即把负值部分矫正为零。
+
+$$
+\mathrm{ReLU}(x) = \max(0, x)
+$$
+
+**优点**：稀疏激活、计算代价低、有效缓解梯度消失（正区间导数恒为 1）。
+
+**缺点**："神经元死亡"——当神经元长期落在负区间时梯度恒为 0。
+
+### 2.3.4 恒等函数（Identity Function）
+
+$$
+f(x) = x
+$$
+
+**通常用于回归问题的输出层**，以允许模型输出任意范围的连续值。
+
+### 2.3.5 Softmax 函数
+
+> Soft 表示"软化"，Max 表示"取最大"。以连续、可导的方式突出较大分量，同时保留所有类别信息。
+
+$$
+\mathrm{Softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}}
+$$
+
+将任意实数向量映射为**概率分布**，每个分量非负且总和为 1。**专用于多分类输出层**。
+
+为避免数值溢出，工程实现中常对输入进行平移（减去最大值）。
+
+### 总体对比
+
+| 特征 | 阶跃函数 | Sigmoid | Softmax | ReLU |
+|------|---------|---------|---------|------|
+| 输出形式 | 0 或 1 | $(0,1)$ 平滑 | $(0,1)$ 概率分布 | $[0,+\infty)$ |
+| 连续性 | 不连续 | 连续光滑 | 连续光滑 | 0 处不可导 |
+| 梯度消失风险 | 不适用 | 严重 | — | 较轻 |
+| 计算复杂度 | 极低 | 较高（含指数） | 较高 | 极低 |
+| 典型使用位置 | 理论感知机 | 二分类输出层 | 多分类输出层 | 隐藏层默认 |
+
+**理解主线**：
+
+- 阶跃函数：解决"是否激活"，但无法训练
+- Sigmoid：引入平滑可导非线性，但在深层网络中受限
+- ReLU：保持非线性同时显著改善训练效率
+- 恒等函数：服务于回归输出
+- Softmax：完成从"打分"到"概率"的最终映射
+
+> ReLU 负责表达能力，Sigmoid/Softmax 负责概率解释，恒等函数负责数值输出，阶跃函数负责历史记忆。
+
+---
+
+## 2.4 神经网络的实际运用：手写数字识别推理
+
+### 2.4.1 纯净版（无预处理）
+
+假设训练好了一个简单的 MLP：**输入 784 → 隐藏 128 (Sigmoid) → 输出 10 (Softmax)**。
+
+```python
+import numpy as np
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def softmax(x):
+    exp_x = np.exp(x - np.max(x))  # 减去最大值防止溢出
+    return exp_x / exp_x.sum()
+
+def inference(input_pixels, weights, bias):
+    # 1. 输入层 -> 隐藏层
+    hidden_layer_input = np.dot(weights['W1'], input_pixels) + bias['b1']
+    hidden_layer_output = sigmoid(hidden_layer_input)
+
+    # 2. 隐藏层 -> 输出层
+    output_layer_input = np.dot(weights['W2'], hidden_layer_output) + bias['b2']
+    final_output = softmax(output_layer_input)
+
+    return final_output
+
+# 模拟一张随机 28x28 图像
+test_image = np.random.rand(784)
+
+trained_params = {
+    'W1': np.random.randn(128, 784),
+    'b1': np.random.randn(128),
+    'W2': np.random.randn(10, 128),
+    'b2': np.random.randn(10)
+}
+
+probabilities = inference(test_image, trained_params, trained_params)
+predicted_digit = np.argmax(probabilities)
+
+print(f"推理结果：该数字最有可能是 {predicted_digit}")
+print(f"置信度：{probabilities[predicted_digit]:.2%}")
+```
+
+#### 维度视角
+
+- `input_pixels`: `(784,)`
+- `W1`: `(128, 784)` → 计算后 `(128,)`
+- `W2`: `(10, 128)` → 计算后 `(10,)`
+
+> 每一个隐藏层神经元都在"看"整张 28×28 图片，学到的是**全局模式的线性组合**。
+
+#### Softmax 数值稳定性
+
+`x - np.max(x)` 是专业级写法。当 $x$ 很大时 `np.exp(x)` 会溢出，但 Softmax 对整体平移不敏感：
+
+$$
+\text{softmax}(x) = \text{softmax}(x - c)
+$$
+
+选择 $c = \max(x)$ 可有效避免数值问题。
+
+### 2.4.2 引入预处理版
+
+#### 概念区分
+
+| 概念 | 作用对象 | 阶段 | 目的 |
+|------|---------|------|------|
+| 预处理（Preprocessing） | 原始输入数据（量纲、缺失值、噪声等） | 训练 + 推理 | 让数据分布"可用" |
+| 正规化（Normalization） | 数据 / 激活值（数值尺度） | 训练 + 推理 | 让数值"稳定" |
+
+**关系**：归一化、标准化 ⊂ 正规化，正规化 ⊂ 预处理流程。
+
+> 预处理解决"数据来自哪里"，正规化解决"数值怎么流动"，正则化解决"模型能走多远"。
+
+#### 典型预处理
+
+```python
+def preprocess(input_pixels, mean, std):
+    """
+    1. 归一化到 [0,1]
+    2. 标准化到零均值、单位方差
+    """
+    x = input_pixels / 255.0
+    x = (x - mean) / std
+    return x
+
+# 假设这是训练集统计得到的参数（MNIST 常用）
+train_mean = 0.1307
+train_std = 0.3081
+
+test_image = np.random.randint(0, 256, size=784)
+test_image = preprocess(test_image, train_mean, train_std)
+```
+
+> 让"新数据"看起来像"训练时见过的数据"。
+
+#### 完整流水线
+
+从原始像素开始：
+
+$$
+\text{原始像素} \to \text{归一化} \to \text{标准化} \to \text{线性变换} \to \text{Sigmoid} \to \text{线性变换} \to \text{Softmax} \to \text{概率分布} \to \text{决策}
+$$
+
+### 2.4.3 MNIST 数据集加载失败的解决办法
+
+《深度学习入门：基于 Python 的理论与实现》中原代码从 `http://yann.lecun.com/exdb/mnist/` 下载，地址已失效，会出现 `HTTPError: HTTP Error 404`。
+
+**解决办法**：用 `torchvision` 替换：
+
+```python
+# mymnist.py
+from torchvision import datasets, transforms
+from PIL import Image
+import numpy as np
+
+
+def img_show(img):
+    pil_img = Image.fromarray(img)
+    pil_img.show()
+
+
+def load_mnist(data_root="data", normalize=False, one_hot_label=False):
+    """返回与《深度学习入门》一致的数据格式"""
+    transform = transforms.Lambda(lambda x: x / 255.0) if normalize else None
+
+    mnist_train = datasets.MNIST(root=data_root, train=True, download=True, transform=transform)
+    mnist_test = datasets.MNIST(root=data_root, train=False, download=True, transform=transform)
+
+    x_train = mnist_train.data.numpy().reshape(len(mnist_train), -1)
+    t_train = mnist_train.targets.numpy()
+
+    x_test = mnist_test.data.numpy().reshape(len(mnist_test), -1)
+    t_test = mnist_test.targets.numpy()
+
+    if one_hot_label:
+        t_train = np.eye(10, dtype=np.float32)[t_train]
+        t_test = np.eye(10, dtype=np.float32)[t_test]
+
+    return x_train, t_train, x_test, t_test
+```
+
+调用方仅需改导入语句：
+
+```python
+from dataset.mymnist import load_mnist, img_show
+```
