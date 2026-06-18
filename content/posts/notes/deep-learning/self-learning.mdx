@@ -1,0 +1,347 @@
+---
+title: "🌞 3. 神经网络的自学习"
+date: "2026-06-10"
+summary: "神经网络如何从数据自动获取最优权重：损失函数、数值微分、梯度法、SGD 与完整的 TwoLayerNet 实现。"
+tags: ["深度学习", "损失函数", "梯度下降", "SGD", "反向传播"]
+categories: ["深度学习"]
+---
+
+> 来源：《深度学习笔记》— 3. 神经网络的自学习
+
+"学习"是指从训练数据中**自动获取最优权重参数**的过程。为了使神经网络能进行学习，引入**损失函数**作为指标——学习的目的就是以该函数为基准，找出能使它的**值达到最小**的权重参数。
+
+---
+
+## 3.1 从数据中学习
+
+### 3.1.1 数据驱动
+
+> **数据是机器学习的核心**。机器学习的方法极力避免人为介入，尝试从收集到的数据中发现答案（模式）。神经网络或深度学习则比以往的机器学习方法更能避免人为介入。
+
+**手写数字识别的两种方案**：
+
+- **方案一**：从图像中提取特征量（SIFT、SURF、HOG 等），再用 SVM、KNN 等分类器学习。但**特征量仍是由人设计的**——必须针对不同问题设计合适的特征量。
+- **方案二**：人工设计识别规则（难度过大，统一困难）。
+
+**神经网络的优势**：
+
+1. 可以将数据直接作为原始数据进行"端到端"的学习
+2. 都通过不断学习提供的数据来发现待求解问题的模式，对所有问题都可以用同样流程解决
+
+### 3.1.2 训练数据和测试数据
+
+机器学习中，一般将数据分为**训练数据**和**测试数据**：
+
+- 先用训练数据学习，寻找最优参数
+- 再用测试数据评价模型的实际能力
+
+**为什么需要划分？** 因为我们求的是模型的**泛化能力**——处理未观察过数据的能力。仅用一个数据集学习和评价，会导致**过拟合**：只对某个数据集过度拟合。
+
+---
+
+## 3.2 损失函数
+
+神经网络的学习中所用的**指标**称为损失函数，它表示神经网络性能的"恶劣程度"——即当前的神经网络对数据在多大程度上不拟合。
+
+> "使性能的恶劣程度达到最小" 和 "使性能的优良程度达到最大" 是等价的。
+
+### 3.2.1 损失函数的具体实现
+
+#### 均方误差 (MSE)
+
+用于**回归问题**：
+
+$$
+E = \frac{1}{2} \sum_k (y_k - t_k)^2
+$$
+
+```python
+import numpy as np
+
+def mean_squared_error(y, t):
+    return 0.5 * np.sum((y - t) ** 2)
+```
+
+#### 交叉熵误差 (CEE)
+
+用于**分类问题**。核心逻辑：只关注正确解标签所对应的输出结果。
+
+$$
+E = -\sum_k t_k \log y_k
+$$
+
+由于 $t_k$ 中只有正确解标签为 1，其余均为 0（one-hot），公式实际上只计算正确解标签对应输出的自然对数。
+
+```python
+def cross_entropy_error(y, t):
+    delta = 1e-7  # 防止 log(0) 变为 -inf
+    return -np.sum(t * np.log(y + delta))
+```
+
+#### Mini-batch 版本
+
+面对 60,000 张图像的 MNIST，无法计算全部数据。我们从中随机抽取一小部分（mini-batch），将总损失除以批量大小得到**平均损失**：
+
+```python
+def cross_entropy_error_batch(y, t):
+    if y.ndim == 1:
+        t = t.reshape(1, t.size)
+        y = y.reshape(1, y.size)
+
+    batch_size = y.shape[0]
+    return -np.sum(t * np.log(y + 1e-7)) / batch_size
+```
+
+### 3.2.2 为何要设定损失函数
+
+**不能用识别精度作为指标**，因为这样大多数地方的导数都会变为 0，导致参数无法更新。
+
+- **阶跃函数**：导数在大多数地方（除 0 外）均为 0 → 参数微小变化被抹杀
+- **Sigmoid 函数**：输出连续变化，斜率也连续变化，导数在任何地方都不为 0
+
+> 在进行神经网络的学习时，不能将识别精度作为指标——因为如果以识别精度为指标，参数的导数在绝大多数地方都会变成零。
+
+---
+
+## 3.3 数值微分：寻找变化的线索
+
+### 3.3.1 导数
+
+利用微小差分求导数的过程称为**数值微分**，基于数学式推导的称为**解析性求解**。
+
+为了减小误差，使用**中心差分**：
+
+$$
+\frac{df(x)}{dx} = \frac{f(x+h) - f(x-h)}{2h}
+$$
+
+```python
+def numerical_diff(f, x):
+    h = 1e-4  # 0.0001
+    return (f(x + h) - f(x - h)) / (2 * h)
+```
+
+> $h$ 取 $10^{-4}$ 是为了防止浮点数舍入误差导致计算失效。
+
+### 3.3.2 偏导数
+
+含有多个变量的函数的导数称为偏导数：$\frac{\partial f}{\partial x_0}$、$\frac{\partial f}{\partial x_1}$。
+
+偏导数和单变量的导数一样，都是求某个地方的斜率，但需要将多个变量中的某一个定为目标变量，其他变量定为某个值。
+
+---
+
+## 3.4 梯度
+
+由**全部变量的偏导数汇总而成的向量**称为**梯度**：
+
+$$
+\nabla f = \left( \frac{\partial f}{\partial x_0}, \frac{\partial f}{\partial x_1} \right)
+$$
+
+```python
+def numerical_gradient(f, x):
+    h = 1e-4
+    grad = np.zeros_like(x)
+    for idx in range(x.size):
+        tmp_val = x[idx]
+        # f(x+h)
+        x[idx] = tmp_val + h
+        fxh1 = f(x)
+        # f(x-h)
+        x[idx] = tmp_val - h
+        fxh2 = f(x)
+        grad[idx] = (fxh1 - fxh2) / (2 * h)
+        x[idx] = tmp_val  # 还原值
+    return grad
+```
+
+对于 $f(x_0, x_1) = x_0^2 + x_1^2$：
+
+```python
+>>> numerical_gradient(function_2, np.array([3.0, 4.0]))
+array([6., 8.])
+>>> numerical_gradient(function_2, np.array([0.0, 2.0]))
+array([0., 4.])
+```
+
+### 3.4.1 梯度法
+
+机器学习的主要任务是在学习时找到最优参数（损失函数取最小值时的参数）。函数复杂、参数空间大，我们不知道它在何处能取得最小值，**梯度法**就是巧妙使用梯度来找函数最小值的方法。
+
+> **数学补充**：方向导数 = $\cos\theta \cdot$ 梯度。因此所有下降方向中，**梯度反方向下降最快**。
+
+**注意**：
+
+- 极小值、最小值、鞍点处梯度都为 0
+- 鞍点：从某个方向看是极大值，从另一个方向看是极小值
+- 梯度法寻找梯度为 0 的地方，**但不一定是最小值**
+- 当函数复杂且呈扁平状时，可能进入"学习高原"停滞期
+
+**梯度下降法**的更新公式：
+
+$$
+x_0 \leftarrow x_0 - \eta \frac{\partial f}{\partial x_0}
+$$
+
+$$
+x_1 \leftarrow x_1 - \eta \frac{\partial f}{\partial x_1}
+$$
+
+其中 $\eta$ 是**学习率（learning rate）**：
+
+- **学习率过大**：参数在最小值附近剧烈震荡，甚至发散
+- **学习率过小**：学习过程极其缓慢，容易陷入局部最小值
+
+> 学习率这样的参数称为**超参数**——和神经网络权重性质不同，需人工设定。
+
+```python
+def gradient_descent(f, init_x, lr=0.01, step_num=100):
+    x = init_x
+    for i in range(step_num):
+        grad = numerical_gradient(f, x)
+        x -= lr * grad
+    return x
+```
+
+### 3.4.2 神经网络中的梯度
+
+在神经网络中，我们关注**损失函数 $L$ 关于权重参数 $W$ 的梯度**，记作 $\frac{\partial L}{\partial W}$：
+
+$$
+\frac{\partial L}{\partial W} = \begin{pmatrix}
+\frac{\partial L}{\partial w_{11}} & \frac{\partial L}{\partial w_{12}} & \cdots \\
+\frac{\partial L}{\partial w_{21}} & \frac{\partial L}{\partial w_{22}} & \cdots \\
+\vdots & \vdots & \ddots
+\end{pmatrix}
+$$
+
+**重点**：$\frac{\partial L}{\partial W}$ 的形状和权重参数 $W$ 相同。
+
+```python
+import numpy as np
+from common.functions import softmax, cross_entropy_error
+from common.gradient import numerical_gradient
+
+class simpleNet:
+    def __init__(self):
+        self.W = np.random.randn(2, 3)  # 用高斯分布初始化
+
+    def predict(self, x):
+        return np.dot(x, self.W)
+
+    def loss(self, x, t):
+        z = self.predict(x)
+        y = softmax(z)
+        return cross_entropy_error(y, t)
+```
+
+---
+
+## 3.5 学习算法的实现
+
+### 训练的实质
+
+> 神经网络训练是一个在参数空间中，对期望风险函数进行随机近似优化的迭代过程。
+
+**四个循环步骤**：
+
+1. **mini-batch（小批量抽样）**：从训练数据中随机选一部分
+   - 前向计算（Forward Pass）
+   - 损失评估（Loss Evaluation）
+2. **计算梯度**：损失函数对各权重参数的梯度
+3. **更新参数**：沿梯度反方向微小更新
+4. **重复**：直到模型性能达到预期
+
+因为使用随机选择的 mini-batch 数据，又称**随机梯度下降法（SGD, Stochastic Gradient Descent）**。
+
+### Mini-batch 抽样实现
+
+```python
+# train_size = 60000, batch_size = 100
+batch_mask = np.random.choice(train_size, batch_size)
+x_batch = x_train[batch_mask]
+t_batch = t_train[batch_mask]
+```
+
+### SGD：参数更新
+
+最基础的更新公式：
+
+$$
+W \leftarrow W - \eta \frac{\partial L}{\partial W}
+$$
+
+表面简单，实则隐含三层假设：
+
+- 一阶泰勒近似成立
+- 局部梯度方向足以代表下降方向
+- 参数空间使用欧几里得几何
+
+**SGD 的局限：非均向地形的困境**
+
+当损失函数形如细长山谷（如 $f(x, y) = \frac{1}{20} x^2 + y^2$），梯度方向并不指向最小值中心，导致 SGD 的更新路径呈剧烈"之"字形摆动，收敛极慢。
+
+```python
+class SGD:
+    def __init__(self, lr=0.01):
+        self.lr = lr
+
+    def update(self, params, grads):
+        for key in params.keys():
+            params[key] -= self.lr * grads[key]
+```
+
+### TwoLayerNet：完整网络构建
+
+```python
+class TwoLayerNet:
+    def __init__(self, input_size, hidden_size, output_size,
+                 weight_init_std=0.01):
+        # 初始化权重
+        self.params = {}
+        self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
+        self.params['b1'] = np.zeros(hidden_size)
+        self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
+        self.params['b2'] = np.zeros(output_size)
+
+    def predict(self, x):
+        W1, W2 = self.params['W1'], self.params['W2']
+        b1, b2 = self.params['b1'], self.params['b2']
+        a1 = np.dot(x, W1) + b1
+        z1 = sigmoid(a1)
+        a2 = np.dot(z1, W2) + b2
+        y = softmax(a2)
+        return y
+
+    def loss(self, x, t):
+        y = self.predict(x)
+        return cross_entropy_error(y, t)
+
+    def numerical_gradient(self, x, t):
+        loss_W = lambda W: self.loss(x, t)
+        grads = {}
+        grads['W1'] = numerical_gradient(loss_W, self.params['W1'])
+        grads['b1'] = numerical_gradient(loss_W, self.params['b1'])
+        grads['W2'] = numerical_gradient(loss_W, self.params['W2'])
+        grads['b2'] = numerical_gradient(loss_W, self.params['b2'])
+        return grads
+```
+
+### 重要变量
+
+| 变量 | 说明 |
+|------|------|
+| `params` | 字典存储参数：`params['W1']` 是第 1 层权重，`params['b1']` 是第 1 层偏置 |
+| `grads` | 字典存储梯度：`grads['W1']` 是第 1 层权重的梯度 |
+
+### 所有方法
+
+| 方法 | 说明 |
+|------|------|
+| `__init__(input_size, hidden_size, output_size)` | 初始化各层神经元数 |
+| `predict(x)` | 进行识别（推理） |
+| `loss(x, t)` | 计算损失函数的值 |
+| `accuracy(x, t)` | 计算识别精度 |
+| `numerical_gradient(x, t)` | 数值微分计算梯度 |
+| `gradient(x, t)` | 反向传播计算梯度（高速版） |
