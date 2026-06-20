@@ -8,12 +8,11 @@
 - [x] 标签 / 分类 / 归档页面
 - [x] 搜索功能（Fuse.js）
 - [x] 侧边栏 / 导航栏 / Footer
-- [ ] **提交初始代码到 GitHub**
-- [ ] **部署到 Vercel**
+- [x] **提交初始代码到 GitHub**
+- [x] **部署到 Vercel**
 
 ## Phase 2 — 完善体验
 
-- [ ] 暗色模式完善（next-themes 全局适配）
 - [ ] 响应式优化（移动端适配）
 - [ ] SEO 优化（meta tags, Open Graph, sitemap.xml）
 - [ ] RSS 订阅（/feed.xml）
@@ -45,15 +44,16 @@
 
 初始代码按模块分批提交，每个 commit 对应一个 PR，保持历史清晰：
 
-| # | Commit Message | PR 标题 | 关键文件 |
-|---|----------------|---------|----------|
-| 1 | `chore: project setup and dependencies` | `[chore] 项目初始化，配置 Next.js + Tailwind + MDX` | `package.json`, `next.config.ts`, `globals.css` |
-| 2 | `feat(layout): add Navbar, Footer, and Sidebar` | `[feat] 新增导航栏、页脚和侧边栏布局组件` | `src/components/layout/*` |
-| 3 | `feat(home): add hero, calendar, music, and clock widgets` | `[feat] 新增首页 Hero、日历、音乐播放器和时钟组件` | `src/components/home/*` |
-| 4 | `feat(posts): add post list, detail, and MDX rendering` | `[feat] 新增文章列表、详情页和 MDX 渲染系统` | `src/app/posts/*`, `src/components/post/*`, `src/lib/posts.ts` |
-| 5 | `feat(tags): add tag and category pages` | `[feat] 新增标签和分类筛选页面` | `src/app/tags/*`, `src/app/categories/*` |
-| 6 | `feat(search): add client-side fuzzy search` | `[feat] 新增客户端模糊搜索功能` | `src/app/search/*` |
-| 7 | `feat(archives): add archive page` | `[feat] 新增文章归档页面` | `src/app/archives/*` |
-| 8 | `feat: add bloggers, share, and 404 pages` | `[feat] 新增友链、分享和 404 页面` | `src/app/bloggers/*`, `src/app/share/*`, `src/app/not-found.tsx` |
-| 9 | `content: add initial blog posts` | `[content] 添加初始博客文章（教程/笔记/随笔）` | `content/posts/**` |
-| 10 | `docs: add commit convention, PR template, and roadmap` | `[docs] 新增提交规范、PR 模板和项目路线图` | `.github/*` |
+| #  | Commit Message                                             | PR 标题                                       | 关键文件                                                             |
+| -- | ---------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------- |
+| 1  | `chore: project setup and dependencies`                    | `[chore] 项目初始化，配置 Next.js + Tailwind + MDX` | `package.json`, `next.config.ts`, `globals.css`                  |
+| 2  | `feat(layout): add Navbar, Footer, and Sidebar`            | `[feat] 新增导航栏、页脚和侧边栏布局组件`                   | `src/components/layout/*`                                        |
+| 3  | `feat(home): add hero, calendar, music, and clock widgets` | `[feat] 新增首页 Hero、日历、音乐播放器和时钟组件`            | `src/components/home/*`                                          |
+| 4  | `feat(posts): add post list, detail, and MDX rendering`    | `[feat] 新增文章列表、详情页和 MDX 渲染系统`               | `src/app/posts/*`, `src/components/post/*`, `src/lib/posts.ts`   |
+| 5  | `feat(tags): add tag and category pages`                   | `[feat] 新增标签和分类筛选页面`                        | `src/app/tags/*`, `src/app/categories/*`                         |
+| 6  | `feat(search): add client-side fuzzy search`               | `[feat] 新增客户端模糊搜索功能`                        | `src/app/search/*`                                               |
+| 7  | `feat(archives): add archive page`                         | `[feat] 新增文章归档页面`                           | `src/app/archives/*`                                             |
+| 8  | `feat: add bloggers, share, and 404 pages`                 | `[feat] 新增友链、分享和 404 页面`                    | `src/app/bloggers/*`, `src/app/share/*`, `src/app/not-found.tsx` |
+| 9  | `content: add initial blog posts`                          | `[content] 添加初始博客文章（教程/笔记/随笔）`              | `content/posts/**`                                               |
+| 10 | `docs: add commit convention, PR template, and roadmap`    | `[docs] 新增提交规范、PR 模板和项目路线图`                 | `.github/*`                                                      |
+
