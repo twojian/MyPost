@@ -53,17 +53,51 @@ export function getAllPosts(): PostMeta[] {
 }
 
 export function getPostBySlug(slug: string) {
-  const mdxPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-  const mdPath = path.join(CONTENT_DIR, `${slug}.md`);
-  const filePath = fs.existsSync(mdxPath) ? mdxPath : mdPath;
+  // 解码 URL 编码的 slug
+  const decodedSlug = decodeURIComponent(slug);
+  
+  const mdxPath = path.join(CONTENT_DIR, `${decodedSlug}.mdx`);
+  const mdPath = path.join(CONTENT_DIR, `${decodedSlug}.md`);
+  
+  // 先尝试直接找文件
+  let filePath = fs.existsSync(mdxPath) ? mdxPath : mdPath;
+  
+  // 如果找不到，遍历所有文件来找匹配的
+  if (!fs.existsSync(filePath)) {
+    const allPosts = getAllPosts();
+    const matchingPost = allPosts.find(post => 
+      post.slug === decodedSlug || 
+      post.slug === slug ||
+      decodeURIComponent(post.slug) === decodedSlug ||
+      decodeURIComponent(post.slug) === slug
+    );
+    
+    if (matchingPost) {
+      const tryMdx = path.join(CONTENT_DIR, `${matchingPost.slug}.mdx`);
+      const tryMd = path.join(CONTENT_DIR, `${matchingPost.slug}.md`);
+      filePath = fs.existsSync(tryMdx) ? tryMdx : tryMd;
+    }
+  }
+  
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Post not found for slug: ${slug} (decoded: ${decodedSlug})`);
+  }
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
   const stats = readingTime(content);
 
+  // 找到实际的 slug
+  const allPosts = getAllPosts();
+  const actualPost = allPosts.find(post => 
+    decodeURIComponent(post.slug) === decodedSlug || 
+    post.slug === decodedSlug
+  );
+  const actualSlug = actualPost ? actualPost.slug : decodedSlug;
+  
   return {
     meta: {
-      slug,
+      slug: actualSlug,
       title: data.title ?? "Untitled",
       date: data.date
         ? new Date(data.date).toISOString().split("T")[0]
@@ -109,9 +143,17 @@ export function extractHeadings(content: string): { depth: number; text: string;
   const slugger = new GithubSlugger();
   const headings: { depth: number; text: string; id: string }[] = [];
   let inCodeBlock = false;
-  for (const line of content.split("\n")) {
-    if (line.startsWith("```")) { inCodeBlock = !inCodeBlock; continue; }
+  
+  // Normalize line endings and split
+  const lines = content.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  
+  for (const line of lines) {
+    if (line.startsWith("```")) { 
+      inCodeBlock = !inCodeBlock; 
+      continue; 
+    }
     if (inCodeBlock) continue;
+    
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const depth = match[1].length;
@@ -125,6 +167,7 @@ export function extractHeadings(content: string): { depth: number; text: string;
       headings.push({ depth, text, id });
     }
   }
+  
   return headings;
 }
 
@@ -155,10 +198,17 @@ export function getPostGroups(): PostGroup[] {
     const segs = post.slug.split("/");
     // Group by the first two segments when they exist (notes/deep-learning),
     // otherwise by the first segment alone (articles, blog, tutorials).
+    // Special case for blog: all content under blog goes to the same "blog" group
     let key: string;
-    if (segs.length >= 3 && segs[0] === "notes") key = `${segs[0]}/${segs[1]}`;
-    else if (segs.length >= 3) key = `${segs[0]}/${segs[1]}`;
-    else key = segs[0];
+    if (segs[0] === "blog") {
+      key = "blog";
+    } else if (segs.length >= 3 && segs[0] === "notes") {
+      key = `${segs[0]}/${segs[1]}`;
+    } else if (segs.length >= 3) {
+      key = `${segs[0]}/${segs[1]}`;
+    } else {
+      key = segs[0];
+    }
 
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(post);

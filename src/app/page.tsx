@@ -1,11 +1,36 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, Hash, Globe, Archive, Mail, GitBranch } from "lucide-react";
+import { FileText, Hash, Globe, Archive } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
 import ClockWidget from "@/components/home/ClockWidget";
 import CalendarWidget from "@/components/home/CalendarWidget";
 import MusicPlayer from "@/components/home/MusicPlayer";
 import RandomPost from "@/components/home/RandomPost";
-import { getAllPosts } from "@/lib/posts";
+import Toast from "@/components/ui/Toast";
+
+interface CardLayout {
+  id: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  visible: boolean;
+}
+
+interface SiteConfig {
+  banner: { type: 'image' | 'video'; image: string; video: string };
+  hero: { greeting: string; name: string; description: string };
+  tags: Record<string, any>;
+}
+
+interface Post {
+  slug: string;
+  title: string;
+  summary?: string;
+  date: string;
+}
 
 const NAV_LINKS = [
   { href: "/posts", label: "近期文章", icon: FileText },
@@ -18,37 +43,93 @@ const SOCIAL_LINKS = [
   {
     href: "https://github.com/twojian",
     label: "GitHub",
-    icon: GitBranch,
-    style: { background: "#24292e", color: "#fff" },
+    icon: "/logo-github.png",
+    style: { background: "transparent" },
+  },
+  {
+    href: "https://www.xiaohongshu.com/user/profile/5cb1ff7b00000000170077d3",
+    label: "小红书",
+    icon: "/手机APP图标-小红书.png",
+    style: { background: "transparent" },
   },
   {
     href: "mailto:twojian6@gmail.com",
     label: "邮件",
-    icon: Mail,
-    style: { background: "var(--color-brand)", color: "#fff" },
+    icon: "/谷歌邮箱应用图标logo.png",
+    style: { background: "transparent" },
+    copyEmail: true,
   },
 ];
 
 export default function HomePage() {
-  const posts = getAllPosts();
-  const latestPost = posts[0] ?? null;
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [latestPost, setLatestPost] = useState<Post | null>(null);
+  const [layout, setLayout] = useState<Record<string, CardLayout>>({});
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  useEffect(() => {
+    fetch('/api/posts')
+      .then(res => res.json())
+      .then(data => {
+        setPosts(data.posts);
+        setLatestPost(data.latestPost || null);
+      })
+      .catch(err => console.error('Failed to load posts:', err));
+
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        setLayout(data.layout);
+        setSiteConfig(data.siteConfig);
+      })
+      .catch(err => console.error('Failed to load config:', err));
+  }, []);
+
+  const card = useCallback((id: string) => {
+    return layout[id] ?? { x: 0, y: 0, w: 200, h: 100, visible: true };
+  }, [layout]);
+
+  const handleCopyEmail = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    navigator.clipboard.writeText('twojian6@gmail.com').then(() => {
+      setToastMessage('邮箱地址已复制');
+      setToastVisible(true);
+    }).catch(err => {
+      console.error('复制失败:', err);
+      setToastMessage('复制失败，请手动复制');
+      setToastVisible(true);
+    });
+  }, []);
+
+  if (!siteConfig) {
+    return <div className="py-20 text-center text-[var(--color-secondary)]">加载中...</div>;
+  }
 
   return (
     <div className="flex flex-col gap-8">
+      {/* Toast notification */}
+      <Toast
+        message={toastMessage}
+        visible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
+
       {/* ===== Bento (lg+) — absolute positioning, content-fitted sizes ===== */}
       <div
         className="relative mx-auto hidden lg:block"
         style={{ width: "1000px", height: "660px" }}
       >
-        {/* ── NAV card (spans 2 rows) ── */}
-        <div
+        {/* ── NAV card ── */}
+        {card('nav').visible && (<div
           className="flex flex-col p-6"
           style={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            width: 280,
-            height: 430,
+            top: card('nav').y,
+            left: card('nav').x,
+            width: card('nav').w,
+            height: card('nav').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
@@ -90,50 +171,61 @@ export default function HomePage() {
               </Link>
             ))}
           </nav>
-        </div>
+        </div>)}
 
-        {/* ── BANNER (center-top) ── */}
-        <div
+        {/* ── BANNER ── */}
+        {card('banner').visible && (<div
           className="overflow-hidden p-2"
           style={{
             position: "absolute",
-            top: 0,
-            left: 296,
-            width: 360,
-            height: 180,
+            top: card('banner').y,
+            left: card('banner').x,
+            width: card('banner').w,
+            height: card('banner').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
             borderRadius: "48px",
           }}
         >
-          <Image
-            src="/images/welcome-banner.svg"
-            alt="Banner"
-            width={900}
-            height={160}
-            className="h-full w-full object-cover"
-            style={{ borderRadius: "40px" }}
-            priority
-          />
-        </div>
+          {siteConfig.banner.type === 'video' ? (
+            <video
+              src={siteConfig.banner.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="h-full w-full object-cover"
+              style={{ borderRadius: "40px" }}
+            />
+          ) : (
+            <Image
+              src={siteConfig.banner.image}
+              alt="Banner"
+              width={900}
+              height={160}
+              className="h-full w-full object-cover"
+              style={{ borderRadius: "40px" }}
+              priority
+            />
+          )}
+        </div>)}
 
-        {/* ── HERO card (center, uses original avatar) ── */}
-        <div
+        {/* ── HERO card ── */}
+        {card('hero').visible && (<div
           className="flex flex-col items-center justify-center gap-3 p-6 text-center"
           style={{
             position: "absolute",
-            top: 196,
-            left: 296,
-            width: 360,
-            height: 290,
+            top: card('hero').y,
+            left: card('hero').x,
+            width: card('hero').w,
+            height: card('hero').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
             borderRadius: "48px",
           }}
         >
-          {/* Avatar in a soft teal oval — mirrors target site's cat in yellow circle */}
           <div className="relative flex h-28 w-28 items-center justify-center rounded-full shadow-inner"
             style={{ background: "rgba(255,235,180,0.55)" }}
           >
@@ -145,7 +237,6 @@ export default function HomePage() {
               className="rounded-full object-cover shadow-sm"
               style={{ border: "3px solid rgba(255,255,255,0.75)" }}
             />
-            {/* Online dot */}
             <span
               className="absolute bottom-0.5 right-0.5 h-4 w-4 rounded-full border-2 border-white"
               style={{ background: "var(--color-brand)" }}
@@ -154,40 +245,44 @@ export default function HomePage() {
 
           <div>
             <p className="text-base font-semibold" style={{ color: "var(--color-secondary)" }}>
-              Good day! 👋
+              {siteConfig.hero.greeting}
             </p>
             <p className="mt-1 text-xl" style={{ color: "var(--color-primary)" }}>
-              I&apos;m{" "}
+              I'm{" "}
               <span className="font-display font-bold" style={{ color: "var(--color-brand)" }}>
-                Twojian
+                {siteConfig.hero.name}
               </span>
               , nice to meet you!
             </p>
-            <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--color-secondary)" }}>
-              AI Infra · 深度学习 · 考研 · 全栈开发
-              <br />
-              记录可复用、可验证、可长期维护的知识
+            <p className="mt-2 text-xs leading-relaxed whitespace-pre-line" style={{ color: "var(--color-secondary)" }}>
+              {siteConfig.hero.description}
             </p>
           </div>
-        </div>
+        </div>)}
 
         {/* ── 时钟 ── */}
-        <div
+        {card('clock').visible && (<div
           style={{
             position: "absolute",
-            top: 20,
-            left: 672,
-            width: 230,
-            height: 120,
+            top: card('clock').y,
+            left: card('clock').x,
+            width: card('clock').w,
+            height: card('clock').h,
             borderRadius: "16px",
             overflow: "hidden",
           }}
         >
           <ClockWidget />
-        </div>
+        </div>)}
 
         {/* ── 最新文章 ── */}
-        <div style={{ position: "absolute", top: 446, left: -40, width: 280, height: 160 }}>
+        {card('latest-post').visible && (<div style={{
+          position: "absolute",
+          top: card('latest-post').y,
+          left: card('latest-post').x,
+          width: card('latest-post').w,
+          height: card('latest-post').h,
+        }}>
           {latestPost ? (
             <Link href={`/posts/${latestPost.slug}`} className="block h-full">
               <div
@@ -233,36 +328,66 @@ export default function HomePage() {
               </p>
             </div>
           )}
-        </div>
+        </div>)}
 
         {/* ── SOCIAL links ── */}
-        <div
+        {card('social').visible && (<div
           className="flex items-center justify-center gap-3"
-          style={{ position: "absolute", top: 502, left: 296, width: 360, height: 64 }}
-        >
-          {SOCIAL_LINKS.map(({ href, label, icon: Icon, style }) => (
-            <Link
-              key={href}
-              href={href}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition-transform hover:scale-105"
-              style={style}
-            >
-              <Icon size={16} />
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        {/* ── CALENDAR (spans 2 rows) ── */}
-        <div
           style={{
             position: "absolute",
-            top: 146,
-            left: 672,
-            width: 328,
-            height: 340,
+            top: card('social').y,
+            left: card('social').x,
+            width: card('social').w,
+            height: card('social').h,
+          }}
+        >
+          {SOCIAL_LINKS.map(({ href, label, icon, style, copyEmail }) => (
+            copyEmail ? (
+              <button
+                key={href}
+                onClick={handleCopyEmail}
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-sm transition-transform hover:scale-105"
+                style={style}
+              >
+                <Image
+                  src={icon}
+                  alt={label}
+                  width={24}
+                  height={24}
+                  className="shrink-0"
+                />
+                {label}
+              </button>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium shadow-sm transition-transform hover:scale-105"
+                style={style}
+              >
+                <Image
+                  src={icon}
+                  alt={label}
+                  width={24}
+                  height={24}
+                  className="shrink-0"
+                />
+                {label}
+              </Link>
+            )
+          ))}
+        </div>)}
+
+        {/* ── CALENDAR ── */}
+        {card('calendar').visible && (<div
+          style={{
+            position: "absolute",
+            top: card('calendar').y,
+            left: card('calendar').x,
+            width: card('calendar').w,
+            height: card('calendar').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
@@ -271,16 +396,16 @@ export default function HomePage() {
           }}
         >
           <CalendarWidget />
-        </div>
+        </div>)}
 
         {/* ── RANDOM post ── */}
-        <div
+        {card('random-post').visible && (<div
           style={{
             position: "absolute",
-            top: 582,
-            left: 296,
-            width: 280,
-            height: 80,
+            top: card('random-post').y,
+            left: card('random-post').x,
+            width: card('random-post').w,
+            height: card('random-post').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
@@ -289,16 +414,16 @@ export default function HomePage() {
           }}
         >
           <RandomPost posts={posts} />
-        </div>
+        </div>)}
 
         {/* ── MUSIC player ── */}
-        <div
+        {card('music').visible && (<div
           style={{
             position: "absolute",
-            top: 502,
-            left: 620,
-            width: 328,
-            height: 80,
+            top: card('music').y,
+            left: card('music').x,
+            width: card('music').w,
+            height: card('music').h,
             background: "rgba(255,255,255,0.4)",
             backdropFilter: "blur(4px)",
             WebkitBackdropFilter: "blur(4px)",
@@ -311,20 +436,33 @@ export default function HomePage() {
             artist="宇多田ヒカル"
             src="/audio/one-last-kiss.mp3"
           />
-        </div>
+        </div>)}
       </div>
 
       {/* ===== Mobile hero ===== */}
-      <div className="lg:hidden">
-        <div className="squircle mb-3 overflow-hidden">
-          <Image
-            src="/images/welcome-banner.svg"
-            alt="Banner"
-            width={900}
-            height={160}
-            className="h-auto w-full"
-          />
+      <div className="flex flex-col gap-4 lg:hidden">
+        <div className="squircle mb-1 overflow-hidden">
+          {siteConfig.banner.type === 'video' ? (
+            <video
+              src={siteConfig.banner.video}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="h-auto w-full"
+            />
+          ) : (
+            <Image
+              src={siteConfig.banner.image}
+              alt="Banner"
+              width={900}
+              height={160}
+              className="h-auto w-full"
+            />
+          )}
         </div>
+
+        {/* Profile card */}
         <div className="glass-card-static squircle flex items-center gap-5 px-6 py-7">
           <Image
             src="/images/avatar.png"
@@ -335,17 +473,123 @@ export default function HomePage() {
           />
           <div>
             <p className="font-display text-xl font-bold" style={{ color: "var(--color-brand)" }}>
-              Twojian
+              {siteConfig.hero.name}
             </p>
-            <p className="mt-1 text-sm" style={{ color: "var(--color-secondary)" }}>
-              AI Infra · 深度学习 · 考研 · 全栈开发
-              <br />
-              记录可复用、可验证、可长期维护的知识
+            <p className="mt-1 text-sm whitespace-pre-line" style={{ color: "var(--color-secondary)" }}>
+              {siteConfig.hero.description}
             </p>
           </div>
         </div>
-      </div>
 
+        {/* Clock + Calendar — stack on tiny screens, side-by-side on sm+ */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="glass-card-static squircle overflow-hidden" style={{ minHeight: 120 }}>
+            <ClockWidget />
+          </div>
+          <div className="glass-card-static squircle overflow-hidden" style={{ minHeight: 160 }}>
+            <CalendarWidget />
+          </div>
+        </div>
+
+        {/* Nav links — 2 cols on small, 4 cols on tablet */}
+        <div className="glass-card-static squircle px-4 py-4 sm:px-6 sm:py-5">
+          <p className="mb-2 text-[10px] uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: "var(--color-secondary)" }}>
+            导航
+          </p>
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-2 md:grid-cols-4">
+            {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs transition-colors hover:bg-white/40 sm:py-2.5 sm:text-sm"
+                style={{ color: "var(--color-primary)" }}
+              >
+                <Icon size={15} style={{ color: "var(--color-brand)" }} />
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Latest post + Random post — side-by-side on tablet */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {latestPost && (
+            <Link href={`/posts/${latestPost.slug}`} className="block">
+              <div className="glass-card-static squircle h-full px-4 py-4 sm:px-6 sm:py-5">
+                <p className="mb-1.5 text-[10px] font-medium sm:mb-2 sm:text-xs" style={{ color: "var(--color-secondary)" }}>
+                  最新文章
+                </p>
+                <p className="mb-1 line-clamp-2 text-xs font-semibold sm:text-sm" style={{ color: "var(--color-primary)" }}>
+                  {latestPost.title}
+                </p>
+                {latestPost.summary && (
+                  <p className="mb-1.5 line-clamp-2 text-[10px] sm:mb-2 sm:text-xs" style={{ color: "var(--color-secondary)" }}>
+                    {latestPost.summary}
+                  </p>
+                )}
+                <p className="text-[10px] sm:text-xs" style={{ color: "var(--color-secondary)" }}>
+                  {latestPost.date}
+                </p>
+              </div>
+            </Link>
+          )}
+
+          <div className="glass-card-static squircle overflow-hidden" style={{ minHeight: 80 }}>
+            <RandomPost posts={posts} />
+          </div>
+        </div>
+
+        {/* Music + Social — side-by-side on tablet */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="glass-card-static squircle overflow-hidden" style={{ minHeight: 72 }}>
+            <MusicPlayer
+              title="One Last Kiss"
+              artist="宇多田ヒカル"
+              src="/audio/one-last-kiss.mp3"
+            />
+          </div>
+
+          <div className="flex items-center justify-center gap-3 py-2">
+            {SOCIAL_LINKS.map(({ href, label, icon, style, copyEmail }) => (
+              copyEmail ? (
+                <button
+                  key={href}
+                  onClick={handleCopyEmail}
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium shadow-sm transition-transform hover:scale-105 sm:px-5 sm:py-2.5 sm:text-sm"
+                  style={style}
+                >
+                  <Image
+                    src={icon}
+                    alt={label}
+                    width={24}
+                    height={24}
+                    className="shrink-0"
+                  />
+                  {label}
+                </button>
+              ) : (
+                <Link
+                  key={href}
+                  href={href}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium shadow-sm transition-transform hover:scale-105 sm:px-5 sm:py-2.5 sm:text-sm"
+                  style={style}
+                >
+                  <Image
+                    src={icon}
+                    alt={label}
+                    width={24}
+                    height={24}
+                    className="shrink-0"
+                  />
+                  {label}
+                </Link>
+              )
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

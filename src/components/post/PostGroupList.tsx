@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { PostGroup } from "@/lib/posts";
+import StudyNoteList from "@/components/notes/StudyNoteList";
 
 export default function PostGroupList({ groups }: { groups: PostGroup[] }) {
   // First group open by default; others closed.
@@ -70,32 +71,41 @@ export default function PostGroupList({ groups }: { groups: PostGroup[] }) {
 
             {/* Children */}
             {isOpen && (
-              <ul
-                className="border-t flex flex-col gap-1 px-3 py-2"
+              <div
+                className="border-t"
                 style={{ borderColor: "rgba(53,191,171,0.15)" }}
               >
-                {g.posts.map((post) => (
-                  <li key={post.slug}>
-                    <Link
-                      href={`/posts/${post.slug}`}
-                      className="flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 transition-colors hover:bg-white/40"
-                    >
-                      <span
-                        className="line-clamp-1 text-sm"
-                        style={{ color: "var(--color-primary)" }}
-                      >
-                        {post.title}
-                      </span>
-                      <span
-                        className="shrink-0 text-xs"
-                        style={{ color: "var(--color-secondary)" }}
-                      >
-                        {formatDate(post.date)}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                {/* For blog group, use StudyNoteList to display by subject */}
+                {g.key === "blog" ? (
+                  <div className="px-3 py-2">
+                    <StudyNoteList posts={g.posts} />
+                  </div>
+                ) : (
+                  <ul className="flex flex-col gap-1 px-3 py-2">
+                    {g.posts.map((post) => (
+                      <li key={post.slug}>
+                        <Link
+                          href={`/posts/${post.slug}`}
+                          className="flex items-center justify-between gap-3 rounded-2xl px-4 py-2.5 transition-colors hover:bg-white/40"
+                        >
+                          <span
+                            className="line-clamp-1 text-sm"
+                            style={{ color: "var(--color-primary)" }}
+                          >
+                            {post.title}
+                          </span>
+                          <span
+                            className="shrink-0 text-xs"
+                            style={{ color: "var(--color-secondary)" }}
+                          >
+                            {formatDate(post.date)}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
           </div>
         );

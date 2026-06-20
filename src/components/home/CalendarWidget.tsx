@@ -28,16 +28,16 @@ export default function CalendarWidget() {
   ];
 
   return (
-    <div className="flex h-full w-full flex-col justify-center px-5 py-4">
-      <p className="mb-3 text-xs" style={{ color: "var(--color-secondary)" }}>
+    <div className="flex h-full w-full flex-col justify-center px-3 py-3 sm:px-5 sm:py-4">
+      <p className="mb-2 text-[10px] sm:mb-3 sm:text-xs" style={{ color: "var(--color-secondary)" }}>
         {year}/{String(month + 1).padStart(2, "0")}/{String(date).padStart(2, "0")}{" "}
         {WEEKDAY_CN[today.getDay()]}
       </p>
-      <div className="grid grid-cols-7 text-center text-xs">
+      <div className="grid grid-cols-7 text-center text-[10px] sm:text-xs">
         {WEEKDAYS.map((d, i) => (
           <span
             key={d}
-            className="py-1 font-medium"
+            className="py-0.5 font-medium sm:py-1"
             style={{
               color: i === 3 ? "var(--color-brand)" : "var(--color-secondary)",
             }}
@@ -48,7 +48,7 @@ export default function CalendarWidget() {
         {cells.map((d, i) => (
           <span
             key={i}
-            className="mx-auto my-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs transition-colors"
+            className="mx-auto my-px flex h-5 w-5 items-center justify-center rounded-full text-[10px] transition-colors sm:my-0.5 sm:h-6 sm:w-6 sm:text-xs"
             style={
               d === date
                 ? { background: "var(--color-brand)", color: "#fff", fontWeight: 600 }

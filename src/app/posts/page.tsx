@@ -15,6 +15,7 @@ export default function PostsPage() {
       <p className="mb-6 text-sm" style={{ color: "var(--color-secondary)" }}>
         按照笔记本分组，点击标题展开 / 收起对应章节。
       </p>
+      
       <PostGroupList groups={groups} />
     </>
   );
