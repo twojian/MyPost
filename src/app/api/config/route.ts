@@ -6,7 +6,7 @@ export async function GET() {
   const configPath = path.join(process.cwd(), 'config/layout.json');
   const siteConfigPath = path.join(process.cwd(), 'config/site.json');
   
-  let layout = {};
+  let layout: Record<string, unknown> = {};
   let siteConfig = {
     banner: { type: 'image', image: '/images/welcome-banner.svg', video: '' },
     hero: { greeting: 'Good day! 👋', name: 'Twojian', description: '' },

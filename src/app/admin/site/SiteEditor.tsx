@@ -71,7 +71,7 @@ export default function SiteEditor({ initialTags }: SiteEditorProps) {
     if (!config) return;
     const updatedTags = { ...config.tags };
     if (!updatedTags[tagName]) {
-      updatedTags[tagName] = { name: tagName };
+      updatedTags[tagName] = { name: tagName, color: '', description: '' };
     }
     updatedTags[tagName] = { ...updatedTags[tagName], [field]: value };
     const updated = { ...config, tags: updatedTags };
@@ -141,16 +141,16 @@ export default function SiteEditor({ initialTags }: SiteEditorProps) {
       
       if (res.ok) {
         const data = await res.json();
-        setMessage(`已将标签「${editingTagName}」重命名为「${newName}」，更新了 ${data.updatedCount} 篇文章`);
+        setMessage(`已将标签「${editingTagName}」重命名为「${newTagName}」，更新了 ${data.updatedCount} 篇文章`);
         
         // 更新配置
         const updatedTags = { ...config.tags };
         if (updatedTags[editingTagName]) {
-          updatedTags[newName] = { ...updatedTags[editingTagName], name: newTagName };
+          updatedTags[newTagName] = { ...updatedTags[editingTagName], name: newTagName };
           delete updatedTags[editingTagName];
         }
         
-        const updatedTagOrder = config.tagOrder?.map(t => t === editingTagName ? newName : t) || [];
+        const updatedTagOrder = config.tagOrder?.map(t => t === editingTagName ? newTagName : t) || [];
         
         setConfig({ ...config, tags: updatedTags, tagOrder: updatedTagOrder });
         setEditingTagName(null);
