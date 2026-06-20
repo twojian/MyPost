@@ -1,0 +1,13 @@
+{
+  "cards": [
+    { "id": "nav", "x": 0, "y": 0, "w": 280, "h": 430, "visible": true },
+    { "id": "banner", "x": 296, "y": 0, "w": 360, "h": 180, "visible": true },
+    { "id": "hero", "x": 296, "y": 196, "w": 360, "h": 290, "visible": true },
+    { "id": "clock", "x": 672, "y": 20, "w": 230, "h": 120, "visible": true },
+    { "id": "latest-post", "x": -40, "y": 446, "w": 280, "h": 160, "visible": true },
+    { "id": "social", "x": 296, "y": 502, "w": 360, "h": 64, "visible": true },
+    { "id": "calendar", "x": 672, "y": 146, "w": 328, "h": 340, "visible": true },
+    { "id": "random-post", "x": 296, "y": 582, "w": 280, "h": 80, "visible": true },
+    { "id": "music", "x": 620, "y": 502, "w": 328, "h": 80, "visible": true }
+  ]
+}

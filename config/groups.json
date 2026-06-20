@@ -1,0 +1,44 @@
+[
+  {
+    "key": "notes/deep-learning",
+    "title": "深度学习笔记",
+    "icon": "📖",
+    "description": "从感知机到 Transformer，逐章构建神经网络的完整理解。"
+  },
+  {
+    "key": "notes/ai-infra",
+    "title": "AI Infra 学习笔记",
+    "icon": "🛠️",
+    "description": "大模型训练 / 推理基础设施：CUDA、并行训练、推理引擎。"
+  },
+  {
+    "key": "notes/nlp",
+    "title": "NLP 笔记",
+    "icon": "🥋",
+    "description": "自然语言处理基础：分词、词向量、Transformer。"
+  },
+  {
+    "key": "notes/minimind",
+    "title": "MiniMind 实战笔记",
+    "icon": "🧠",
+    "description": "从零实现大语言模型的完整路径。"
+  },
+  {
+    "key": "articles",
+    "title": "随笔与阅读",
+    "icon": "📝",
+    "description": "读书笔记、播客摘录与日常思考。"
+  },
+  {
+    "key": "blog",
+    "title": "考研笔记",
+    "icon": "🎓",
+    "description": "408 / 数学复习的章节笔记。"
+  },
+  {
+    "key": "tutorials",
+    "title": "工具教程",
+    "icon": "🧰",
+    "description": "LaTeX、n8n 等工具的上手指南。"
+  }
+]
