@@ -9,6 +9,7 @@ import CalendarWidget from "@/components/home/CalendarWidget";
 import MusicPlayer from "@/components/home/MusicPlayer";
 import RandomPost from "@/components/home/RandomPost";
 import Toast from "@/components/ui/Toast";
+import type { PostMeta } from "@/lib/posts";
 
 interface CardLayout {
   id: string;
@@ -23,13 +24,6 @@ interface SiteConfig {
   banner: { type: 'image' | 'video'; image: string; video: string };
   hero: { greeting: string; name: string; description: string };
   tags: Record<string, any>;
-}
-
-interface Post {
-  slug: string;
-  title: string;
-  summary?: string;
-  date: string;
 }
 
 const NAV_LINKS = [
@@ -62,8 +56,8 @@ const SOCIAL_LINKS = [
 ];
 
 export default function HomePage() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [latestPost, setLatestPost] = useState<Post | null>(null);
+  const [posts, setPosts] = useState<PostMeta[]>([]);
+  const [latestPost, setLatestPost] = useState<PostMeta | null>(null);
   const [layout, setLayout] = useState<Record<string, CardLayout>>({});
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
