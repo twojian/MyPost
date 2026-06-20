@@ -16,7 +16,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="navbar-glass sticky top-4 z-50 mx-auto mt-4 max-w-5xl px-6 py-3">
+    <header className="navbar-glass sticky top-0 z-50 mx-auto mt-4 max-w-5xl px-6 py-3 md:top-4">
       <nav className="flex items-center justify-between">
         {/* Logo */}
         <Link

@@ -25,16 +25,16 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
       { rootMargin: "-80px 0% -65% 0%", threshold: 0 }
     );
 
-    const els = document.querySelectorAll("article h1, article h2, article h3, article h4");
+    const els = document.querySelectorAll("article h1, article h2, article h3, article h4, article h5, article h6");
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [headings]);
 
-  // Keep only top-level chapters (h2) and their sub-sections (h3).
-  const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+  // Show all headings, not just h2 and h3
+  const items = headings;
   if (!items.length) return null;
 
-  // Find shallowest depth so indentation starts from 0.
+  // Find shallowest depth so indentation starts from 0
   const minDepth = Math.min(...items.map((h) => h.depth));
 
   return (
@@ -48,7 +48,11 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
       <nav className="flex max-h-[70vh] flex-col gap-1 overflow-y-auto pr-1">
         {items.map((h) => {
           const isActive = activeId === h.id;
-          const isSub = h.depth > minDepth;
+          const level = h.depth - minDepth;
+          // 设置最小字体大小为 12px，避免字体过小
+          const fontSize = Math.max(12, 14 - level * 0.5);
+          // 限制最大缩进，避免缩进过大
+          const paddingLeft = Math.min(level * 10, 40);
           return (
             <a
               key={h.id}
@@ -62,15 +66,17 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
                   history.replaceState(null, "", `#${h.id}`);
                 }
               }}
-              className="block rounded leading-snug transition-colors hover:text-[var(--color-brand)]"
+              className="block rounded leading-relaxed transition-colors hover:text-[var(--color-brand)] py-0.5"
               style={{
-                paddingLeft: isSub ? "14px" : "0",
-                fontSize: isSub ? "12px" : "13px",
+                paddingLeft: `${paddingLeft}px`,
+                fontSize: `${fontSize}px`,
                 color: isActive ? "var(--color-brand)" : "var(--color-secondary)",
-                fontWeight: isActive ? 600 : isSub ? 400 : 500,
+                fontWeight: isActive ? 600 : level > 0 ? 400 : 500,
                 whiteSpace: "normal",
                 wordBreak: "break-word",
-                borderLeft: isSub ? "2px solid rgba(53,191,171,0.2)" : "none",
+                overflowWrap: "break-word",
+                borderLeft: level > 0 ? "2px solid rgba(53,191,171,0.15)" : "none",
+                marginLeft: level > 0 ? "4px" : "0",
               }}
             >
               {h.text}

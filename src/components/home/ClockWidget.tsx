@@ -33,7 +33,7 @@ export default function ClockWidget() {
       >
         <span
           aria-hidden
-          className="absolute select-none text-5xl"
+          className="absolute select-none text-3xl sm:text-5xl"
           style={{
             fontFamily: '"DSEG7 Classic", "DSEG7-Classic", monospace',
             color: "rgba(60,72,60,0.10)",
@@ -44,7 +44,7 @@ export default function ClockWidget() {
           88:88
         </span>
         <span
-          className="relative text-5xl"
+          className="relative text-3xl sm:text-5xl"
           style={{
             fontFamily: '"DSEG7 Classic", "DSEG7-Classic", monospace',
             color: "#3b4a3d",

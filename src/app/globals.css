@@ -342,6 +342,65 @@ body {
   -webkit-box-orient: vertical;
 }
 
+/* ===== Admin form fields ===== */
+.input-field {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.input-field:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px rgba(53, 191, 171, 0.15);
+}
+
+/* ===== Details/Collapsible ===== */
+.prose-notion details {
+  margin: 1em 0;
+  border-radius: 12px;
+  border: 1px solid rgba(53, 191, 171, 0.2);
+  overflow: hidden;
+  background: rgba(53, 191, 171, 0.05);
+}
+
+.prose-notion details summary {
+  padding: 0.75em 1em;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  transition: background 0.2s;
+}
+
+.prose-notion details summary:hover {
+  background: rgba(53, 191, 171, 0.1);
+}
+
+.prose-notion details summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose-notion details[open] summary {
+  border-bottom: 1px solid rgba(53, 191, 171, 0.15);
+}
+
+.prose-notion details > div,
+.prose-notion details > *:not(summary) {
+  padding: 0.75em 1em;
+}
+
+/* ===== Colored spans ===== */
+.prose-notion span[style*="color"] {
+  font-weight: 500;
+}
+
 /* ===== Selection ===== */
 ::selection {
   background: rgba(53, 191, 171, 0.3);

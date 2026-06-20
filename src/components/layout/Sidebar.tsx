@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GitBranch, Mail, FileText, Hash } from "lucide-react";
+import { FileText, Hash } from "lucide-react";
 
 export default function Sidebar() {
   return (
@@ -76,18 +76,40 @@ export default function Sidebar() {
           target="_blank"
           rel="noopener noreferrer"
           className="rounded-full p-2 transition-colors hover:bg-white/30"
-          style={{ color: "var(--color-secondary)" }}
           aria-label="GitHub"
         >
-          <GitBranch size={16} />
+          <Image
+            src="/logo-github.png"
+            alt="GitHub"
+            width={24}
+            height={24}
+          />
         </Link>
         <Link
           href="mailto:twojian0705@163.com"
           className="rounded-full p-2 transition-colors hover:bg-white/30"
-          style={{ color: "var(--color-secondary)" }}
           aria-label="Email"
         >
-          <Mail size={16} />
+          <Image
+            src="/谷歌邮箱应用图标logo.png"
+            alt="Email"
+            width={24}
+            height={24}
+          />
+        </Link>
+        <Link
+          href="https://www.xiaohongshu.com/user/profile/5cb1ff7b00000000170077d3"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-full p-2 transition-colors hover:bg-white/30"
+          aria-label="小红书"
+        >
+          <Image
+            src="/手机APP图标-小红书.png"
+            alt="小红书"
+            width={24}
+            height={24}
+          />
         </Link>
       </div>
     </aside>
