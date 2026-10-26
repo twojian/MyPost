@@ -11,17 +11,9 @@ export default function TagBadge({ name, variant = "tag", showLink = true }: Pro
 
   const badge = (
     <span
-      className="inline-block rounded-full px-3 py-1 text-xs font-medium transition-colors"
-      style={{
-        background:
-          variant === "category"
-            ? "rgba(31, 201, 231, 0.15)"
-            : "rgba(53, 191, 171, 0.15)",
-        color:
-          variant === "category"
-            ? "var(--color-brand-secondary)"
-            : "var(--color-brand)",
-      }}
+      className={`tag-badge inline-block rounded-full px-3 py-1 text-xs font-medium ${
+        variant === "category" ? "tag-badge-category" : "tag-badge-tag"
+      }`}
     >
       {variant === "tag" ? `# ${name}` : name}
     </span>

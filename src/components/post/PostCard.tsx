@@ -5,7 +5,7 @@ import TagBadge from "@/components/ui/TagBadge";
 
 export default function PostCard({ post }: { post: PostMeta }) {
   return (
-    <Link href={`/posts/${post.slug}`} className="block">
+    <Link href={`/posts/${post.slug}`} className="press block">
       <article className="glass-card px-6 py-5">
         <h2
           className="mb-2 text-lg font-semibold"

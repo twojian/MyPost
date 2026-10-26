@@ -17,11 +17,12 @@ export default function Navbar() {
 
   return (
     <header className="navbar-glass sticky top-4 z-50 mx-auto mt-4 max-w-5xl px-6 py-3">
-      <nav className="flex items-center justify-between">
+      <nav className="flex items-center gap-6">
         {/* Logo */}
         <Link
           href="/"
-          className="font-display text-xl"
+          transitionTypes={["nav-back"]}
+          className="press font-display text-xl"
           style={{ color: "var(--color-brand)" }}
         >
           Twojian
@@ -33,16 +34,15 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm transition-colors hover:text-[var(--color-brand)]"
-              style={{ color: "var(--color-secondary)" }}
+              transitionTypes={link.href === "/" ? ["nav-back"] : undefined}
+              className="press text-sm text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/search"
-            className="transition-colors hover:text-[var(--color-brand)]"
-            style={{ color: "var(--color-secondary)" }}
+            className="press text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
           >
             <Search size={18} />
           </Link>
@@ -50,7 +50,7 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden"
+          className="press ml-auto md:hidden"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
           style={{ color: "var(--color-secondary)" }}
@@ -66,8 +66,8 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm transition-colors hover:text-[var(--color-brand)]"
-              style={{ color: "var(--color-secondary)" }}
+              transitionTypes={link.href === "/" ? ["nav-back"] : undefined}
+              className="press text-sm text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
               onClick={() => setOpen(false)}
             >
               {link.label}
@@ -76,7 +76,7 @@ export default function Navbar() {
           <Link
             href="/search"
             onClick={() => setOpen(false)}
-            style={{ color: "var(--color-secondary)" }}
+            className="press text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
           >
             <Search size={18} />
           </Link>

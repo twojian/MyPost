@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# 大体积原图（使用压缩版 yantai-banner.jpg，原图仅留本地）
+/public/images/yantai.JPEG
+
 # vercel
 .vercel
 

@@ -58,7 +58,7 @@ export default async function PostPage({ params }: Props) {
 
         <hr className="my-6 border-white/30" />
 
-        <div className="prose-notion">
+        <div className="prose-notion mx-auto w-full max-w-[72ch]">
           <MDXRemote
             source={content}
             components={mdxComponents}

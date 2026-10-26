@@ -2,7 +2,11 @@ import type { ReactNode } from "react";
 import { Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 const variants = {
-  info: { icon: Info, bg: "rgba(53, 191, 171, 0.1)", border: "var(--color-brand)" },
+  info: {
+    icon: Info,
+    bg: "color-mix(in srgb, var(--color-brand) 10%, transparent)",
+    border: "var(--color-brand)",
+  },
   warning: { icon: AlertTriangle, bg: "rgba(251, 191, 36, 0.1)", border: "#fbbf24" },
   success: { icon: CheckCircle, bg: "rgba(34, 197, 94, 0.1)", border: "#22c55e" },
   error: { icon: XCircle, bg: "rgba(239, 68, 68, 0.1)", border: "#ef4444" },

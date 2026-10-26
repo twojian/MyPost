@@ -128,59 +128,6 @@ export function extractHeadings(content: string): { depth: number; text: string;
   return headings;
 }
 
-// Display names for top-level groups (matches Notion's top-level page titles).
-const GROUP_TITLES: Record<string, { title: string; icon?: string; description?: string }> = {
-  "notes/deep-learning": { title: "深度学习笔记", icon: "📖", description: "从感知机到 Transformer，逐章构建神经网络的完整理解。" },
-  "notes/ai-infra":      { title: "AI Infra 学习笔记", icon: "🛠️", description: "大模型训练 / 推理基础设施：CUDA、并行训练、推理引擎。" },
-  "notes/nlp":           { title: "NLP 笔记", icon: "🥋", description: "自然语言处理基础：分词、词向量、Transformer。" },
-  "notes/minimind":      { title: "MiniMind 实战笔记", icon: "🧠", description: "从零实现大语言模型的完整路径。" },
-  articles:              { title: "随笔与阅读", icon: "📝", description: "读书笔记、播客摘录与日常思考。" },
-  blog:                  { title: "考研笔记", icon: "🎓", description: "408 / 数学复习的章节笔记。" },
-  tutorials:             { title: "工具教程", icon: "🧰", description: "LaTeX、n8n 等工具的上手指南。" },
-};
-
-export interface PostGroup {
-  key: string;
-  title: string;
-  icon?: string;
-  description?: string;
-  posts: PostMeta[];
-}
-
-export function getPostGroups(): PostGroup[] {
-  const posts = getAllPosts();
-  const map = new Map<string, PostMeta[]>();
-
-  for (const post of posts) {
-    const segs = post.slug.split("/");
-    // Group by the first two segments when they exist (notes/deep-learning),
-    // otherwise by the first segment alone (articles, blog, tutorials).
-    let key: string;
-    if (segs.length >= 3 && segs[0] === "notes") key = `${segs[0]}/${segs[1]}`;
-    else if (segs.length >= 3) key = `${segs[0]}/${segs[1]}`;
-    else key = segs[0];
-
-    if (!map.has(key)) map.set(key, []);
-    map.get(key)!.push(post);
-  }
-
-  return Array.from(map.entries())
-    .map(([key, items]) => {
-      const meta = GROUP_TITLES[key] ?? { title: key };
-      return {
-        key,
-        title: meta.title,
-        icon: meta.icon,
-        description: meta.description,
-        // Posts within a group sorted by date asc (so chapter 0 → 7 reads naturally).
-        posts: items
-          .slice()
-          .sort((a, b) => a.title.localeCompare(b.title, "zh-Hans-CN")),
-      };
-    })
-    .sort((a, b) => b.posts.length - a.posts.length);
-}
-
 function getFilesRecursively(dir: string): string[] {
   const entries = fs.readdirSync(dir, { withFileTypes: true });
   return entries.flatMap((entry) => {

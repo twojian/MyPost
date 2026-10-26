@@ -68,7 +68,7 @@ export default function HomePage() {
                 Twojian
               </p>
               <p className="text-xs" style={{ color: "var(--color-secondary)" }}>
-                开发中
+                less is more
               </p>
             </div>
           </div>
@@ -108,10 +108,10 @@ export default function HomePage() {
           }}
         >
           <Image
-            src="/images/welcome-banner.svg"
+            src="/images/yantai-banner.jpg"
             alt="Banner"
-            width={900}
-            height={160}
+            width={1600}
+            height={1067}
             className="h-full w-full object-cover"
             style={{ borderRadius: "40px" }}
             priority
@@ -153,20 +153,19 @@ export default function HomePage() {
           </div>
 
           <div>
-            <p className="text-base font-semibold" style={{ color: "var(--color-secondary)" }}>
-              Good day! 👋
-            </p>
-            <p className="mt-1 text-xl" style={{ color: "var(--color-primary)" }}>
+            <p
+              className="font-display text-2xl leading-relaxed"
+              style={{ color: "var(--color-primary)" }}
+            >
               I&apos;m{" "}
-              <span className="font-display font-bold" style={{ color: "var(--color-brand)" }}>
-                Twojian
+              <span className="font-bold" style={{ color: "var(--color-brand)" }}>
+                twojian
               </span>
-              , nice to meet you!
-            </p>
-            <p className="mt-2 text-xs leading-relaxed" style={{ color: "var(--color-secondary)" }}>
-              AI Infra · 深度学习 · 考研 · 全栈开发
+              {" ,"}
               <br />
-              记录可复用、可验证、可长期维护的知识
+              Nice to
+              <br />
+              meet you!
             </p>
           </div>
         </div>
@@ -318,10 +317,10 @@ export default function HomePage() {
       <div className="lg:hidden">
         <div className="squircle mb-3 overflow-hidden">
           <Image
-            src="/images/welcome-banner.svg"
+            src="/images/yantai-banner.jpg"
             alt="Banner"
-            width={900}
-            height={160}
+            width={1600}
+            height={1067}
             className="h-auto w-full"
           />
         </div>
@@ -334,13 +333,19 @@ export default function HomePage() {
             className="shrink-0 rounded-full border-4 border-white/60 shadow-sm"
           />
           <div>
-            <p className="font-display text-xl font-bold" style={{ color: "var(--color-brand)" }}>
-              Twojian
-            </p>
-            <p className="mt-1 text-sm" style={{ color: "var(--color-secondary)" }}>
-              AI Infra · 深度学习 · 考研 · 全栈开发
+            <p
+              className="font-display text-2xl leading-relaxed"
+              style={{ color: "var(--color-primary)" }}
+            >
+              I&apos;m{" "}
+              <span className="font-bold" style={{ color: "var(--color-brand)" }}>
+                twojian
+              </span>
+              {" ,"}
               <br />
-              记录可复用、可验证、可长期维护的知识
+              Nice to
+              <br />
+              meet you!
             </p>
           </div>
         </div>

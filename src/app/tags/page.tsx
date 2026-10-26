@@ -20,14 +20,14 @@ export default function TagsPage() {
               href={`/tags/${tag.name}`}
               className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-transform hover:scale-105"
               style={{
-                background: "rgba(53, 191, 171, 0.15)",
+                background: "color-mix(in srgb, var(--color-brand) 15%, transparent)",
                 color: "var(--color-brand)",
               }}
             >
               # {tag.name}
               <span
                 className="rounded-full px-1.5 py-0.5 text-xs"
-                style={{ background: "rgba(53, 191, 171, 0.2)" }}
+                style={{ background: "color-mix(in srgb, var(--color-brand) 20%, transparent)" }}
               >
                 {tag.count}
               </span>

@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Averia_Gruesa_Libre } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import CanvasBg from "@/components/home/CanvasBg";
+import VideoBg from "@/components/home/VideoBg";
 import ScrollToTop from "@/components/ui/ScrollToTop";
+import ScrollReveal from "@/components/ui/ScrollReveal";
+import SiteShell from "@/components/layout/SiteShell";
+import { getAllPosts, getAllTags, getAllCategories } from "@/lib/posts";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -25,6 +28,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const posts = getAllPosts();
+  const tags = getAllTags();
+  const categories = getAllCategories();
+
   return (
     <html
       lang="zh-CN"
@@ -38,12 +45,19 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-screen flex-col antialiased">
-        <CanvasBg />
+        <VideoBg />
         <Navbar />
-        <main className="relative z-10 mx-auto w-full max-w-6xl flex-1 px-4 py-8">
-          {children}
+        <main className="relative z-10 flex-1">
+          <SiteShell
+            postsCount={posts.length}
+            tags={tags}
+            categories={categories}
+          >
+            {children}
+          </SiteShell>
         </main>
         <Footer />
+        <ScrollReveal />
         <ScrollToTop />
       </body>
     </html>

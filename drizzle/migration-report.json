@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-10-20T13:13:22.195Z",
+  "mode": "apply",
+  "fileCount": 42,
+  "recordCount": 42,
+  "slugList": [
+    "articles/how-to-do-research",
+    "articles/how-to-find-ideas",
+    "articles/how-to-find-papers",
+    "articles/how-to-read-papers",
+    "articles/steam-steel-infinite-minds",
+    "blog/os-chapter-1",
+    "notes/ai-infra/introduction",
+    "notes/ai-infra/learning-roadmap",
+    "notes/deep-learning/architectures",
+    "notes/deep-learning/backpropagation",
+    "notes/deep-learning/core-concepts",
+    "notes/deep-learning/generative-and-evaluation",
+    "notes/deep-learning/glossary",
+    "notes/deep-learning/index",
+    "notes/deep-learning/neural-network-intro",
+    "notes/deep-learning/perceptron",
+    "notes/deep-learning/pytorch-quickstart",
+    "notes/deep-learning/self-learning",
+    "notes/deep-learning/training-techniques",
+    "notes/html/a",
+    "notes/html/attribute",
+    "notes/html/elements",
+    "notes/html/encode",
+    "notes/html/form",
+    "notes/html/iframe",
+    "notes/html/image",
+    "notes/html/intro",
+    "notes/html/link",
+    "notes/html/list",
+    "notes/html/mobile",
+    "notes/html/multimedia",
+    "notes/html/script",
+    "notes/html/semantic",
+    "notes/html/table",
+    "notes/html/text",
+    "notes/html/url",
+    "notes/minimind/index",
+    "notes/minimind/tokenizer",
+    "notes/nlp/chapter-1-basics",
+    "tutorials/latex-basics",
+    "tutorials/n8n/n8n-beginner-guide",
+    "tutorials/n8n/n8n-maintenance-guide"
+  ],
+  "imageStats": {
+    "absolute": 40,
+    "publicLike": 0,
+    "relative": 0,
+    "relativeMissing": [],
+    "other": [
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y8wl3W0AAba3S.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y9M4OW0AA0v9Q.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y9U07W0AA-N1g.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y-btoXEAAC2dn.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y-0DPWsAA-fCD.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8y_Q1UWcAAV08O.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8zARYAXkAAJh5m.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8zBGwyW0AI2S0F.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8zBVOTWsAAHsF9.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8zBgWaXAAArTM_.jpg"
+      },
+      {
+        "slug": "articles/steam-steel-infinite-minds",
+        "url": "G8zC4gTWUAA8ZcP.jpg"
+      },
+      {
+        "slug": "blog/os-chapter-1",
+        "url": "image.png"
+      },
+      {
+        "slug": "blog/os-chapter-1",
+        "url": "1745172996423.jpg"
+      },
+      {
+        "slug": "notes/html/form",
+        "url": "search.gif"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "image.png"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo-640w.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo-1280.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "foo-1280.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "cat.jpg"
+      },
+      {
+        "slug": "notes/html/image",
+        "url": "logo.png"
+      },
+      {
+        "slug": "notes/html/intro",
+        "url": "demo.jpg"
+      },
+      {
+        "slug": "notes/html/text",
+        "url": "warning.jpg"
+      }
+    ]
+  },
+  "problems": [],
+  "applied": [
+    "articles/how-to-do-research",
+    "articles/how-to-find-ideas",
+    "articles/how-to-find-papers",
+    "articles/how-to-read-papers",
+    "articles/steam-steel-infinite-minds",
+    "blog/os-chapter-1",
+    "notes/ai-infra/introduction",
+    "notes/ai-infra/learning-roadmap",
+    "notes/deep-learning/architectures",
+    "notes/deep-learning/backpropagation",
+    "notes/deep-learning/core-concepts",
+    "notes/deep-learning/generative-and-evaluation",
+    "notes/deep-learning/glossary",
+    "notes/deep-learning/index",
+    "notes/deep-learning/neural-network-intro",
+    "notes/deep-learning/perceptron",
+    "notes/deep-learning/pytorch-quickstart",
+    "notes/deep-learning/self-learning",
+    "notes/deep-learning/training-techniques",
+    "notes/html/a",
+    "notes/html/attribute",
+    "notes/html/elements",
+    "notes/html/encode",
+    "notes/html/form",
+    "notes/html/iframe",
+    "notes/html/image",
+    "notes/html/intro",
+    "notes/html/link",
+    "notes/html/list",
+    "notes/html/mobile",
+    "notes/html/multimedia",
+    "notes/html/script",
+    "notes/html/semantic",
+    "notes/html/table",
+    "notes/html/text",
+    "notes/html/url",
+    "notes/minimind/index",
+    "notes/minimind/tokenizer",
+    "notes/nlp/chapter-1-basics",
+    "tutorials/latex-basics",
+    "tutorials/n8n/n8n-beginner-guide",
+    "tutorials/n8n/n8n-maintenance-guide"
+  ],
+  "skipped": [],
+  "sampleCheck": [
+    "articles/how-to-do-research",
+    "articles/how-to-find-ideas",
+    "articles/how-to-find-papers"
+  ]
+}

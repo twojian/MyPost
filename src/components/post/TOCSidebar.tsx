@@ -62,15 +62,18 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
                   history.replaceState(null, "", `#${h.id}`);
                 }
               }}
-              className="block rounded leading-snug transition-colors hover:text-[var(--color-brand)]"
+              className="press block rounded leading-snug transition-colors hover:text-[var(--color-brand)]"
               style={{
                 paddingLeft: isSub ? "14px" : "0",
                 fontSize: isSub ? "12px" : "13px",
-                color: isActive ? "var(--color-brand)" : "var(--color-secondary)",
+                color: isActive
+                  ? "var(--color-brand)"
+                  : isSub
+                    ? "var(--color-tertiary)"
+                    : "var(--color-secondary)",
                 fontWeight: isActive ? 600 : isSub ? 400 : 500,
                 whiteSpace: "normal",
                 wordBreak: "break-word",
-                borderLeft: isSub ? "2px solid rgba(53,191,171,0.2)" : "none",
               }}
             >
               {h.text}
