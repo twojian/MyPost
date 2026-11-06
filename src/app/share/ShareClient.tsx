@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Search, ExternalLink } from "lucide-react";
-import { CATEGORY_STYLE, SHARE_ITEMS, type ShareItem } from "@/lib/share";
+import { CATEGORY_STYLE, type ShareItem } from "@/lib/share";
 
 const CATEGORIES = ["全部", ...Object.keys(CATEGORY_STYLE)];
 
@@ -18,13 +18,13 @@ function hostOf(url: string) {
   }
 }
 
-export default function ShareClient() {
+export default function ShareClient({ items }: { items: ShareItem[] }) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState("全部");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return SHARE_ITEMS.filter((item) => {
+    return items.filter((item) => {
       const matchCat = active === "全部" || item.category === active;
       if (!matchCat) return false;
       if (!q) return true;
