@@ -4,9 +4,10 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
-import { getAllPosts, getPostBySlug, extractHeadings } from "@/lib/posts";
+import { getAllPosts, getPostBySlug, getPostsByPrefix, isDirectorySlug, extractHeadings } from "@/lib/posts";
 import { mdxComponents } from "@/components/mdx/MDXComponents";
 import PostMeta from "@/components/post/PostMeta";
+import PostDateList from "@/components/post/PostDateList";
 import TOCSidebar from "@/components/post/TOCSidebar";
 import LikeButton from "@/components/post/LikeButton";
 
@@ -24,6 +25,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const slugPath = slug.join("/");
+  if (isDirectorySlug(slugPath)) {
+    return { title: slugPath.split("/").pop() ?? "目录" };
+  }
   const { meta } = getPostBySlug(slugPath);
   return {
     title: meta.title,
@@ -34,6 +38,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
   const slugPath = slug.join("/");
+
+  if (isDirectorySlug(slugPath)) {
+    const posts = getPostsByPrefix(slugPath);
+    return (
+      <>
+        <h1
+          className="mb-2 text-2xl font-bold"
+          style={{ color: "var(--color-primary)" }}
+        >
+          {slugPath.split("/").pop()}
+        </h1>
+        <p className="mb-6 text-sm" style={{ color: "var(--color-secondary)" }}>
+          {posts.length} 篇文章
+        </p>
+        <PostDateList posts={posts} />
+      </>
+    );
+  }
+
   const { meta, content } = getPostBySlug(slugPath);
   const headings = extractHeadings(content);
 

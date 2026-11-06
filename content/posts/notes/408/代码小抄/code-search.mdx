@@ -1,0 +1,40 @@
+---
+title: "查找"
+date: 2026-01-01
+summary: "考研代码手写：查找相关算法（顺序/折半/二叉排序树等）函数实现。"
+categories: ["技术"]
+tags: ["代码", "408", "笔记", "考研"]
+---
+
+## 二分查找
+
+```c
+int BSearch(int A[], int L, int R, int e) {
+    while (L <= R) {
+        int mid = L + (R - L) / 2; // 避免溢出
+        if (A[mid] == e) {
+            return mid;
+        } else if (e < A[mid]) {
+            R = mid - 1; // e更小，向左找
+        } else {
+            L = mid + 1; // e更大，向右找
+        }
+    }
+    return -1; // 未找到
+}
+```
+
+## 二叉排序树查找
+
+```c
+BSTNode *Findx(BST T, int x) {
+    if (T == NULL) return NULL;
+    if (x == T->data) {
+        return T;
+    } else if (x < T->data) {
+        return Findx(T->lchild, x); // 向左子树找
+    } else {
+        return Findx(T->rchild, x); // 向右子树找
+    }
+}
+```

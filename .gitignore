@@ -42,3 +42,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+/.vscode/
+
+# 未采用的背景视频压缩中间版本（已由 switzerland-alps-bg.mp4 替代）
+/public/videos/switzerland-alps-bg-720p.mp4

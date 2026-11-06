@@ -52,9 +52,30 @@ export function getAllPosts(): PostMeta[] {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
+function decodeSlug(slug: string): string {
+  // 路由 slug 可能含 URL 编码的中文路径段（如 %E6%93%8D...），先解码再拼文件路径
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
+export function isDirectorySlug(slug: string): boolean {
+  const decoded = decodeSlug(slug);
+  const dir = path.join(CONTENT_DIR, decoded);
+  return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
+}
+
+export function getPostsByPrefix(prefix: string): PostMeta[] {
+  const decoded = decodeSlug(prefix);
+  return getAllPosts().filter((p) => p.slug.startsWith(`${decoded}/`));
+}
+
 export function getPostBySlug(slug: string) {
-  const mdxPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-  const mdPath = path.join(CONTENT_DIR, `${slug}.md`);
+  const decodedSlug = decodeSlug(slug);
+  const mdxPath = path.join(CONTENT_DIR, `${decodedSlug}.mdx`);
+  const mdPath = path.join(CONTENT_DIR, `${decodedSlug}.md`);
   const filePath = fs.existsSync(mdxPath) ? mdxPath : mdPath;
 
   const raw = fs.readFileSync(filePath, "utf-8");
@@ -63,7 +84,7 @@ export function getPostBySlug(slug: string) {
 
   return {
     meta: {
-      slug,
+      slug: decodedSlug,
       title: data.title ?? "Untitled",
       date: data.date
         ? new Date(data.date).toISOString().split("T")[0]
@@ -108,10 +129,35 @@ export function getAllCategories(): { name: string; count: number }[] {
 export function extractHeadings(content: string): { depth: number; text: string; id: string }[] {
   const slugger = new GithubSlugger();
   const headings: { depth: number; text: string; id: string }[] = [];
+  // 兼容 CRLF 行尾：JS 中 . 不匹配 \r，先归一化再按行解析
+  content = content.replace(/\r/g, "");
   let inCodeBlock = false;
+  let inMathBlock = false;
   for (const line of content.split("\n")) {
-    if (line.startsWith("```")) { inCodeBlock = !inCodeBlock; continue; }
-    if (inCodeBlock) continue;
+    if (inCodeBlock) {
+      // 闭围栏：允许 0-3 空格缩进（如 " ```"）
+      if (/^ {0,3}(`{3,}|~{3,})\s*$/.test(line)) inCodeBlock = false;
+      continue;
+    }
+    // 数学块：与渲染端 remark-math 对齐。
+    // mathFlow 开行 = 纯 $$ 行，或 $$ + 空格 + 内容且行尾无闭合 $$；
+    // 单行 $$...$$（mathText）不触发块级状态。闭行 = 独立 $$ 行。
+    if (!inMathBlock && /^\$\$/.test(line)) {
+      const pureLine = /^\$\$\s*$/.test(line);
+      const trailingClose = /\$\$\s*$/.test(line);
+      const noSpaceAfter = /^\$\$[^$\s]/.test(line);
+      if (pureLine || (!trailingClose && !noSpaceAfter)) {
+        inMathBlock = true;
+        continue;
+      }
+      continue; // mathText 单行公式：不改变状态
+    }
+    if (inMathBlock) {
+      if (/^\$\$\s*$/.test(line)) inMathBlock = false;
+      continue;
+    }
+    // 开围栏：允许 0-3 空格缩进
+    if (/^ {0,3}(`{3,}|~{3,})/.test(line)) { inCodeBlock = true; continue; }
     const match = line.match(/^(#{1,6})\s+(.+)$/);
     if (match) {
       const depth = match[1].length;

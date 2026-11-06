@@ -1,10 +1,12 @@
 import type { MDXComponents as MDXComponentsType } from "mdx/types";
 import CodeBlock from "./CodeBlock";
 import Callout from "./Callout";
+import Details from "./Details";
 
 export const mdxComponents: MDXComponentsType = {
   pre: ({ children, ...props }) => <CodeBlock {...props}>{children}</CodeBlock>,
   Callout,
+  Details,
   img: ({ src, alt, ...props }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img

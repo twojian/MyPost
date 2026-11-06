@@ -1,0 +1,340 @@
+---
+title: "排序"
+date: 2026-01-01
+summary: "考研代码手写：插入、交换、选择、归并、基数等排序算法实现与对比。"
+categories: ["技术"]
+tags: ["代码", "408", "笔记", "考研"]
+---
+
+归并排序
+
+```c++
+/**
+ * 归并排序 - 稳定排序
+ * 时间复杂度：O(nlogn)
+ * 空间复杂度：O(n)
+ */
+// 全局/外部定义辅助数组（避免重复分配内存）
+ElemType *B;
+
+void Merge(ElemType A[], int L, int mid, int R) {
+    int i = L, j = mid + 1, k = L;
+    // 把A[L..R]复制到B[L..R]
+    for (int t = L; t <= R; t++) {
+        B[t] = A[t];
+    }
+    // 合并到A[L..R]
+    while (i <= mid && j <= R) {
+        if (B[i] <= B[j]) {
+            A[k++] = B[i++];
+        } else {
+            A[k++] = B[j++];
+        }
+    }
+    // 处理剩余元素
+    while (i <= mid) A[k++] = B[i++];
+    while (j <= R) A[k++] = B[j++];
+}
+
+void MergeSort(ElemType A[], int L, int R, int n) {
+    if (B == NULL) {
+        B = (ElemType*)malloc(n * sizeof(ElemType)); // 初始化辅助数组
+    }
+    if (L < R) {
+        int mid = L + (R - L) / 2;
+        MergeSort(A, L, mid, n);   // 左区间排序
+        MergeSort(A, mid + 1, R, n); // 右区间排序
+        Merge(A, L, mid, R);       // 合并
+    }
+}
+```
+
+冒泡排序
+
+```c++
+/**
+ * 冒泡排序 - 稳定排序
+ * 时间复杂度：O(n^2)，最好情况O(n)
+ * 空间复杂度：O(1)
+ */
+void bubbleSort(vector<int>& nums) {
+    int n = nums.size();
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (nums[j] > nums[j + 1]) {
+                swap(nums[j], nums[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break; // 优化：已有序则提前退出
+    }
+}
+```
+
+**迭代版堆排序：空间 ****$O(1)$**
+
+```c++
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums) {
+        int n = nums.size();
+        // 建堆，从最后一个非叶子节点开始下沉
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(nums, i, n);
+        }
+        // 排序过程
+        for (int i = n - 1; i > 0; i--) {
+            swap(nums[0], nums[i]);   // 把堆顶最大值放到末尾
+            heapify(nums, 0, i);      // 重新调整剩下的堆
+        }
+        return nums;
+    }
+
+    void heapify(vector<int>& nums, int i, int n) {
+        while (true) {
+            int largest = i;
+            int l = 2 * i + 1;
+            int r = 2 * i + 2;
+
+            if (l < n && nums[l] > nums[largest]) largest = l;
+            if (r < n && nums[r] > nums[largest]) largest = r;
+
+            if (largest != i) {
+                swap(nums[i], nums[largest]);
+                i = largest;  // 继续下沉
+            } else {
+                break;        // 已经满足堆性质
+            }
+        }
+    }
+};
+```
+
+堆排序：空间 $O(logn)$
+
+```c++
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums) {
+        int n = nums.size();
+        for (int i = n / 2; i >= 0; i--) {
+            heapify(nums, i, n);
+        }
+        for (int i = n - 1; i >= 0; i--) {
+            swap(nums[i], nums[0]);
+            heapify(nums, 0, i);
+        }
+        return nums;
+    }
+
+    void heapify(vector<int>& nums, int i, int n) {
+        int largest = i;
+        int l = 2 * i + 1;
+        int r = 2 * i + 2;
+        if (l < n && nums[largest] < nums[l]) {
+            largest = l;
+        }
+        if (r < n && nums[largest] < nums[r]) {
+            largest = r;
+        }
+        if (largest != i) {
+            swap(nums[i], nums[largest]);
+            heapify(nums, largest, n);
+        }
+    }
+};
+```
+
+基数排序
+
+```c++
+/**
+ * 基数排序 - 稳定排序
+ * 时间复杂度：O(dn)，d为最大位数
+ * 空间复杂度：O(n+k)
+ * 适用于非负整数
+ */
+void radixSort(vector<int>& nums) {
+    int maxVal = *max_element(nums.begin(), nums.end());
+
+    for (int exp = 1; maxVal / exp > 0; exp *= 10) {
+        vector<int> output(nums.size()), count(10, 0);
+
+        for (int num : nums) count[(num / exp) % 10]++;
+        for (int i = 1; i < 10; i++) count[i] += count[i - 1];
+
+        for (int i = nums.size() - 1; i >= 0; i--) {
+            output[--count[(nums[i] / exp) % 10]] = nums[i];
+        }
+
+        nums = output;
+    }
+}
+```
+
+快速排序
+
+```c++
+/**
+ * 快速排序 - 不稳定排序
+ * 时间复杂度：平均O(nlogn)，最坏O(n^2)
+ * 空间复杂度：O(logn)
+ */
+int partition(vector<int>& nums, int l, int r) {
+    int pivot = nums[r], i = l - 1;
+    for (int j = l; j < r; j++) {
+        if (nums[j] < pivot) swap(nums[++i], nums[j]);
+    }
+    swap(nums[i + 1], nums[r]);
+    return i + 1;
+}
+
+void quickSort(vector<int>& nums, int l, int r) {
+    if (l < r) {
+        int pi = partition(nums, l, r);
+        quickSort(nums, l, pi - 1);
+        quickSort(nums, pi + 1, r);
+    }
+}
+```
+
+```c
+int Partition(ElemType A[], int L, int R) {
+    ElemType pivot = A[L]; // 选左端点为基准
+    while (L < R) {
+        // 从右找小于pivot的元素
+        while (L < R && A[R] >= pivot) R--;
+        A[L] = A[R]; // 移到左指针位置
+        // 从左找大于pivot的元素
+        while (L < R && A[L] <= pivot) L++;
+        A[R] = A[L]; // 移到右指针位置
+    }
+    A[L] = pivot; // 基准元素放到最终位置
+    return L; // 返回基准位置
+}
+
+void QuickSort(ElemType A[], int L, int R) {
+    if (L < R) {
+        int pivot = Partition(A, L, R);
+        QuickSort(A, L, pivot - 1); // 左子区间
+        QuickSort(A, pivot + 1, R); // 右子区间
+    }
+}
+```
+
+选择排序
+
+```c++
+/**
+ * 选择排序 - 不稳定排序
+ * 时间复杂度：O(n^2)
+ * 空间复杂度：O(1)
+ */
+void selectionSort(vector<int>& nums) {
+    int n = nums.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (nums[j] < nums[minIdx]) minIdx = j;
+        }
+        swap(nums[i], nums[minIdx]);
+    }
+}
+```
+
+插入排序
+
+```c++
+/**
+ * 插入排序 - 稳定排序
+ * 时间复杂度：O(n^2)，最好情况O(n)
+ * 空间复杂度：O(1)
+ */
+void insertionSort(vector<int>& nums) {
+    int n = nums.size();
+    for (int i = 1; i < n; i++) {
+        int key = nums[i], j = i - 1;
+        while (j >= 0 && nums[j] > key) {
+            nums[j + 1] = nums[j];
+            j--;
+        }
+        nums[j + 1] = key;
+    }
+}
+```
+
+希尔排序
+
+```c++
+/**
+ * 希尔排序 - 不稳定排序
+ * 时间复杂度：O(n^1.3)~O(n^2)
+ * 空间复杂度：O(1)
+ */
+void shellSort(vector<int>& nums) {
+    int n = nums.size();
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            int temp = nums[i], j = i;
+            while (j >= gap && nums[j - gap] > temp) {
+                nums[j] = nums[j - gap];
+                j -= gap;
+            }
+            nums[j] = temp;
+        }
+    }
+}
+```
+
+计数排序
+
+```c++
+/**
+ * 计数排序 - 稳定排序
+ * 时间复杂度：O(n+k)，k为值域大小
+ * 空间复杂度：O(k)
+ * 适用于小范围整数排序
+ */
+void countingSort(vector<int>& nums) {
+    int maxVal = *max_element(nums.begin(), nums.end());
+    int minVal = *min_element(nums.begin(), nums.end());
+    vector<int> count(maxVal - minVal + 1, 0);
+
+    for (int num : nums) count[num - minVal]++;
+
+    int idx = 0;
+    for (int i = 0; i < count.size(); i++) {
+        while (count[i]--) nums[idx++] = i + minVal;
+    }
+}
+```
+
+### 桶排序
+```cpp
+/**
+ * 桶排序 - 稳定排序
+ * 时间复杂度：平均O(n)，最坏O(n^2)
+ * 空间复杂度：O(n+k)
+ */
+void bucketSort(vector<int>& nums) {
+    int n = nums.size();
+    if (n <= 0) return;
+
+    int minVal = *min_element(nums.begin(), nums.end());
+    int maxVal = *max_element(nums.begin(), nums.end());
+    int bucketNum = n;
+    vector<vector<int>> buckets(bucketNum);
+
+    for (int num : nums) {
+        int idx = (num - minVal) * (bucketNum - 1) / (maxVal - minVal);
+        buckets[idx].push_back(num);
+    }
+
+    int idx = 0;
+    for (auto& bucket : buckets) {
+        sort(bucket.begin(), bucket.end());
+        for (int num : bucket) nums[idx++] = num;
+    }
+}
+```
