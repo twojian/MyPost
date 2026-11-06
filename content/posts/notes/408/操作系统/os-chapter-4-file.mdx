@@ -58,7 +58,7 @@ tags: ["操作系统", "文件管理", "408", "笔记"]
 
 **2. inode的优势**
 
-- **加速文件检索**：目录项只需存储<文件名, inode编号>，大大缩小了目录文件的大小
+- **加速文件检索**：目录项只需存储&lt;文件名, inode编号&gt;，大大缩小了目录文件的大小
 - **支持文件共享**：多个目录项可以指向同一个inode（硬链接）
 - **节省存储空间**：相比于在每个目录项中存放完整的FCB
 
@@ -1520,7 +1520,7 @@ mount -t ext4 /dev/sda2 /mnt/root   # 挂载真正的根分区exec switch_root /
 > 示例 /etc/fstab：
 
 ```bash
-# <设备>          <挂载点>   <文件系统>  <选项>       <dump> <pass>/dev/sda1         /boot      ext4       defaults     0      2
+# &lt;设备&gt;          &lt;挂载点&gt;   &lt;文件系统&gt;  &lt;选项&gt;       &lt;dump&gt; &lt;pass&gt;/dev/sda1         /boot      ext4       defaults     0      2
 /dev/sda3         /home      ext4       defaults     0      2
 /dev/sda4         /data      xfs        defaults     0      2
 UUID=1234-5678    /mnt/ntfs  ntfs-3g    defaults     0      0
