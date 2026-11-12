@@ -210,7 +210,9 @@ ZeRO 系列（好比合租房里每人只存自己那份家具，需要时互相
 
 **KV Cache 估算**：给定 LLaMA-2-7B（32层、32头、head_dim=128），上下文长度 4096，batch_size=16，FP16：
 
-$$KV = 2 \times 32 \times 32 \times 128 \times 4096 \times 16 \times 2\text{B} \approx 32\text{GB}$$
+$$
+KV = 2 \times 32 \times 32 \times 128 \times 4096 \times 16 \times 2\text{B} \approx 32\text{GB}
+$$
 
 ### 3.2 推理引擎
 

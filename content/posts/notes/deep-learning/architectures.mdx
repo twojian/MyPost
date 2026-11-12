@@ -138,7 +138,9 @@ CNN 擅长处理固定尺寸的空间数据（图像），但现实中大量数�
 
 RNN 的关键公式只有一行：
 
-$$h_t = \tanh(W_h \cdot h_{t-1} + W_x \cdot x_t + b)$$
+$$
+h_t = \tanh(W_h \cdot h_{t-1} + W_x \cdot x_t + b)
+$$
 
 其中：
 - $x_t$：当前时间步的输入（比如当前单词）
@@ -216,7 +218,9 @@ GRU 是 LSTM 的简化版，把三个门简化为两个：**重置门（Reset Ga
 
 用 Q 和每个 K 做点积，得分越高说明两个单词越相关。然后除以 $\sqrt{d_k}$ 进行缩放，再通过 Softmax 归一化：
 
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V$$
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
 
 **步骤三：加权汇总**
 

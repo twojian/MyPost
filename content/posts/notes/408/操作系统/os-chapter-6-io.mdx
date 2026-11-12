@@ -1423,7 +1423,7 @@ while (printer_status != READY)；//等待直到打印机状态为“就绪”
 
 ![](https://cos.izumichan16.cn/408note/OS/aEQHMIdm8A3H3aIr/1746087504655-fdd36826-c24c-4c95-ad5c-1e098b694ecb-426052.png)
 
-- **printer\_data\_port=kernbuf\[il;//向数据端口输出第一个字符**
+- **printer\_data\_port=kernbuf[il;//向数据端口输出第一个字符**
 
 > CPU通过执行设备驱动程序从内核缓冲区读取字符串的第一个字符“d”，先读到CPU里的通用寄存器，然后执行驱动程序里的I/O指令将其写入设备控制器里的数据寄存器（I/O端口）
 
@@ -2009,19 +2009,19 @@ D. 设备接口和 DMA 控制器之间
 **① 柱面号 (Cylinder)**
 
 $$
-N_{cylinder}=\lceil\log_220000\rceil=15
+N_{cylinder}=\lceil\log_{2}20000\rceil=15
 $$
 
 **② 磁头号 (Head)**
 
 $$
-\begin{aligned}&4\times2=8\\&N_{head}=\lceil\log_28\rceil=3\end{aligned}
+\begin{aligned}&4\times2=8\\&N_{head}=\lceil\log_{2}8\rceil=3\end{aligned}
 $$
 
 **③ 扇区号 (Sector)**
 
 $$
-N_{sector}=\lceil\log_2500\rceil=9
+N_{sector}=\lceil\log_{2}500\rceil=9
 $$
 
 (2) 平均访问时间 = 平均寻道时间 + 平均旋转延迟时间 + 数据传输时间。
@@ -2073,7 +2073,7 @@ $$
 - DMA控制器的数据缓冲区大小 = 64 位 = 64 / 8 = 8 字节。
 
 $$
-总线请求次数 = \frac{\text{总数据量}}{\text{每次传送的数据量}}=\frac{512\text{字节}}{8\text{字节}/\text{次}}=64\text{次}
+\text{总线请求次数} = \frac{\text{总数据量}}{\text{每次传送的数据量}}=\frac{512\text{字节}}{8\text{字节}/\text{次}}=64\text{次}
 $$
 
 **结论：** 在一个扇区读写过程中，DMA控制器向CPU发送了 **64次** 总线请求。

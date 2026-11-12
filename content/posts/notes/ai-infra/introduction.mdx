@@ -221,7 +221,9 @@ Roofline 模型是性能分析的核心思维框架。它把算子分为两类�
 
 判断依据是**算术强度（Arithmetic Intensity）**：
 
-$$\text{Arithmetic Intensity} = \frac{\text{FLOPs}}{\text{Bytes Accessed}}$$
+$$
+\text{Arithmetic Intensity} = \frac{\text{FLOPs}}{\text{Bytes Accessed}}
+$$
 
 当算术强度低于硬件的"拐点"时，算子受限于内存带宽；反之受限于计算能力。
 

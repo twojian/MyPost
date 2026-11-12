@@ -1,534 +1,644 @@
 ---
 title: "LaTeX 基本语法"
 date: 2025-12-30
-summary: "可能用的到的 LaTeX 代码，美观论文和笔记"
+summary: "KaTeX 实测版 LaTeX 公式速查表：左列看得见的效果、右列可直接复制的源码，140+ 命令覆盖符号、结构、矩阵、多行对齐，并标注本站渲染红线与易错对照。"
 categories:
   - "公式表"
 tags:
   - "math"
   - "LaTeX"
----
-# Latex基本语法
-
-## 一、数学公式的基本书写规则
-
-### 行内公式与行间公式
-
-行内公式用于段落中嵌入表达式：
-```latex
-$ ... $ → 行内公式
-```
-
-行间公式用于独立、强调的数学表达：
-```latex
-$$ ... $$ → 只能放纯数学表达
-```
-
-
-### 1、不编号的行间公式：
-$$
-f(x)=x^2+1
-$$
-
-```latex
-$$
-f(x)=x^2+1
-$$
-```
-
-### 2、带编号的行间公式（论文、作业常用）：
-$$
-\begin{equation}
-f(x)=x^2+1
-\end{equation}
-$$
-
-```latex
-\begin{equation}
-f(x)=x^2+1
-\end{equation}
-```
-### 3、手动指定编号：
-$$
-\begin{equation}
-f(x)=x^2+1 \tag{A}
-\end{equation}
-$$
-
-```latex
-\begin{equation}
-f(x)=x^2+1 \tag{A}
-\end{equation}
-```
+  - "KaTeX"
+  - "速查表"
 ---
 
-## 二、上下标、分式与根式（最基础但最常错）
+本页是给自己用的 LaTeX 公式速查表。全站公式由 **KaTeX 0.16.47** 渲染（remark-math → rehype-katex），下面每一条都在本站编译链上实测通过，不是抄来的"应该能用"。
 
-### 1. 上标与下标
-$$
-x^2,\quad a_n,\quad x_i^k
-$$
+全篇按一个原则组织：**左列是看得见的效果，右列是可直接复制的源码**，一行一对，两半篇幅对等。多行结构用**成对交替**：上面看效果，下面是代码块，右上角有一键复制。
 
-```latex
-x^2,\quad a_n,\quad x_i^k
-```
+- 想"这符号长什么样"→ 扫左列。
+- 想"这符号怎么打"→ 抄右列。
+- 想"我这行为什么不渲染"→ 直接跳 [H2 本站 KaTeX 差异与红线](#h2-本站-katex-差异与红线)。
 
-多个字符必须用花括号：
-$$
-x^{n+1},\quad a_{i,j}
-$$
+| 分区 | 覆盖内容 | 直达 |
+| --- | --- | --- |
+| A 定界符 | 行内 / 行间 / 编号 / `\tag` | [A 定界符与编号](#a-定界符与编号) |
+| B 结构 | 上下标 / 分式 / 根式 / 括号 / 文本 | [B 上下标与分式根式](#b-上下标与分式根式) |
+| C 符号 | 希腊字母 / 关系 / 运算 / 箭头 / 省略号 | [C 符号速查](#c-符号速查) |
+| D 运算 | 求和 / 连乘 / 极限 / 函数 / 导数 / 积分 | [D 运算与微积分](#d-运算与微积分) |
+| E 集合 | 集合关系 / 逻辑 / 量词 | [E 集合与逻辑](#e-集合与逻辑) |
+| F 线代 | 向量 / 矩阵族 / 行列式 / 范数 / 转置 | [F 向量与矩阵](#f-向量与矩阵) |
+| G 多行 | 分段函数 / 对齐推导 / 多行矩阵 | [G 多行表达](#g-多行表达) |
+| H 实践 | 字体直立 / 渲染红线 / 易错对照 | [H 工程实践](#h-工程实践) |
 
-```latex
-x^{n+1},\quad a_{i,j}
-```
-
-### 2. 分式
-$$
-\frac{a}{b},\quad \frac{x+1}{x-1}
-$$
-
-```latex
-\frac{a}{b},\quad \frac{x+1}{x-1}
-```
-
-嵌套分式：
-$$
-\frac{1}{1+\frac{1}{n}}
-$$
-
-```latex
-\frac{1}{1+\frac{1}{n}}
-```
-
-### 3. 根式
-$$
-\sqrt{x},\quad \sqrt{x+1}
-$$
-
-```latex
-\sqrt{x},\quad \sqrt{x+1}
-```
-
-### 4. n 次根：
-$$
-\sqrt[n]{x}
-$$
-
-```latex
-\sqrt[n]{x}
-```
+最常用的五条，先抄走：`$x^2$`、`\frac{a}{b}`、`\sqrt{x}`、`\sum_{i=1}^{n} a_i`、`\begin{cases} ... \end{cases}`。展开正文前先看这条红线：**块级公式的 `$$` 必须独占一行，写在行尾会被当成行内公式。**
 
 ---
 
-## 三、常见运算符与数学符号
+## A 定界符与编号
 
-### 1. 四则与逻辑关系
-$$
-+ \quad - \quad \times \quad \cdot \quad \div
-$$
+### A1 行内与行间
 
-```latex
-+ \quad - \quad \times \quad \cdot \quad \div
-```
+| 效果 | 源码 |
+| --- | --- |
+| 正文里的行内公式 $a^2+b^2=c^2$ 与文字同排 | `$a^2+b^2=c^2$` |
+| 行间公式（独立成行、居中）见下方成对示例 | `$$` 换行 内容 换行 `$$` |
+| 行内也能放大分式 $\dfrac{a}{b}$，不撑行高用 `\tfrac` | `\dfrac{a}{b}` |
 
-推荐乘法用 `\cdot`：
-$$
-a \cdot b
-$$
+块级公式的正确写法——`$$` 单独占一行，首尾各一行：
 
-```latex
-a \cdot b
-```
-
-等价与不等关系：
 $$
-= \quad \neq \quad < \quad > \quad \le \quad \ge
+\int_{0}^{1} x^{2}\,\mathrm{d}x=\frac{1}{3}
 $$
 
 ```latex
-= \quad \neq \quad < \quad > \quad \le \quad \ge
+$$
+\int_{0}^{1} x^{2}\,\mathrm{d}x=\frac{1}{3}
+$$
 ```
 
-### 2. 求和、乘积、极限
+### A2 编号与交叉引用
+
+手动编号，标签以括号形式贴在公式右侧：
+
 $$
-\sum_{i=1}^{n} a_i
+f(x)=x^{2}+1 \tag{A}
 $$
 
 ```latex
-\sum_{i=1}^{n} a_i
-
-```
 $$
-\prod_{i=1}^{n} a_i
+f(x)=x^{2}+1 \tag{A}
+$$
+```
+
+标签加星号则只留字母、不带括号：
+
+$$
+f(x)=x^{2}+1 \tag*{B}
 $$
 
 ```latex
-\prod_{i=1}^{n} a_i
-
-```
 $$
-\lim_{x \to 0} f(x)
+f(x)=x^{2}+1 \tag*{B}
 $$
-
-```latex
-\lim_{x \to 0} f(x)
 ```
+
+交叉引用不靠 `\label`（本站 `\eqref` 编译失败），直接把页面锚点写成链接：[见 A2](#a2-编号与交叉引用)。
+
+<Callout type="warning">
+本站 KaTeX 不会自动编号：`\begin{equation}`、`\begin{align}` 都能编译通过，但公式左侧**不会出现 (1)(2)**，想要编号只能手写 `\tag{}`；`\label` / `\eqref` 会直接编译失败，交叉引用请改用页面锚点链接。
+</Callout>
 
 ---
 
-## 四、函数、导数与积分（数学与机器学习必备）
+## B 上下标与分式根式
 
-### 1. 常见函数
-$$
-\sin x,\quad \cos x,\quad \tan x
-$$
+### B1 上下标
 
-```latex
-\sin x,\quad \cos x,\quad \tan x
-```
-$$
-\ln x,\quad \log x,\quad \exp(x)
-$$
+| 效果 | 源码 |
+| --- | --- |
+| $x^{2}$ 上标 | `x^2` |
+| $a_{n}$ 下标 | `a_n` |
+| $x_i^{k}$ 上下标同时用 | `x_i^k` |
+| $x^{n+1}$ 多字符上标必须加花括号 | `x^{n+1}` |
+| $a_{i,j}$ 多字符下标同理 | `a_{i,j}` |
+| ${}^{14}_{6}C$ 前置上下标用空组占位 | `{}^{14}_{6}C` |
+| $x^{-1}$ 负指数 | `x^{-1}` |
+| $x'$ 一撇求导 | `x'` |
+| $f''(x)$ 两撇 | `f''(x)` |
+| $f^{(n)}(x)$ n 阶导要用括号包住 | `f^{(n)}(x)` |
+| $x_{1}^{2}$ 顺序无所谓，先下后上更清晰 | `x_{1}^{2}` |
 
-```latex
-\ln x,\quad \log x,\quad \exp(x)
-```
+### B2 分式与根式
 
-### 2. 导数
+| 效果 | 源码 |
+| --- | --- |
+| $\frac{a}{b}$ 标准分式 | `\frac{a}{b}` |
+| $\dfrac{a}{b}$ 行内也要大号分式 | `\dfrac{a}{b}` |
+| $\tfrac{a}{b}$ 行内紧凑分式，不撑行高 | `\tfrac{a}{b}` |
+| $\cfrac{a}{b}$ 连分数排版 | `\cfrac{a}{b}` |
+| $\frac{1}{1+\frac{1}{n}}$ 嵌套分式 | `\frac{1}{1+\frac{1}{n}}` |
+| $\frac{x+1}{x-1}$ 分子分母多字符要整体花括号 | `\frac{x+1}{x-1}` |
+| $\sqrt{x}$ 平方根 | `\sqrt{x}` |
+| $\sqrt{x+1}$ 根号内容多字符 | `\sqrt{x+1}` |
+| $\sqrt[3]{x}$ n 次根，方括号写次数 | `\sqrt[3]{x}` |
+| $x^{1/2}$ 二分之一的另一种写法 | `x^{1/2}` |
 
-一阶导数：
-$$
-f'(x)
-$$
+### B3 括号与文本混排
 
-```latex
-f'(x)
-```
-
-高阶导数：
-$$
-f''(x),\quad f^{(n)}(x)
-$$
-
-```latex
-**f''(x),\quad f^{(n)}(x)**
-```
-
-微分形式（规范推荐）：
-$$
-\frac{d f(x)}{d x}
-$$
-
-```latex
-\frac{d f(x)}{d x}
-```
-
-偏导数：
-$$
-\frac{\partial f}{\partial x}
-$$
-
-```latex
-\frac{\partial f}{\partial x}
-```
-$$
-\frac{\partial^2 f}{\partial x^2}
-$$
-
-```latex
-\frac{\partial^2 f}{\partial x^2}
-```
-
-### 3. 积分
-
-不定积分：
-$$
-\int f(x)\,dx
-$$
-
-```latex
-\int f(x)\,dx
-```
-
-定积分：
-$$
-\int_{0}^{1} f(x)\,dx
-$$
-
-```latex
-\int_{0}^{1} f(x)\,dx
-```
-
-二重积分（拓展）：
-$$
-\iint_D f(x,y)\,dx\,dy
-$$
-
-```latex
-\iint_D f(x,y)\,dx\,dy
-```
+| 效果 | 源码 |
+| --- | --- |
+| $\left( \frac{a}{b} \right)$ 括号自动撑高 | `\left( \frac{a}{b} \right)` |
+| $\left[ \sum_{i=1}^{n} a_i \right]$ 大方括号 | `\left[ \sum_{i=1}^{n} a_i \right]` |
+| $\left\{ x \right\}$ 花括号要转义 | `\left\{ x \right\}` |
+| $\left. \frac{\mathrm{d}y}{\mathrm{d}x} \right\vert_{x=0}$ 求值竖线，左边用点隐藏 | `\left. \frac{\mathrm{d}y}{\mathrm{d}x} \right\vert_{x=0}` |
+| $\langle x, y \rangle$ 内积尖括号 | `\langle x, y \rangle` |
+| $\lfloor x \rfloor$ 向下取整 | `\lfloor x \rfloor` |
+| $\lceil x \rceil$ 向上取整 | `\lceil x \rceil` |
+| $x > 0 \quad \text{其中 } x \in \mathbb{R}$ 公式里插文字 | `x > 0 \quad \text{其中 } x \in \mathbb{R}` |
+| $\operatorname{softmax}(z)$ 自定义函数名，直立正体 | `\operatorname{softmax}(z)` |
+| $a \quad b$ 大空格（1 em） | `a \quad b` |
+| $a \qquad b$ 双倍大空格 | `a \qquad b` |
+| $a\,b$ 细空格，微分前推荐 | `a\,b` |
 
 ---
 
-## 五、集合、逻辑与离散数学常用符号
+## C 符号速查
 
-### 1. 集合表示
-$$
-\{1,2,3\}
-$$
+### C1 希腊字母
 
-```latex
-\{1,2,3\}
-```
-$$
-\{x \mid x>0\}
-$$
+| 效果 | 源码 |
+| --- | --- |
+| $\alpha$ | `\alpha` |
+| $\beta$ | `\beta` |
+| $\gamma$ | `\gamma` |
+| $\delta$ | `\delta` |
+| $\epsilon$ 月牙形 | `\epsilon` |
+| $\varepsilon$ 手写体，随机变量常用 | `\varepsilon` |
+| $\zeta$ | `\zeta` |
+| $\eta$ | `\eta` |
+| $\theta$ | `\theta` |
+| $\vartheta$ 变体 | `\vartheta` |
+| $\iota$ | `\iota` |
+| $\kappa$ | `\kappa` |
+| $\lambda$ | `\lambda` |
+| $\mu$ | `\mu` |
+| $\nu$ | `\nu` |
+| $\xi$ | `\xi` |
+| $\pi$ | `\pi` |
+| $\rho$ | `\rho` |
+| $\sigma$ | `\sigma` |
+| $\tau$ | `\tau` |
+| $\upsilon$ | `\upsilon` |
+| $\phi$ | `\phi` |
+| $\varphi$ 变体，机器学习最爱 | `\varphi` |
+| $\chi$ | `\chi` |
+| $\psi$ | `\psi` |
+| $\omega$ | `\omega` |
+| $\Gamma$ | `\Gamma` |
+| $\Delta$ | `\Delta` |
+| $\Theta$ | `\Theta` |
+| $\Lambda$ | `\Lambda` |
+| $\Xi$ | `\Xi` |
+| $\Pi$ | `\Pi` |
+| $\Sigma$ | `\Sigma` |
+| $\Upsilon$ | `\Upsilon` |
+| $\Phi$ | `\Phi` |
+| $\Psi$ | `\Psi` |
+| $\Omega$ | `\Omega` |
 
-```latex
-\{x \mid x>0\}
-```
+### C2 关系与运算
 
-### 2. 属于与包含
-$$
-\in \quad \notin
-$$
+| 效果 | 源码 |
+| --- | --- |
+| $\neq$ 不等于 | `\neq` |
+| $\approx$ 约等于 | `\approx` |
+| $\equiv$ 恒等 | `\equiv` |
+| $\sim$ 服从分布 / 相似 | `\sim` |
+| $\simeq$ 近似同构 | `\simeq` |
+| $\cong$ 全等 / 同构 | `\cong` |
+| $\propto$ 正比于 | `\propto` |
+| $\ll$ 远小于 | `\ll` |
+| $\gg$ 远大于 | `\gg` |
+| $\le$ 小于等于 | `\le` |
+| $\ge$ 大于等于 | `\ge` |
+| $\leqslant$ 斜线版本 | `\leqslant` |
+| $\geqslant$ 斜线版本 | `\geqslant` |
+| $\prec$ 先于 / 优于 | `\prec` |
+| $\succ$ 后于 / 劣于 | `\succ` |
+| $\parallel$ 平行 | `\parallel` |
+| $\perp$ 垂直 | `\perp` |
+| $\mid$ 条件竖线，贝叶斯常用 | `\mid` |
+| $\nmid$ 不整除 | `\nmid` |
+| $\times$ 叉乘 / 维度 | `\times` |
+| $\div$ 除号 | `\div` |
+| $\cdot$ 点乘（推荐） | `\cdot` |
+| $\pm$ 正负 | `\pm` |
+| $\mp$ 负正 | `\mp` |
+| $\ast$ 星运算，卷积常用 | `\ast` |
+| $\star$ 星号 | `\star` |
+| $\circ$ 复合运算 | `\circ` |
+| $\bullet$ 圆点 | `\bullet` |
+| $\oplus$ 异或 / 直和 | `\oplus` |
+| $\otimes$ 张量积 | `\otimes` |
+| $\odot$ 哈达玛积 | `\odot` |
+| $\bigoplus$ 大号直和 | `\bigoplus` |
+| $\bigotimes$ 大号张量积 | `\bigotimes` |
 
-```latex
-\in \quad \notin
-```
-$$
-\subset \quad \subseteq \quad \supseteq
-$$
+### C3 箭头与省略号
 
-```latex
-\subset \quad \subseteq \quad \supseteq
-```
-
-### 3. 交并补
-$$
-A \cup B,\quad A \cap B
-$$
-
-```latex
-A \cup B,\quad A \cap B
-```
-$$
-A^c
-$$
-
-```latex
-A^c
-```
-
-### 4. 逻辑符号
-$$
-⁍
-$$
-
-```latex
-\forall \quad \exists
-```
-$$
-⁍
-$$
-
-```latex
-\land \quad \lor \quad \neg
-```
-$$
-⁍
-$$
-
-```latex
-\Rightarrow \quad \Leftrightarrow
-```
-
----
-
-## 六、向量、矩阵与线性代数（计算机考研高频）
-
-### 1. 向量
-$$
-\vec{x}
-$$
-
-```latex
-\vec{x}
-```
-
-粗体向量（更常用）：
-$$
-\mathbf{x}
-$$
-
-```latex
-\mathbf{x}
-```
-
-### 2. 矩阵
-$$
-\begin{matrix}
-a & b \\
-c & d
-\end{matrix}
-$$
-
-```latex
-\begin{matrix}
-a & b \\
-c & d
-\end{matrix}
-```
-
-带括号：
-$$
-\begin{pmatrix}
-a & b \\
-c & d
-\end{pmatrix}
-$$
-
-```latex
-\begin{pmatrix}
-a & b \\
-c & d
-\end{pmatrix}
-```
-
-行列式：
-$$
-\begin{vmatrix}
-a & b \\
-c & d
-\end{vmatrix}
-$$
-
-```latex
-\begin{vmatrix}
-a & b \\
-c & d
-\end{vmatrix}
-```
-
-### 3. 转置与逆
-$$
-A^T,\quad A^{-1}
-$$
-
-```latex
-A^T,\quad A^{-1}
-```
+| 效果 | 源码 |
+| --- | --- |
+| $\to$ 趋向 | `\to` |
+| $\rightarrow$ 右箭头 | `\rightarrow` |
+| $\leftarrow$ 左箭头 | `\leftarrow` |
+| $\leftrightarrow$ 双向箭头 | `\leftrightarrow` |
+| $\Rightarrow$ 推出 | `\Rightarrow` |
+| $\Leftarrow$ 反向推出 | `\Leftarrow` |
+| $\Leftrightarrow$ 等价 | `\Leftrightarrow` |
+| $\mapsto$ 映射到 | `\mapsto` |
+| $\implies$ 蕴含（间距更宽） | `\implies` |
+| $\iff$ 当且仅当 | `\iff` |
+| $\longrightarrow$ 长右箭头 | `\longrightarrow` |
+| $\uparrow$ 上箭头 | `\uparrow` |
+| $\downarrow$ 下箭头 | `\downarrow` |
+| $\nearrow$ 右上箭头 | `\nearrow` |
+| $\searrow$ 右下箭头 | `\searrow` |
+| $\xrightarrow{f}$ 箭头上带文字 | `\xrightarrow{f}` |
+| $\xleftarrow{n}$ 箭头下带文字 | `\xleftarrow{n}` |
+| $\rightleftharpoons$ 可逆反应 | `\rightleftharpoons` |
+| $\cdots$ 居中省略号，求和里用它 | `\cdots` |
+| $\ldots$ 底部省略号，列举里用它 | `\ldots` |
+| $\dots$ 自动选择位置 | `\dots` |
+| $\vdots$ 竖直省略号 | `\vdots` |
+| $\ddots$ 斜向省略号，矩阵用 | `\ddots` |
+| $\infty$ 无穷 | `\infty` |
+| $\partial$ 偏导符号 | `\partial` |
+| $\nabla$ 梯度算子 | `\nabla` |
+| $\forall$ 任意 | `\forall` |
+| $\exists$ 存在 | `\exists` |
+| $\nexists$ 不存在 | `\nexists` |
+| $\neg$ 非 | `\neg` |
+| $\angle$ 角 | `\angle` |
+| $\triangle$ 三角形 | `\triangle` |
+| $\square$ 正方形 / 证毕 | `\square` |
+| $\bigstar$ 星标 | `\bigstar` |
+| $\degree$ 度数 | `\degree` |
+| $\prime$ 撇 | `\prime` |
+| $\ell$ 手写 l，损失函数常用 | `\ell` |
+| $\hbar$ 约化普朗克常数 | `\hbar` |
+| $\aleph$ 阿列夫数 | `\aleph` |
+| $\emptyset$ 空集 | `\emptyset` |
+| $\varnothing$ 空集另一种写法 | `\varnothing` |
+| $\checkmark$ 勾 | `\checkmark` |
+| $\therefore$ 所以 | `\therefore` |
+| $\because$ 因为 | `\because` |
 
 ---
 
-## 七、分段函数与条件表达
-$$
-f(x)=
-\begin{cases}
-x^2, & x \ge 0 \\
--x, & x < 0
-\end{cases}
-$$
+## D 运算与微积分
 
-```latex
-f(x)=
-\begin{cases}
-x^2, & x \ge 0 \\
--x, & x < 0
-\end{cases}
-```
+### D1 求和连乘与极限
 
-这是考研数学、算法分析中极其常见的表达方式。
+| 效果 | 源码 |
+| --- | --- |
+| $\sum_{i=1}^{n} a_i$ 求和 | `\sum_{i=1}^{n} a_i` |
+| $\prod_{i=1}^{n} a_i$ 连乘 | `\prod_{i=1}^{n} a_i` |
+| $\coprod_{i}$ 余积 | `\coprod_{i}` |
+| $\bigcup_{i=1}^{n} A_i$ 大并集 | `\bigcup_{i=1}^{n} A_i` |
+| $\bigcap_{i=1}^{n} A_i$ 大交集 | `\bigcap_{i=1}^{n} A_i` |
+| $\bigvee_{i}$ 大析取 | `\bigvee_{i}` |
+| $\bigwedge_{i}$ 大合取 | `\bigwedge_{i}` |
+| $\lim_{x \to 0} f(x)$ 极限 | `\lim_{x \to 0} f(x)` |
+| $\lim_{n \to \infty} a_n$ 趋于无穷 | `\lim_{n \to \infty} a_n` |
+| $\limsup_{n} a_n$ 上极限 | `\limsup_{n} a_n` |
+| $\liminf_{n} a_n$ 下极限 | `\liminf_{n} a_n` |
+| $\sup_{x \in X} f(x)$ 上确界 | `\sup_{x \in X} f(x)` |
+| $\inf_{x \in X} f(x)$ 下确界 | `\inf_{x \in X} f(x)` |
+| $\sum\limits_{i=1}^{n}$ 强制把上下限压到正上正下 | `\sum\limits_{i=1}^{n}` |
+| $\sum\nolimits_{i=1}^{n}$ 强制恢复行内样式 | `\sum\nolimits_{i=1}^{n}` |
+
+### D2 函数与导数
+
+三角函数与反三角：
+
+| 效果 | 源码 |
+| --- | --- |
+| $\sin x$ | `\sin x` |
+| $\cos x$ | `\cos x` |
+| $\tan x$ | `\tan x` |
+| $\cot x$ | `\cot x` |
+| $\sec x$ | `\sec x` |
+| $\csc x$ | `\csc x` |
+| $\arcsin x$ | `\arcsin x` |
+| $\arccos x$ | `\arccos x` |
+| $\arctan x$ | `\arctan x` |
+| $\sinh x$ | `\sinh x` |
+| $\cosh x$ | `\cosh x` |
+| $\tanh x$ | `\tanh x` |
+
+对数、指数与其他函数：
+
+| 效果 | 源码 |
+| --- | --- |
+| $\log x$ | `\log x` |
+| $\ln x$ | `\ln x` |
+| $\lg x$ | `\lg x` |
+| $\exp(x)$ | `\exp(x)` |
+| $\log_2 n$ 算法复杂度常用 | `\log_2 n` |
+| $\det A$ 行列式 | `\det A` |
+| $\dim V$ 维数 | `\dim V` |
+| $\gcd(a,b)$ 最大公约数 | `\gcd(a,b)` |
+| $\max_{x} f(x)$ 最大值 | `\max_{x} f(x)` |
+| $\min_{x} f(x)$ 最小值 | `\min_{x} f(x)` |
+| $\arg\min_{x} f(x)$ 最优解 | `\arg\min_{x} f(x)` |
+| $\deg p$ 次数 | `\deg p` |
+| $a \bmod b$ 取模 | `a \bmod b` |
+| $a \pmod{b}$ 带括号的模 | `a \pmod{b}` |
+
+导数与微分：
+
+| 效果 | 源码 |
+| --- | --- |
+| $f'(x)$ 一阶导 | `f'(x)` |
+| $f''(x)$ 二阶导 | `f''(x)` |
+| $f^{(n)}(x)$ n 阶导 | `f^{(n)}(x)` |
+| $\frac{\mathrm{d}f}{\mathrm{d}x}$ 规范写法，d 要直立 | `\frac{\mathrm{d}f}{\mathrm{d}x}` |
+| $\frac{\mathrm{d}^{2}f}{\mathrm{d}x^{2}}$ 二阶导规范写法 | `\frac{\mathrm{d}^{2}f}{\mathrm{d}x^{2}}` |
+| $\frac{\partial f}{\partial x}$ 偏导 | `\frac{\partial f}{\partial x}` |
+| $\frac{\partial^{2} f}{\partial x^{2}}$ 二阶偏导 | `\frac{\partial^{2} f}{\partial x^{2}}` |
+| $\nabla_\theta L(\theta)$ 梯度 | `\nabla_\theta L(\theta)` |
+| $\dot{x}$ 对时间一阶导 | `\dot{x}` |
+| $\ddot{x}$ 对时间二阶导 | `\ddot{x}` |
+| $\hat{y}$ 预测值 | `\hat{y}` |
+| $\overline{x}$ 样本均值 | `\overline{x}` |
+
+### D3 积分与组合
+
+| 效果 | 源码 |
+| --- | --- |
+| $\int f(x)\,\mathrm{d}x$ 不定积分 | `\int f(x)\,\mathrm{d}x` |
+| $\int_{0}^{1} f(x)\,\mathrm{d}x$ 定积分 | `\int_{0}^{1} f(x)\,\mathrm{d}x` |
+| $\iint_D f(x,y)\,\mathrm{d}x\,\mathrm{d}y$ 二重积分 | `\iint_D f(x,y)\,\mathrm{d}x\,\mathrm{d}y` |
+| $\iiint_V f\,\mathrm{d}V$ 三重积分 | `\iiint_V f\,\mathrm{d}V` |
+| $\oint_C \mathbf{F} \cdot \mathrm{d}\mathbf{r}$ 环路积分 | `\oint_C \mathbf{F} \cdot \mathrm{d}\mathbf{r}` |
+| $\binom{n}{k}$ 组合数 | `\binom{n}{k}` |
+| $\dbinom{n}{k}$ 大号组合数 | `\dbinom{n}{k}` |
+| $\operatorname{tr}(A)$ 迹 | `\operatorname{tr}(A)` |
+| $\prod_{k=1}^{n} p_k$ 连乘概率 | `\prod_{k=1}^{n} p_k` |
 
 ---
 
-## 八、对齐公式（步骤推导必用）
-$$
-\begin{aligned}
-f(x) &= x^2 + 2x + 1 \\
-     &= (x+1)^2
-\end{aligned}
-$$
+## E 集合与逻辑
 
-```latex
-\begin{aligned}
-f(x) &= x^2 + 2x + 1 \\
-     &= (x+1)^2
-\end{aligned}
-```
+### E1 集合与逻辑
 
-等号自动对齐，适合推导过程展示。
+集合表示：
 
----
+| 效果 | 源码 |
+| --- | --- |
+| $\{1,2,3\}$ 花括号必须转义 | `\{1,2,3\}` |
+| $\{x \mid x>0\}$ 描述法，竖线用 `\mid` | `\{x \mid x>0\}` |
+| $\in$ 属于 | `\in` |
+| $\notin$ 不属于 | `\notin` |
+| $\ni$ 包含元素 | `\ni` |
+| $\subset$ 真子集 | `\subset` |
+| $\subseteq$ 子集 | `\subseteq` |
+| $\subsetneq$ 真子集（带不等号） | `\subsetneq` |
+| $\supset$ 真包含 | `\supset` |
+| $\supseteq$ 包含 | `\supseteq` |
+| $A \cup B$ 并集 | `A \cup B` |
+| $A \cap B$ 交集 | `A \cap B` |
+| $A \setminus B$ 差集 | `A \setminus B` |
+| $\complement_{U} A$ 补集 | `\complement_{U} A` |
+| $A^{c}$ 补集简写 | `A^c` |
+| $\emptyset$ 空集 | `\emptyset` |
 
-## 九、括号与自适应大小
+逻辑与量词：
 
-普通括号：
-$$
-( ) \quad [ ] \quad \{ \}
-$$
-
-```latex
-( ) \quad 
-[ ] \quad 
-\{ \}
-```
-
-自动调整大小（非常重要）：
-$$
-\left( \frac{a}{b} \right)
-$$
-
-```latex
-\left( \frac{a}{b} \right)
-```
-$$
-\left[ \sum_{i=1}^{n} a_i \right]
-$$
-
-```latex
-\left[ \sum_{i=1}^{n} a_i \right]
-```
+| 效果 | 源码 |
+| --- | --- |
+| $\forall x \in \mathbb{R}$ 任意 | `\forall x \in \mathbb{R}` |
+| $\exists x$ 存在 | `\exists x` |
+| $\nexists$ 不存在 | `\nexists` |
+| $p \land q$ 合取 | `p \land q` |
+| $p \lor q$ 析取 | `p \lor q` |
+| $\neg p$ 否定 | `\neg p` |
+| $p \Rightarrow q$ 蕴含 | `p \Rightarrow q` |
+| $p \Leftrightarrow q$ 等价 | `p \Leftrightarrow q` |
+| $p \iff q$ 当且仅当 | `p \iff q` |
+| $\vdash$ 可证明 | `\vdash` |
+| $\models$ 满足 | `\models` |
+| $\therefore$ 所以 | `\therefore` |
+| $\because$ 因为 | `\because` |
 
 ---
 
-## 十、文本与公式混排
+## F 向量与矩阵
 
-在公式中插入文字说明：
+### F1 向量与矩阵环境
+
+向量写法：
+
+| 效果 | 源码 |
+| --- | --- |
+| $\vec{x}$ 箭头向量 | `\vec{x}` |
+| $\mathbf{x}$ 粗体向量（论文更常用） | `\mathbf{x}` |
+| $\boldsymbol{\theta}$ 粗体希腊字母 | `\boldsymbol{\theta}` |
+| $\bm{\theta}$ 同上，命令更短 | `\bm{\theta}` |
+| $\mathbf{A}$ 粗体矩阵 | `\mathbf{A}` |
+| $x^{(i)}$ 第 i 个样本 | `x^{(i)}` |
+
+矩阵族——无括号、圆括号、方括号、行列式竖线，四套环境：
+
 $$
-x > 0 \quad \text{其中 } x \in \mathbb{R}
+\begin{matrix} a & b \\ c & d \end{matrix}
 $$
 
 ```latex
-x > 0 \quad \text{其中 } x \in \mathbb{R}
+$$
+\begin{matrix} a & b \\ c & d \end{matrix}
+$$
+```
+
+$$
+\begin{pmatrix} a & b \\ c & d \end{pmatrix}
+$$
+
+```latex
+$$
+\begin{pmatrix} a & b \\ c & d \end{pmatrix}
+$$
+```
+
+$$
+\begin{bmatrix} a & b \\ c & d \end{bmatrix}
+$$
+
+```latex
+$$
+\begin{bmatrix} a & b \\ c & d \end{bmatrix}
+$$
+```
+
+$$
+\begin{vmatrix} a & b \\ c & d \end{vmatrix}
+$$
+
+```latex
+$$
+\begin{vmatrix} a & b \\ c & d \end{vmatrix}
+$$
+```
+
+### F2 行列式与范数
+
+| 效果 | 源码 |
+| --- | --- |
+| $\lVert x \rVert_2$ L2 范数，双竖线用 `\lVert` | `\lVert x \rVert_2` |
+| $\vert x \vert$ 绝对值单竖线 | `\vert x \vert` |
+| $\langle x, y \rangle$ 内积 | `\langle x, y \rangle` |
+| $A^{T}$ 转置（大写 T 斜体） | `A^{T}` |
+| $A^{\top}$ 转置（数学规范写法） | `A^{\top}` |
+| $A^{\mathsf{T}}$ 转置（直立 T，最规范） | `A^{\mathsf{T}}` |
+| $A^{-1}$ 逆矩阵 | `A^{-1}` |
+| $A^{\dagger}$ 共轭转置 | `A^{\dagger}` |
+| $\operatorname{tr}(A)$ 迹 | `\operatorname{tr}(A)` |
+| $\operatorname{rank}(A)$ 秩 | `\operatorname{rank}(A)` |
+
+增广矩阵与带竖线分块（`|` 在表格里会断列，只能在块级公式里写）：
+
+$$
+\left(\begin{array}{cc|c} a & b & c \\ d & e & f \end{array}\right)
+$$
+
+```latex
+$$
+\left(\begin{array}{cc|c} a & b & c \\ d & e & f \end{array}\right)
+$$
 ```
 
 ---
 
-## 十一、常见黑板粗体集合（规范写法）
+## G 多行表达
+
+### G1 分段与对齐
+
+分段函数（`&` 对齐取值列，`\\` 换行）：
+
 $$
-\mathbb{N} \quad \mathbb{Z} \quad \mathbb{Q}
+f(x)=\begin{cases} x^{2}, & x \ge 0 \\ -x, & x < 0 \end{cases}
 $$
 
 ```latex
-\mathbb{N} \quad \mathbb{Z} \quad \mathbb{Q}
+$$
+f(x)=\begin{cases} x^{2}, & x \ge 0 \\ -x, & x < 0 \end{cases}
+$$
 ```
+
+推导对齐（`&` 对齐等号，`\\` 换行）：
+
 $$
-\mathbb{R} \quad \mathbb{C}
+\begin{aligned} f(x) &= x^{2}+2x+1 \\ &= (x+1)^{2} \\ &= (x+1)(x+1) \end{aligned}
 $$
 
 ```latex
-\mathbb{R} \quad \mathbb{C}
+$$
+\begin{aligned} f(x) &= x^{2}+2x+1 \\ &= (x+1)^{2} \\ &= (x+1)(x+1) \end{aligned}
+$$
+```
+
+对齐 + 手动编号（`\tag` 放在 `\end{aligned}` 后面）：
+
+$$
+\begin{aligned} a &= b+c \\ &= d \end{aligned} \tag{2}
+$$
+
+```latex
+$$
+\begin{aligned} a &= b+c \\ &= d \end{aligned} \tag{2}
+$$
+```
+
+多行矩阵与省略号（`\cdots` 横向、`\vdots` 纵向、`\ddots` 斜向）：
+
+$$
+\begin{pmatrix} a_{11} & \cdots & a_{1n} \\ \vdots & \ddots & \vdots \\ a_{m1} & \cdots & a_{mn} \end{pmatrix}
+$$
+
+```latex
+$$
+\begin{pmatrix} a_{11} & \cdots & a_{1n} \\ \vdots & \ddots & \vdots \\ a_{m1} & \cdots & a_{mn} \end{pmatrix}
+$$
+```
+
+按列对齐（`array` 的 `{rcl}` 指定每列对齐方式）：
+
+$$
+\begin{array}{rcl} (a+b)^{2} & = & a^{2}+2ab+b^{2} \\ (a-b)^{2} & = & a^{2}-2ab+b^{2} \end{array}
+$$
+
+```latex
+$$
+\begin{array}{rcl} (a+b)^{2} & = & a^{2}+2ab+b^{2} \\ (a-b)^{2} & = & a^{2}-2ab+b^{2} \end{array}
+$$
 ```
 
 ---
 
-## 十二、科研写作的实践建议
+## H 工程实践
 
-从长期看，LaTeX 的价值在**规范与一致性**：
+### H1 字体与单位直立
 
-1. 运算符用语义命令（`\cdot` 而不是 ）。
-2. 微分符号 `dx` 前加空格 `\,`。
-3. 向量、矩阵风格全篇统一。
-4. 推导过程使用 `aligned` 而不是手动换行。
-5. 永远使用 `\left \right` 控制复杂括号。
+| 效果 | 源码 |
+| --- | --- |
+| $\mathbb{N}$ 自然数集 | `\mathbb{N}` |
+| $\mathbb{Z}$ 整数集 | `\mathbb{Z}` |
+| $\mathbb{Q}$ 有理数集 | `\mathbb{Q}` |
+| $\mathbb{R}$ 实数集 | `\mathbb{R}` |
+| $\mathbb{C}$ 复数集 | `\mathbb{C}` |
+| $\mathbb{E}[X]$ 期望 | `\mathbb{E}[X]` |
+| $\mathcal{L}$ 损失 / 拉格朗日 | `\mathcal{L}` |
+| $\mathfrak{g}$ 哥特体 | `\mathfrak{g}` |
+| $\mathscr{F}$ 花体 | `\mathscr{F}` |
+| $\mathrm{d}x$ 微分 d 直立 | `\mathrm{d}x` |
+| $\mathrm{Gb/s}$ 单位直立 | `\mathrm{Gb/s}` |
+| $\mathrm{m/s^{2}}$ 单位带指数 | `\mathrm{m/s^{2}}` |
+| $\text{最大值}$ 公式内中文 | `\text{最大值}` |
+| $\textbf{粗体文字}$ 公式内粗体 | `\textbf{粗体文字}` |
+| $\operatorname*{arg\,max}_{x}$ 直立函数 + 下标 | `\operatorname*{arg\,max}_{x}` |
+
+### H2 本站 KaTeX 差异与红线
+
+这张表是踩坑记录，写法都是站在**本站**（KaTeX 0.16.47 + MDX）的角度：
+
+| 写法 | 本站实测结果 | 建议 |
+| --- | --- | --- |
+| `$x$` | 行内公式，正常 | 首选 |
+| `$$` 独占一行夹住内容 | 块级公式，居中，正常 | 多行结构一律用这个 |
+| `$$x+1$$` 写在同一行 | 退化为**行内公式**，不居中 | 拆成三行写 |
+| `\[ x \]` | **完全不渲染**，页面显示字面 `[` 加源码 | 改写成 `$$` |
+| `\( x \)` | 同样不渲染 | 改写成 `$` |
+| `\$` | 显示字面美元符，KaTeX 不介入 | 想显示 `$` 就用它 |
+| 代码块、行内代码里的 `$` | 安全，不参与解析 | 讲源码时放进代码里 |
+| `\begin{equation}` | 能编译，但**不自动编号** | 编号只能手写 `\tag{}` |
+| `\begin{align}` | 能编译，同样不自动编号 | 用 `aligned` + `\tag` |
+| `\label` / `\eqref` | **编译报错** | 改用页面锚点链接 |
+| 正文里的 `{` | MDX 当成表达式，容易编译失败 | 放进行内代码或写 `&#123;` |
+| 正文里的 `<` | MDX 当成标签开头，编译失败 | 放进 `$...$` 或行内代码 |
+| 公式里的全角空格、全角括号 | 报错或渲染异常 | 用 `\quad`、半角括号 |
+| 公式里的中文 | 必须包 `\text{}`，否则报错 | `\text{其中 }` |
+
+### H3 易错对照 20 条
+
+左列是常见写法，右列是改对之后的源码。**看效果差别，别只看字符**：
+
+| 场景 | 错 | 对 |
+| --- | --- | --- |
+| 多字符上标 | `x^n+1`（只把 n 当上标） | `x^{n+1}` |
+| 多字符下标 | `a_ij`（只有 i 是下标） | `a_{i,j}` |
+| 分式偷懒 | `1/2`（斜杠很小，论文里显廉价） | `\frac{1}{2}` |
+| 分式分子多字符 | `\frac12 x`（只取首字符） | `\frac{1}{2}x` |
+| 根式次数 | `\sqrt{x}[3]`（次数跑到根号外） | `\sqrt[3]{x}` |
+| 括号不撑高 | `( \frac{a}{b} )`（括号比内容矮） | `\left( \frac{a}{b} \right)` |
+| 花括号不转义 | `{1,2}`（直接报错） | `\{1,2\}` |
+| 乘法用星号 | `a * b`（显示成普通星号） | `a \cdot b` |
+| 集合描述法 | 直接写裸竖线（本行就是反例，会把表格断成多列） | `\{x \mid x>0\}` |
+| 分段函数不分列 | `\begin{cases} x^2 & x\ge 0 \\ -x & x<0\end{cases}` 挤在一起 | 每行补 `&` 和 `,`：`\begin{cases} x^{2}, & x \ge 0 \end{cases}` |
+| 换行写在普通公式里 | `a=1 \\ b=2`（块级里才生效） | 套 `\begin{aligned}` |
+| 对齐忘了 `&` | `\begin{aligned} a=b \\ c=d \end{aligned}`（右侧不齐） | `\begin{aligned} a &= b \end{aligned}` |
+| 用 `align` 当块级 | `\begin{align}` 无编号会疑惑 | `\begin{aligned}` 更稳 |
+| 下标中文不包 `\text` | `A_失败`（报错） | `A_{\text{失败}}` |
+| 单位斜体 | `10 m/s`（m、s 变斜体） | `10\,\mathrm{m/s}` |
+| 微分斜体 | `\frac{d f}{d x}`（d 是变量斜体） | `\frac{\mathrm{d}f}{\mathrm{d}x}` |
+| 省略号用点 | `...`（贴底，位置不对） | `\cdots` / `\ldots` |
+| `\tag` 用在行内 | `$x^2 \tag{1}$`（报错） | 放进 `$$` 块级公式 |
+| 交叉引用用 `\label` | `\label{eq1}`（编译失败） | 页面锚点 `[§A2](#a2-编号与交叉引用)` |
+| 中文全角标点 | `（x）` 写在公式里（报错） | `\text{（}x\text{）}` 或半角 |
+
+<Callout type="success">
+改完这样自检一遍：① 每条公式的 `$$` 是否都独占一行；② 多字符上下标是否都加了花括号；③ 有没有残留 `\[ ... \]`；④ 表格行里的竖线有没有漏转义（表格错列十有八九是它）。四条全过，本站基本不会渲染翻车。
+</Callout>
+
+<Callout type="info">
+维护约定：新增命令前先在编辑区写一行 `$命令$` 看是否渲染，再并入对应分区的表格；分区内保持"一行一对、左效果右源码"，不插图、不写长段落，保证扫读时视线只走两列。符号含义有歧义的（如 `\epsilon` 与 `\varepsilon`）在左列加一句中文注解，注解写在公式右侧括注，不额外占列。
+</Callout>

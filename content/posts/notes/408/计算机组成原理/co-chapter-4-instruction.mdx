@@ -70,22 +70,22 @@ tags: ['计算机组成原理', '指令系统']
 
 | 指令 | 类别 | 含义 | 汇编举例 | 汇编语言表示 |
 | --- | --- | --- | --- | --- |
-| jump register | 无条件跳转 | 过程返回 | `jr $ra` | go to $ra |
-| load word | 存储访问 | 从内存取一个字到寄存器 | `lw $s1, 100($s2)` | $s1 = Memory[$s2 + 100] |
-| shift right logical | 逻辑运算 | 按常数对寄存器逻辑右移 | `srl $s1, $s2, 10` | $s1 = $s2 >> 10 |
-| and | 逻辑运算 | 三个寄存器操作数，按位与 | `and $s1, $s2, $s3` | $s1 = $s2 & $s3 |
-| store word | 存储访问 | 从寄存器存一个字到内存 | `sw $s1, 100($s2)` | Memory[$s2 + 100] = $s1 |
-| shift left logical | 逻辑运算 | 按常数对寄存器逻辑左移 | `sll $s1, $s2, 10` | $s1 = $s2 &lt;&lt; 10 |
-| jump | 无条件跳转 | 直接跳转至目标地址 | `j L` | go to L |
-| set on less than immediate | 条件分支 | 小于常数则置寄存器为 1，否则为 0，用于后续指令判 0 | `slti $s1, $s2, 100` | if ($s2 &lt; 100) $s1=1; else $s1=0 |
-| or immediate | 逻辑运算 | 寄存器和常数，按位或 | `ori $s1, $s2, 100` | $s1 = $s2 | 100 |
-| set on less than | 条件分支 | 小于则置寄存器为 1，否则为 0，用于后续指令判 0 | `slt $s1, $s2, $s3` | if ($s2 &lt; $s3) $s1=1; else $s1=0 |
-| or | 逻辑运算 | 三个寄存器操作数，按位或 | `or $s1, $s2, $s3` | $s1 = $s2 | $s3 |
-| subtract | 算术运算 | 三个寄存器操作数 | `sub $s1, $s2, $s3` | $s1 = $s2 − $s3 |
-| branch on equal | 条件分支 | 相等则转移 | `beq $s1, $s2, L` | if ($s1 == $s2) go to L |
-| add | 算术运算 | 三个寄存器操作数 | `add $s1, $s2, $s3` | $s1 = $s2 + $s3 |
-| jump and link | 无条件跳转 | 过程调用 | `jal L` | $ra = PC + 4; go to L |
-| and immediate | 逻辑运算 | 寄存器和常数，按位与 | `andi $s1, $s2, 100` | $s1 = $s2 & 100 |
-| nor | 逻辑运算 | 三个寄存器操作数，按位或非 | `nor $s1, $s2, $s3` | $s1 = ~($s2 \| $s3) |
-| branch on not equal | 条件分支 | 不相等则转移 | `bne $s1, $s2, L` | if ($s1 != $s2) go to L |
+| jump register | 无条件跳转 | 过程返回 | `jr $ra` | `go to $ra` |
+| load word | 存储访问 | 从内存取一个字到寄存器 | `lw $s1, 100($s2)` | `$s1 = Memory[$s2 + 100]` |
+| shift right logical | 逻辑运算 | 按常数对寄存器逻辑右移 | `srl $s1, $s2, 10` | `$s1 = $s2 >> 10` |
+| and | 逻辑运算 | 三个寄存器操作数，按位与 | `and $s1, $s2, $s3` | `$s1 = $s2 & $s3` |
+| store word | 存储访问 | 从寄存器存一个字到内存 | `sw $s1, 100($s2)` | `Memory[$s2 + 100] = $s1` |
+| shift left logical | 逻辑运算 | 按常数对寄存器逻辑左移 | `sll $s1, $s2, 10` | `$s1 = $s2 << 10` |
+| jump | 无条件跳转 | 直接跳转至目标地址 | `j L` | `go to L` |
+| set on less than immediate | 条件分支 | 小于常数则置寄存器为 1，否则为 0，用于后续指令判 0 | `slti $s1, $s2, 100` | `if ($s2 < 100) $s1 = 1; else $s1 = 0` |
+| or immediate | 逻辑运算 | 寄存器和常数，按位或 | `ori $s1, $s2, 100` | `$s1 = $s2 \| 100` |
+| set on less than | 条件分支 | 小于则置寄存器为 1，否则为 0，用于后续指令判 0 | `slt $s1, $s2, $s3` | `if ($s2 < $s3) $s1 = 1; else $s1 = 0` |
+| or | 逻辑运算 | 三个寄存器操作数，按位或 | `or $s1, $s2, $s3` | `$s1 = $s2 \| $s3` |
+| subtract | 算术运算 | 三个寄存器操作数 | `sub $s1, $s2, $s3` | `$s1 = $s2 - $s3` |
+| branch on equal | 条件分支 | 相等则转移 | `beq $s1, $s2, L` | `if ($s1 == $s2) go to L` |
+| add | 算术运算 | 三个寄存器操作数 | `add $s1, $s2, $s3` | `$s1 = $s2 + $s3` |
+| jump and link | 无条件跳转 | 过程调用 | `jal L` | `$ra = PC + 4; go to L` |
+| and immediate | 逻辑运算 | 寄存器和常数，按位与 | `andi $s1, $s2, 100` | `$s1 = $s2 & 100` |
+| nor | 逻辑运算 | 三个寄存器操作数，按位或非 | `nor $s1, $s2, $s3` | `$s1 = ~($s2 \| $s3)` |
+| branch on not equal | 条件分支 | 不相等则转移 | `bne $s1, $s2, L` | `if ($s1 != $s2) go to L` |
 
