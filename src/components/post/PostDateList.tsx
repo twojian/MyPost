@@ -82,7 +82,7 @@ export default function PostDateList({ posts }: { posts: PostMeta[] }) {
             className="press rounded-full px-4 py-1.5 text-sm font-medium transition-colors"
             style={
               mode === key
-                ? { background: "var(--color-brand)", color: "#fff" }
+                ? { background: "var(--color-brand)", color: "var(--color-on-brand)" }
                 : { color: "var(--color-secondary)" }
             }
           >
@@ -99,12 +99,11 @@ export default function PostDateList({ posts }: { posts: PostMeta[] }) {
         >
           <div className="flex items-center gap-2 px-5 py-4">
             <p
-              className="reveal text-base font-semibold"
-              style={{ color: "var(--color-primary)" }}
-            >
+       className="reveal text-base font-semibold text-fg"
+     >
               {g.label}
             </p>
-            <span className="text-xs" style={{ color: "var(--color-secondary)" }}>
+            <span className="text-xs text-muted">
               {g.posts.length} 篇文章
             </span>
           </div>
@@ -129,15 +128,14 @@ export default function PostDateList({ posts }: { posts: PostMeta[] }) {
                   <span className="timeline-track" aria-hidden="true">
                     <span className="timeline-dot" />
                   </span>
-                  <span className="line-clamp-1 flex-1 px-2 text-sm text-[var(--color-primary)] transition-colors duration-150 group-hover:text-[var(--color-brand)]">
+                  <span className="line-clamp-1 flex-1 px-2 text-sm text-fg transition-colors duration-150 group-hover:text-brand">
                     {post.title}
                   </span>
                   {post.tags.slice(0, 2).map((tag) => (
                     <span
-                      key={tag}
-                      className="shrink-0 text-xs font-medium"
-                      style={{ color: "var(--color-brand)" }}
-                    >
+           key={tag}
+           className="shrink-0 text-xs font-medium text-brand"
+         >
                       #{tag}
                     </span>
                   ))}

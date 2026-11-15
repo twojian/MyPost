@@ -20,7 +20,7 @@ const averia = Averia_Gruesa_Libre({
 export const metadata: Metadata = {
   title: { default: "Twojian Blog", template: "%s | Twojian Blog" },
   description: "记录个人计算机考研笔记、数学基础与技术思考",
-  icons: { icon: "/images/avatar.png" },
+  icons: { icon: "/images/ayanami.jpg" },
 };
 
 export default function RootLayout({

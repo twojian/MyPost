@@ -8,10 +8,12 @@ export default function LikeButton({ slug }: { slug: string }) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    const isLiked = localStorage.getItem(`liked:${slug}`) === "1";
-    const saved = parseInt(localStorage.getItem(`likeCount:${slug}`) ?? "0", 10);
-    setLiked(isLiked);
-    setCount(saved);
+    // localStorage 只能在客户端读取，延后到下一帧落状态，避免 effect 内同步 setState
+    const id = requestAnimationFrame(() => {
+      setLiked(localStorage.getItem(`liked:${slug}`) === "1");
+      setCount(parseInt(localStorage.getItem(`likeCount:${slug}`) ?? "0", 10));
+    });
+    return () => cancelAnimationFrame(id);
   }, [slug]);
 
   const toggle = () => {
@@ -31,12 +33,12 @@ export default function LikeButton({ slug }: { slug: string }) {
     >
       <Heart
         size={26}
-        fill={liked ? "#e0405e" : "none"}
+        fill={liked ? "var(--color-like)" : "none"}
         strokeWidth={1.8}
-        style={{ color: liked ? "#e0405e" : "var(--color-secondary)", transition: "all 0.2s" }}
+        className={`transition-colors ${liked ? "text-like" : "text-muted"}`}
       />
       {count > 0 && (
-        <span className="text-xs" style={{ color: "var(--color-secondary)" }}>
+        <span className="text-xs text-muted">
           {count}
         </span>
       )}

@@ -31,20 +31,19 @@ export default function MusicPlayer({
     <div className="flex h-full w-full items-center gap-3 px-5">
       <div
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-        style={{ background: "rgba(53,191,171,0.15)" }}
+        style={{ background: "color-mix(in srgb, var(--color-brand) 15%, transparent)" }}
       >
-        <Music size={16} style={{ color: "var(--color-brand)" }} />
+        <Music size={16} className="text-brand" />
       </div>
 
       <div className="min-w-0 flex-1">
         <p
-          className="truncate text-sm font-medium"
-          style={{ color: "var(--color-primary)" }}
-        >
+     className="truncate text-sm font-medium text-fg"
+   >
           {title}
         </p>
         {artist && (
-          <p className="truncate text-xs" style={{ color: "var(--color-secondary)" }}>
+          <p className="truncate text-xs text-muted">
             {artist}
           </p>
         )}

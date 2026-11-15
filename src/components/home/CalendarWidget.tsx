@@ -9,7 +9,9 @@ export default function CalendarWidget() {
   const [today, setToday] = useState<Date | null>(null);
 
   useEffect(() => {
-    setToday(new Date());
+    // 延后到下一帧：避免 effect 内同步 setState 触发级联渲染（与 SiteShell 首屏淡入同一处理方式）
+    const id = requestAnimationFrame(() => setToday(new Date()));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   if (!today) return <div className="glass-card-static squircle h-48" />;
@@ -29,7 +31,7 @@ export default function CalendarWidget() {
 
   return (
     <div className="flex h-full w-full flex-col justify-center px-5 py-4">
-      <p className="mb-3 text-xs" style={{ color: "var(--color-secondary)" }}>
+      <p className="mb-3 text-xs text-muted">
         {year}/{String(month + 1).padStart(2, "0")}/{String(date).padStart(2, "0")}{" "}
         {WEEKDAY_CN[today.getDay()]}
       </p>
@@ -51,7 +53,7 @@ export default function CalendarWidget() {
             className="mx-auto my-0.5 flex h-6 w-6 items-center justify-center rounded-full text-xs transition-colors"
             style={
               d === date
-                ? { background: "var(--color-brand)", color: "#fff", fontWeight: 600 }
+                ? { background: "var(--color-brand)", color: "var(--color-on-brand)", fontWeight: 600 }
                 : { color: d ? "var(--color-primary)" : "transparent" }
             }
           >

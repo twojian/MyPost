@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import TagBadge from "@/components/ui/TagBadge";
 import { getAllTags } from "@/lib/posts";
 
 export const metadata: Metadata = { title: "标签" };
@@ -9,32 +9,16 @@ export default function TagsPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
+      <h1 className="mb-6 text-2xl font-bold text-fg">
         标签
       </h1>
       <div className="glass-card-static flex flex-wrap gap-3 p-6">
         {tags.length > 0 ? (
           tags.map((tag) => (
-            <Link
-              key={tag.name}
-              href={`/tags/${tag.name}`}
-              className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-transform hover:scale-105"
-              style={{
-                background: "color-mix(in srgb, var(--color-brand) 15%, transparent)",
-                color: "var(--color-brand)",
-              }}
-            >
-              # {tag.name}
-              <span
-                className="rounded-full px-1.5 py-0.5 text-xs"
-                style={{ background: "color-mix(in srgb, var(--color-brand) 20%, transparent)" }}
-              >
-                {tag.count}
-              </span>
-            </Link>
+            <TagBadge key={tag.name} name={tag.name} count={tag.count} size="lg" />
           ))
         ) : (
-          <p style={{ color: "var(--color-secondary)" }}>暂无标签</p>
+          <p className="text-muted">暂无标签</p>
         )}
       </div>
     </>

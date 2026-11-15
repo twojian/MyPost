@@ -19,15 +19,13 @@ export default function CanIRunPage() {
   return (
     <>
       <h1
-        className="mb-2 text-2xl font-bold"
-        style={{ color: "var(--color-primary)" }}
-      >
+    className="mb-2 text-2xl font-bold text-fg"
+  >
         AI 模型本地运行检测
       </h1>
       <p
-        className="mb-6 text-sm"
-        style={{ color: "var(--color-secondary)" }}
-      >
+    className="mb-6 text-sm text-muted"
+  >
         在浏览器端检测你的 CPU / GPU / 内存，推荐可以本地运行的开放模型，无需云端 API。
       </p>
 
@@ -43,12 +41,12 @@ export default function CanIRunPage() {
               className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all"
               style={{
                 background: isActive
-                  ? "rgba(53, 191, 171, 0.18)"
+                  ? "color-mix(in srgb, var(--color-brand) 18%, transparent)"
                   : "transparent",
                 color: isActive
                   ? "var(--color-brand)"
                   : "var(--color-secondary)",
-                boxShadow: isActive ? "inset 0 0 0 1px rgba(53, 191, 171, 0.35)" : undefined,
+                boxShadow: isActive ? "inset 0 0 0 1px color-mix(in srgb, var(--color-brand) 35%, transparent)" : undefined,
               }}
               aria-pressed={isActive}
             >
@@ -60,7 +58,7 @@ export default function CanIRunPage() {
       </div>
 
       <div
-        className="overflow-hidden rounded-2xl border bg-white/70"
+        className="overflow-hidden rounded-2xl border bg-[var(--color-panel)]"
         style={{ borderColor: "var(--color-border)" }}
       >
         <iframe

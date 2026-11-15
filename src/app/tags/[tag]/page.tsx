@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import PostCard from "@/components/post/PostCard";
+import PostList from "@/components/post/PostList";
+import TagBadge from "@/components/ui/TagBadge";
 import { getAllPosts, getAllTags } from "@/lib/posts";
 
 interface Props {
@@ -22,17 +23,10 @@ export default async function TagPage({ params }: Props) {
 
   return (
     <>
-      <h1 className="mb-6 text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
-        # {decoded}
-        <span className="ml-2 text-base font-normal" style={{ color: "var(--color-secondary)" }}>
-          ({posts.length} 篇)
-        </span>
+      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold text-fg">
+        <TagBadge name={decoded} size="lg" count={posts.length} showLink={false} />
       </h1>
-      <div className="flex flex-col gap-4">
-        {posts.map((post) => (
-          <PostCard key={post.slug} post={post} />
-        ))}
-      </div>
+      <PostList posts={posts} emptyText="该标签下暂无文章" />
     </>
   );
 }

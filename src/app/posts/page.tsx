@@ -9,10 +9,10 @@ export default function PostsPage() {
 
   return (
     <>
-      <h1 className="mb-2 text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
+      <h1 className="mb-2 text-2xl font-bold text-fg">
         所有文章
       </h1>
-      <p className="mb-6 text-sm" style={{ color: "var(--color-secondary)" }}>
+      <p className="mb-6 text-sm text-muted">
         按日、周、月、年或分类浏览文章。
       </p>
       <PostDateList posts={posts} />

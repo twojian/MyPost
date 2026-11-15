@@ -2,15 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Search } from "lucide-react";
-
-const navLinks = [
-  { href: "/", label: "首页" },
-  { href: "/posts", label: "文章" },
-  { href: "/share", label: "分享" },
-  { href: "/bloggers", label: "博客圈" },
-  { href: "/archives", label: "归档" },
-];
+import { Menu, X } from "lucide-react";
+import { MAIN_NAV } from "@/lib/nav";
+import { siteConfig } from "@/lib/site-config";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -22,38 +16,36 @@ export default function Navbar() {
         <Link
           href="/"
           transitionTypes={["nav-back"]}
-          className="press font-display text-xl"
-          style={{ color: "var(--color-brand)" }}
+          className="press font-display text-xl text-brand"
+          aria-label={siteConfig.name}
         >
-          Twojian
+          {siteConfig.name}
         </Link>
 
         {/* Desktop nav */}
         <div className="hidden items-center gap-6 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              transitionTypes={link.href === "/" ? ["nav-back"] : undefined}
-              className="press text-sm text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link
-            href="/search"
-            className="press text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
-          >
-            <Search size={18} />
-          </Link>
+          {MAIN_NAV.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                transitionTypes={link.href === "/" ? ["nav-back"] : undefined}
+                aria-label={link.iconOnly ? link.label : undefined}
+                className="press text-sm text-muted transition-colors hover:text-brand"
+              >
+                {link.iconOnly ? <Icon size={18} /> : link.label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Mobile hamburger */}
         <button
-          className="press ml-auto md:hidden"
+          className="press ml-auto text-muted md:hidden"
           onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-          style={{ color: "var(--color-secondary)" }}
+          aria-label="切换导航菜单"
+          aria-expanded={open}
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -61,25 +53,18 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="mt-4 flex flex-col gap-3 border-t border-white/30 pt-4 md:hidden">
-          {navLinks.map((link) => (
+        <div className="mt-4 flex flex-col gap-3 border-t border-[var(--color-hairline)] pt-4 md:hidden">
+          {MAIN_NAV.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               transitionTypes={link.href === "/" ? ["nav-back"] : undefined}
-              className="press text-sm text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
+              className="press text-sm text-muted transition-colors hover:text-brand"
               onClick={() => setOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/search"
-            onClick={() => setOpen(false)}
-            className="press text-[var(--color-secondary)] transition-colors hover:text-[var(--color-brand)]"
-          >
-            <Search size={18} />
-          </Link>
         </div>
       )}
     </header>

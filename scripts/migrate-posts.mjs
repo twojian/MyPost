@@ -9,6 +9,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import grayMatter from "gray-matter";
 
 const APPLY = process.argv.includes("--apply");
@@ -52,6 +53,8 @@ function classifyImage(url, filePath) {
 const files = walk(CONTENT_DIR).sort();
 const records = [];
 const imageStats = { absolute: 0, publicLike: 0, relative: 0, relativeMissing: [], other: [] };
+// 无法解析来源的裸文件名：只登记，绝不猜测改写
+const unresolvedImages = [];
 
 for (const f of files) {
   const rel = path.relative(CONTENT_DIR, f).replace(/\\/g, "/");
@@ -78,7 +81,10 @@ for (const f of files) {
     else if (img.kind === "relative") {
       imageStats.relative++;
       if (!img.exists) imageStats.relativeMissing.push({ slug, url: img.url, abs: img.abs });
-    } else imageStats.other.push({ slug, url: img.url });
+    } else {
+      imageStats.other.push({ slug, url: img.url });
+      unresolvedImages.push({ slug, url: img.url, type: img.type, action: "keep-as-is" });
+    }
   }
 
   records.push({ slug, title, date, tags, excerpt, content, images: imgs, file: rel, bytes: Buffer.byteLength(raw) });
@@ -107,6 +113,8 @@ const report = {
   recordCount: records.length,
   slugList: records.map((r) => r.slug),
   imageStats,
+  unresolvedImages,
+  unresolvedImageCount: unresolvedImages.length,
   problems: problems.map((p) => ({ slug: p.slug, title: p.title, date: p.date })),
 };
 const reportPath = path.join(ROOT, "drizzle", APPLY ? "migration-report.json" : "migration-dryrun.json");
@@ -153,22 +161,87 @@ for (const r of records) {
 const count = await sql`SELECT count(*)::int AS n FROM posts`;
 console.log(`\n迁移完成: 成功 ${applied.length} 篇, 失败 ${skipped.length} 篇, 表内总数 ${count[0].n}`);
 
-// 校验：DB 记录数 vs 仓库文章数
-const expect = records.length;
-const actual = count[0].n;
-console.log(`校验: 仓库文件 ${expect} 篇 vs DB 记录 ${actual} 条 ${actual === expect ? "✅ 一致" : "⚠️ 不一致"}`);
+// ---------- 校验：全量对比 DB 与源文件 ----------
+// 口径统一：源侧使用 gray-matter 去除 frontmatter 后的 content；DB 侧使用 content_md。
+// 用 md5 全量比对，避免把大段正文拉回内存；抽样再做逐字精确比对。
+const md5 = (s) => crypto.createHash("md5").update(s, "utf8").digest("hex");
 
-// 抽样 3 篇对比正文完整
+const dbRows = await sql`SELECT slug, title, tags, excerpt, status, md5(content_md) AS content_hash FROM posts`;
+const dbBySlug = new Map(dbRows.map((r) => [r.slug, r]));
+const sourceSlugs = new Set(records.map((r) => r.slug));
+
+const missingInDb = records.filter((r) => !dbBySlug.has(r.slug)).map((r) => r.slug);
+const extraInDb = dbRows.filter((r) => !sourceSlugs.has(r.slug)).map((r) => r.slug);
+const contentDiff = records
+  .filter((r) => dbBySlug.has(r.slug) && dbBySlug.get(r.slug).content_hash !== md5(r.content))
+  .map((r) => r.slug);
+
+const titleDiff = records
+  .filter((r) => dbBySlug.has(r.slug) && dbBySlug.get(r.slug).title !== r.title)
+  .map((r) => r.slug);
+const tagsDiff = records
+  .filter((r) => dbBySlug.has(r.slug) && JSON.stringify(dbBySlug.get(r.slug).tags ?? []) !== JSON.stringify(r.tags ?? []))
+  .map((r) => r.slug);
+const excerptDiff = records
+  .filter((r) => dbBySlug.has(r.slug) && (dbBySlug.get(r.slug).excerpt ?? "") !== (r.excerpt ?? ""))
+  .map((r) => r.slug);
+const statusDiff = dbRows.filter((r) => r.status !== "published").map((r) => r.slug);
+
+console.log(
+  `校验: 源文件 ${records.length} 篇 vs DB ${dbRows.length} 条 ${records.length === dbRows.length ? "一致" : "不一致"}`
+);
+console.log(`缺失 ${missingInDb.length} 篇 / 多余 ${extraInDb.length} 条 / 正文差异 ${contentDiff.length} 篇`);
+console.log(
+  `字段差异: title ${titleDiff.length} / tags ${tagsDiff.length} / excerpt ${excerptDiff.length} / 非 published ${statusDiff.length}`
+);
+console.log(`无法解析来源的图片裸路径 ${unresolvedImages.length} 条（保持原样，未改写）`);
+
+// 抽样 3 篇逐字精确对比正文
 const sampleSlugs = records.slice(0, 3).map((r) => r.slug);
+const sampleChecks = [];
 for (const s of sampleSlugs) {
-  const row = await sql`SELECT slug, title, length(content_md)::int AS len FROM posts WHERE slug = ${s}`;
   const src = records.find((r) => r.slug === s);
-  const ok = row.length === 1 && row[0].len === src.bytes;
-  console.log(`抽样 [${s}]: DB title=${row[0]?.title ?? "N/A"} content_len=${row[0]?.len ?? 0} 源字节=${src.bytes} ${ok ? "✅" : "⚠️"}`);
+  const row = await sql`SELECT title, content_md FROM posts WHERE slug = ${s}`;
+  const dbContent = row[0]?.content_md ?? null;
+  const exactMatch = dbContent === src.content;
+  const dbChars = dbContent == null ? 0 : [...dbContent].length;
+  const sourceChars = [...src.content].length;
+  sampleChecks.push({ slug: s, title: row[0]?.title ?? null, dbChars, sourceChars, exactMatch });
+  console.log(
+    `抽样 [${s}]: DB title=${row[0]?.title ?? "N/A"} 字符=${dbChars} 源字符=${sourceChars} ${exactMatch ? "精确一致" : "不一致"}`
+  );
 }
+
+const allPassed =
+  records.length === dbRows.length &&
+  missingInDb.length === 0 &&
+  extraInDb.length === 0 &&
+  contentDiff.length === 0 &&
+  titleDiff.length === 0 &&
+  tagsDiff.length === 0 &&
+  excerptDiff.length === 0 &&
+  statusDiff.length === 0 &&
+  sampleChecks.every((c) => c.exactMatch);
 
 report.applied = applied;
 report.skipped = skipped;
-report.sampleCheck = sampleSlugs;
+report.sampleCheck = sampleChecks;
+report.verification = {
+  sourceFileCount: files.length,
+  sourceRecordCount: records.length,
+  dbRowCount: dbRows.length,
+  countMatch: records.length === dbRows.length,
+  missingInDb,
+  extraInDb,
+  contentDiff,
+  titleDiff,
+  tagsDiff,
+  excerptDiff,
+  statusDiff,
+  unresolvedImageCount: unresolvedImages.length,
+  sampleChecks,
+  allPassed,
+};
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2), "utf8");
+console.log(`最终校验 ${allPassed ? "全部通过" : "未通过"}`);
 console.log(`最终报告 -> ${reportPath}`);

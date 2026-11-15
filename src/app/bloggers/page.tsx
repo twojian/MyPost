@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
+import SiteIcon from "@/components/ui/SiteIcon";
+import { mailtoHref } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "博客圈",
@@ -39,19 +41,13 @@ const BLOGGERS: Blogger[] = [
   { name: "Tonsky", url: "https://tonsky.me", tagline: "页面很亮的极客", color: "#fde68a" },
 ];
 
-function initials(name: string) {
-  // 取首字（中文用第一个字符，英文取首字母）
-  const ch = name.trim().charAt(0);
-  return ch.toUpperCase();
-}
-
 export default function BloggersPage() {
   return (
     <>
-      <h1 className="mb-2 text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
+      <h1 className="mb-2 text-2xl font-bold text-fg">
         博客圈
       </h1>
-      <p className="mb-6 text-sm" style={{ color: "var(--color-secondary)" }}>
+      <p className="mb-6 text-sm text-muted">
         想多看看大家的小宇宙，所以做了这个友链页——按下卡片直达博客主页，致敬每一位认真写作的朋友。
       </p>
 
@@ -65,26 +61,25 @@ export default function BloggersPage() {
             className="glass-card squircle flex items-center gap-3 p-4 transition-transform hover:-translate-y-0.5"
             style={{ borderRadius: "24px" }}
           >
-            <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display text-lg font-bold text-white shadow-sm"
-              style={{ background: b.color ?? "var(--color-brand)" }}
-            >
-              {initials(b.name)}
-            </div>
+            <SiteIcon
+              url={b.url}
+              name={b.name}
+              size={48}
+              color={b.color}
+              className="shadow-sm"
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <p
-                  className="line-clamp-1 text-sm font-semibold"
-                  style={{ color: "var(--color-primary)" }}
-                >
+         className="line-clamp-1 text-sm font-semibold text-fg"
+       >
                   {b.name}
                 </p>
-                <ExternalLink size={11} style={{ color: "var(--color-secondary)" }} />
+                <ExternalLink size={11} className="text-muted" />
               </div>
               <p
-                className="line-clamp-2 text-xs leading-relaxed"
-                style={{ color: "var(--color-secondary)" }}
-              >
+        className="line-clamp-2 text-xs leading-relaxed text-muted"
+      >
                 {b.tagline}
               </p>
             </div>
@@ -92,8 +87,8 @@ export default function BloggersPage() {
         ))}
       </div>
 
-      <p className="mt-8 text-center text-xs" style={{ color: "var(--color-secondary)" }}>
-        想添加友链？欢迎通过 <a href="mailto:twojian6@gmail.com" style={{ color: "var(--color-brand)" }}>邮件</a> 联系我。
+      <p className="mt-8 text-center text-xs text-muted">
+        想添加友链？欢迎通过 <a href={mailtoHref} className="text-brand">邮件</a> 联系我。
       </p>
     </>
   );

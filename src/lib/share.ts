@@ -21,14 +21,18 @@ export interface ShareItem {
   desc?: string;
 }
 
-/** 每个知识大类的封面渐变与标签主色 */
-export const CATEGORY_STYLE: Record<string, { from: string; to: string; accent: string }> = {
-  "GPU / AI Infra": { from: "#0d5c56", to: "#2dd4bf", accent: "#14b8a6" },
-  "运维 / CI-CD / 监控": { from: "#1e3a8a", to: "#38bdf8", accent: "#3b82f6" },
-  "技术周刊 / 观点": { from: "#78350f", to: "#fbbf24", accent: "#f59e0b" },
-  "编程语言 / 前端": { from: "#831843", to: "#f472b6", accent: "#ec4899" },
-  "效率工具 / 方法": { from: "#3b0764", to: "#a78bfa", accent: "#8b5cf6" },
-  "独立博客精选": { from: "#155e75", to: "#22d3ee", accent: "#06b6d4" },
+/**
+ * 每个知识大类对应的 CSS 变量组类名。
+ * 具体的渐变 / 主色统一维护在 globals.css 的 `.share-cat-*` 规则里，
+ * 组件只引用 var(--cat-from) / var(--cat-to) / var(--cat-accent)，不出现颜色字面量。
+ */
+export const CATEGORY_CLASS: Record<string, string> = {
+  "GPU / AI Infra": "share-cat-gpu",
+  "运维 / CI-CD / 监控": "share-cat-ops",
+  "技术周刊 / 观点": "share-cat-weekly",
+  "编程语言 / 前端": "share-cat-frontend",
+  "效率工具 / 方法": "share-cat-tools",
+  "独立博客精选": "share-cat-blog",
 };
 
 export const SHARE_ITEMS: ShareItem[] = [

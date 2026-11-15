@@ -1,43 +1,26 @@
 import Link from "next/link";
-import type { PostMeta } from "@/lib/posts";
-import { formatDate } from "@/lib/utils";
-import TagBadge from "@/components/ui/TagBadge";
+import type { PostMeta as PostMetaData } from "@/lib/posts";
+import PostMeta from "@/components/post/PostMeta";
 
-export default function PostCard({ post }: { post: PostMeta }) {
+/** 列表卡片：元信息（日期 · 阅读时长 · 字数 · 标签）统一由 PostMeta 渲染 */
+export default function PostCard({ post }: { post: PostMetaData }) {
   return (
     <Link href={`/posts/${post.slug}`} className="press block">
       <article className="glass-card px-6 py-5">
-        <h2
-          className="mb-2 text-lg font-semibold"
-          style={{ color: "var(--color-primary)" }}
-        >
-          {post.title}
-        </h2>
+        <h2 className="mb-2 text-lg font-semibold text-fg">{post.title}</h2>
 
         {post.summary && (
-          <p
-            className="mb-3 line-clamp-2 text-sm"
-            style={{ color: "var(--color-secondary)" }}
-          >
-            {post.summary}
-          </p>
+          <p className="mb-3 line-clamp-2 text-sm text-muted">{post.summary}</p>
         )}
 
-        <div className="flex flex-wrap items-center gap-3 text-xs" style={{ color: "var(--color-secondary)" }}>
-          <time>{formatDate(post.date)}</time>
-          <span>·</span>
-          <span>{post.readingTime}</span>
-          <span>·</span>
-          <span>{post.wordCount} 字</span>
-        </div>
-
-        {post.tags.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <TagBadge key={tag} name={tag} showLink={false} />
-            ))}
-          </div>
-        )}
+        <PostMeta
+          date={post.date}
+          readingTime={post.readingTime}
+          wordCount={post.wordCount}
+          tags={post.tags}
+          size="sm"
+          tagLinks={false}
+        />
       </article>
     </Link>
   );

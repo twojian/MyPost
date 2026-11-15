@@ -19,9 +19,9 @@ export default function ArchivesPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-2xl font-bold" style={{ color: "var(--color-primary)" }}>
+      <h1 className="mb-6 text-2xl font-bold text-fg">
         归档
-        <span className="ml-2 text-base font-normal" style={{ color: "var(--color-secondary)" }}>
+        <span className="ml-2 text-base font-normal text-muted">
           (共 {posts.length} 篇)
         </span>
       </h1>
@@ -30,25 +30,22 @@ export default function ArchivesPage() {
         {years.map((year) => (
           <div key={year} className="mb-8 last:mb-0">
             <h2
-              className="mb-4 text-lg font-bold"
-              style={{ color: "var(--color-brand)" }}
-            >
+       className="mb-4 text-lg font-bold text-brand"
+     >
               {year}
             </h2>
             <ul className="space-y-3">
               {grouped[year].map((post) => (
                 <li key={post.slug} className="flex items-baseline gap-4">
                   <time
-                    className="shrink-0 text-sm tabular-nums"
-                    style={{ color: "var(--color-secondary)" }}
-                  >
+          className="shrink-0 text-sm tabular-nums text-muted"
+        >
                     {formatDate(post.date)}
                   </time>
                   <Link
-                    href={`/posts/${post.slug}`}
-                    className="text-sm transition-colors hover:text-[var(--color-brand)]"
-                    style={{ color: "var(--color-primary)" }}
-                  >
+          href={`/posts/${post.slug}`}
+          className="text-sm transition-colors hover:text-brand text-fg"
+        >
                     {post.title}
                   </Link>
                 </li>
