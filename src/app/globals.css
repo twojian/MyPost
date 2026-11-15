@@ -7,6 +7,22 @@
   --color-brand: #35bfab;             /* 强调色：可交互 / 当前状态 */
   --color-brand-secondary: #0e9384;   /* 强调色深变体（hover） */
 
+  /* ===== Catppuccin Latte 强调色板（标签 / 分类配色，浅色模式） ===== */
+  --ctp-rosewater: #dc8a78;
+  --ctp-flamingo: #dd7878;
+  --ctp-pink: #ea76cb;
+  --ctp-mauve: #8839ef;
+  --ctp-red: #d20f39;
+  --ctp-maroon: #e64553;
+  --ctp-peach: #fe640b;
+  --ctp-yellow: #df8e1d;
+  --ctp-green: #40a02b;
+  --ctp-teal: #179299;
+  --ctp-sky: #04a5e5;
+  --ctp-sapphire: #209fb5;
+  --ctp-blue: #1e66f5;
+  --ctp-lavender: #7287fd;
+
   --color-primary: #1d1d1f;           /* label · 一级文本 */
   --color-secondary: #6e6e73;         /* label · 二级文本 */
   --color-tertiary: rgba(60, 60, 67, 0.35); /* label · 三级文本 */
@@ -20,6 +36,56 @@
   --color-card-hover: rgba(255, 255, 255, 0.95);
   --color-article: rgba(255, 255, 255, 0.92);
   --color-inline-code: #b5485d;       /* 行内代码（Notion 红） */
+
+  /* ===== 图层 / 描边 / 前景（深浅模式各给一套，组件只改引用不改值） ===== */
+  --color-glass: rgba(255, 255, 255, 0.4);        /* Bento 薄玻璃纱 */
+  --color-panel: rgba(255, 255, 255, 0.7);        /* 嵌页面板底 */
+  --color-nav-glass: rgba(255, 255, 255, 0.75);   /* 导航栏强玻璃 */
+  --color-row-hover: rgba(255, 255, 255, 0.4);    /* 行 / 按钮悬浮底 */
+  --color-hairline: rgba(255, 255, 255, 0.3);     /* 半透明白描边 */
+  --color-scrim: rgba(255, 255, 255, 0.22);       /* 图片上的半透明标签底 */
+  --color-on-brand: #ffffff;                      /* 强调色块上的文字 */
+  --color-github: #24292e;                        /* GitHub 品牌色 */
+  --color-like: #e0405e;                          /* 点赞高亮 */
+  --clock-lcd-bg: #dde1d8;
+  --clock-lcd-fg: #3b4a3d;
+  --clock-lcd-ghost: rgba(60, 72, 60, 0.1);
+  --clock-lcd-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.12), inset 0 -2px 4px rgba(255, 255, 255, 0.6),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-nav: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  /* 视频背景遮罩（深浅模式见 .dark） */
+  --video-overlay: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+
+  /* Callout 提示框 */
+  --color-callout-warning-bg: rgba(251, 191, 36, 0.1);
+  --color-callout-warning-border: #fbbf24;
+  --color-callout-success-bg: rgba(34, 197, 94, 0.1);
+  --color-callout-success-border: #22c55e;
+  --color-callout-error-bg: rgba(239, 68, 68, 0.1);
+  --color-callout-error-border: #ef4444;
+
+  /* 时钟 LCD（拟物硬件质感，深浅模式统一观感） */
+  --color-clock-face: #dde1d8;
+  --color-clock-digits: #3b4a3d;
+  --color-clock-ghost: rgba(60, 72, 60, 0.1);
+  --shadow-clock: inset 0 2px 6px rgba(0, 0, 0, 0.12),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.6), 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  /* Catppuccin 中性色（头像兜底底色） */
+  --ctp-overlay1: #8c8fa1;
+
+  /* 代码块底色（Catppuccin Latte base，与 shiki 浅色主题同源，避免双层叠加） */
+  --code-block-bg: #eff1f5;
+  --code-block-border: rgba(60, 60, 67, 0.12);
+  --code-block-fg: #4c4f69;
 
   --color-bg-dark: #161616;
 }
@@ -55,6 +121,22 @@ body {
 .dark {
   --color-brand: #4ad3c0;
   --color-brand-secondary: #35bfab;
+
+  /* ===== Catppuccin Mocha 强调色板（深色模式） ===== */
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
   --color-primary: rgba(255, 255, 255, 0.85);
   --color-secondary: rgba(255, 255, 255, 0.55);
   --color-tertiary: rgba(255, 255, 255, 0.35);
@@ -65,6 +147,45 @@ body {
   --color-article: rgba(28, 28, 30, 0.85);
   --color-border: rgba(255, 255, 255, 0.18);
   --color-inline-code: #ff7a90;
+
+  /* 图层 / 描边 / 前景（深色） */
+  --color-glass: rgba(28, 28, 30, 0.45);
+  --color-panel: rgba(28, 28, 30, 0.7);
+  --color-nav-glass: color-mix(in srgb, var(--color-bg-dark) 75%, transparent);
+  --color-row-hover: rgba(255, 255, 255, 0.08);
+  --color-hairline: rgba(255, 255, 255, 0.12);
+  --color-scrim: rgba(255, 255, 255, 0.16);
+  --color-github: #3a3f44;
+  --color-like: #ff6b85;
+  --clock-lcd-bg: #232a24;
+  --clock-lcd-fg: #9fd6a6;
+  --clock-lcd-ghost: rgba(159, 214, 166, 0.1);
+  --clock-lcd-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.55), inset 0 -2px 4px rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.3);
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-nav: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+  --video-overlay: linear-gradient(
+    180deg,
+    rgba(12, 12, 14, 0.55) 0%,
+    rgba(12, 12, 14, 0.4) 100%
+  );
+
+  --color-callout-warning-bg: rgba(251, 191, 36, 0.12);
+  --color-callout-warning-border: #f9e2af;
+  --color-callout-success-bg: rgba(34, 197, 94, 0.12);
+  --color-callout-success-border: #a6e3a1;
+  --color-callout-error-bg: rgba(239, 68, 68, 0.12);
+  --color-callout-error-border: #f38ba8;
+
+  --ctp-overlay1: #7f849c;
+
+  /* 代码块底色（Catppuccin Mocha base，与 shiki 深色主题同源，避免双层叠加） */
+  --code-block-bg: #1e1e2e;
+  --code-block-border: rgba(255, 255, 255, 0.08);
+  --code-block-fg: #cdd6f4;
 }
 
 .dark body {
@@ -72,15 +193,65 @@ body {
   color: var(--color-primary);
 }
 
-/* ===== 毛玻璃卡片 ===== */
-.glass-card {
-  background: var(--color-card);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+/* ===========================================================
+   语义文本色 / 悬浮底纹
+   组件里不再重复写 style={{ color: "var(--color-*)" }}，统一用这些类
+   =========================================================== */
+.text-fg {
+  color: var(--color-primary);
+}
+
+.text-muted {
+  color: var(--color-secondary);
+}
+
+.text-subtle {
+  color: var(--color-tertiary);
+}
+
+.text-brand {
+  color: var(--color-brand);
+}
+
+.text-onbrand {
+  color: var(--color-on-brand);
+}
+
+/* 点赞激活色（--color-like 已在明暗两套变量里定义） */
+.text-like {
+  color: var(--color-like);
+}
+
+.hover-brand:hover {
+  color: var(--color-brand);
+}
+
+.hover-fg:hover {
+  color: var(--color-primary);
+}
+
+.row-hover:hover {
+  background: var(--color-row-hover);
+}
+
+/* ===========================================================
+   毛玻璃表面 —— 单一基类 + 变量变体
+   glass-card / glass-card-static / article-surface / navbar-glass 只在变量上有差异
+   =========================================================== */
+.glass-card,
+.glass-card-static,
+.article-surface,
+.navbar-glass {
+  background: var(--glass-bg, var(--color-card));
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 20px)) saturate(180%);
   border: 1px solid var(--color-border);
   border-radius: 20px;
+  box-shadow: var(--glass-shadow, var(--shadow-card));
+}
+
+.glass-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .glass-card:hover {
@@ -92,46 +263,90 @@ body {
   border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
 }
 
-.glass-card-static {
-  background: var(--color-card);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+/* 文章卡片用更不透明的背景，提升正文可读性 */
+.article-surface {
+  --glass-bg: var(--color-article);
 }
 
 /* 导航栏：更强的毛玻璃，滚动时不透出正文 */
 .navbar-glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  --glass-bg: var(--color-nav-glass);
+  --glass-blur: 24px;
+  --glass-shadow: var(--shadow-nav);
+}
+
+/* ===========================================================
+   分享专栏 —— 各知识大类的封面渐变 / 主色
+   颜色只在这里维护，组件通过 .share-cat + var(--cat-*) 引用
+   =========================================================== */
+.share-cat {
+  --cat-from: var(--color-brand);
+  --cat-to: var(--color-brand-secondary);
+  --cat-accent: var(--color-brand);
+}
+
+.share-cat-gpu {
+  --cat-from: #0d5c56;
+  --cat-to: #2dd4bf;
+  --cat-accent: #14b8a6;
+}
+
+.share-cat-ops {
+  --cat-from: #1e3a8a;
+  --cat-to: #38bdf8;
+  --cat-accent: #3b82f6;
+}
+
+.share-cat-weekly {
+  --cat-from: #78350f;
+  --cat-to: #fbbf24;
+  --cat-accent: #f59e0b;
+}
+
+.share-cat-frontend {
+  --cat-from: #831843;
+  --cat-to: #f472b6;
+  --cat-accent: #ec4899;
+}
+
+.share-cat-tools {
+  --cat-from: #3b0764;
+  --cat-to: #a78bfa;
+  --cat-accent: #8b5cf6;
+}
+
+.share-cat-blog {
+  --cat-from: #155e75;
+  --cat-to: #22d3ee;
+  --cat-accent: #06b6d4;
+}
+
+/* 封面渐变 */
+.share-cover {
+  background: linear-gradient(135deg, var(--cat-from), var(--cat-to));
+}
+
+/* 分类 chip：选中为实心主色，未选中为同色 10% 淡底 */
+.share-chip {
+  background: color-mix(in srgb, var(--cat-accent) 10%, transparent);
+  color: var(--cat-accent);
   border: 1px solid var(--color-border);
-  border-radius: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
-.dark .navbar-glass {
-  background: color-mix(in srgb, var(--color-bg-dark) 75%, transparent);
+.share-chip-active {
+  background: var(--cat-accent);
+  color: var(--color-on-brand);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--cat-accent) 20%, transparent);
 }
 
-/* 视频背景的随主题遮罩：浅色主题加白纱，深色主题加深纱，保证前景可读 */
+/* 作者行主色文字 */
+.share-accent {
+  color: var(--cat-accent);
+}
+
+/* 视频背景的随主题遮罩：浅色加白纱、深色加深纱，保证前景可读 */
 .video-bg-overlay {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.4) 100%);
-}
-
-.dark .video-bg-overlay {
-  background: linear-gradient(180deg, rgba(12, 12, 14, 0.55) 0%, rgba(12, 12, 14, 0.4) 100%);
-}
-
-/* 文章卡片用更不透明的背景，提升正文可读性 */
-.article-surface {
-  background: var(--color-article);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  background: var(--video-overlay);
 }
 
 /* ===== 显示字体（手写风格） ===== */
@@ -210,6 +425,22 @@ body {
   text-decoration-color: var(--color-brand-secondary);
 }
 
+/* 站内链接：实线加粗下划线 + 末尾箭头标识，与站外链接（淡下划线 + 站点图标 + 新窗口）区分 */
+.prose-notion a.mdx-internal-link {
+  font-weight: 600;
+  text-decoration-style: solid;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: color-mix(in srgb, var(--color-brand) 75%, transparent);
+}
+
+.prose-notion a.mdx-internal-link::after {
+  content: "→";
+  margin-left: 0.15em;
+  font-size: 0.85em;
+  font-weight: 400;
+  opacity: 0.65;
+}
+
 /* 列表 —— Notion 风格紧凑缩进 */
 .prose-notion ul,
 .prose-notion ol {
@@ -253,24 +484,95 @@ body {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
-/* 代码块 */
-.prose-notion pre {
-  background: #1e2127 !important;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 1em 1.2em;
+/* 代码块 —— Catppuccin 双主题（浅色 Latte / 深色 Mocha） */
+.prose-notion figure[data-rehype-pretty-code-figure] {
   margin: 1em 0;
+}
+
+.prose-notion pre {
+  background: var(--code-block-bg) !important;
+  border-radius: 12px;
+  border: 1px solid var(--code-block-border);
+  padding: 1em 1.2em;
+  margin: 0;
   overflow-x: auto;
   font-size: 0.875em;
-  line-height: 1.6;
+  line-height: 1.65;
+  color: var(--code-block-fg);
 }
 
 .prose-notion pre code {
   background: transparent;
   padding: 0;
-  color: #d4d4d4;
+  color: inherit;
   font-weight: 400;
+  font-variant-ligatures: none;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  display: grid;
+}
+
+/* shiki 双主题令牌：浅色取 --shiki-light，深色取 --shiki-dark */
+.prose-notion pre code [data-line] span[style*="--shiki-light"],
+.prose-notion pre code span[style*="--shiki-light"] {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+}
+
+.dark .prose-notion pre code span[style*="--shiki-light"] {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
+/* 高亮行（{1,3-4} 语法）与高亮词 */
+.prose-notion pre code [data-highlighted-line] {
+  background: color-mix(in srgb, var(--ctp-yellow) 22%, transparent);
+  border-radius: 4px;
+}
+
+.prose-notion pre code [data-highlighted-chars] {
+  background: color-mix(in srgb, var(--ctp-blue) 25%, transparent);
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* 代码块标题（```lang title="xxx"） */
+.prose-notion figcaption[data-rehype-pretty-code-title] {
+  font-size: 0.75rem;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  color: var(--color-secondary);
+  background: color-mix(in srgb, var(--code-block-bg) 88%, var(--color-primary));
+  border: 1px solid var(--code-block-border);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  padding: 6px 14px;
+}
+
+/* 复制按钮包裹层：MDXComponents 把 pre 映射成 CodeBlock（div.group > pre），
+   所以「标题 + 代码」的圆角衔接要落在这一层，不能直接选 pre */
+.prose-notion figcaption[data-rehype-pretty-code-title] + div > pre {
+  border-radius: 0 0 12px 12px;
+}
+
+.prose-notion figcaption[data-rehype-pretty-code-title] + pre {
+  border-radius: 0 0 12px 12px;
+}
+
+/* 复制按钮 —— 跟随代码块底色，深浅模式都有足够对比度 */
+.code-copy-btn {
+  background: color-mix(in srgb, var(--code-block-fg) 12%, transparent);
+  color: var(--color-secondary);
+}
+
+.code-copy-btn:hover {
+  background: color-mix(in srgb, var(--code-block-fg) 22%, transparent);
+}
+
+.dark .code-copy-btn {
+  color: var(--code-block-fg);
 }
 
 /* 引用块 —— Notion 灰底风格 */
@@ -348,6 +650,197 @@ body {
   padding: 0.5em 0;
 }
 
+/* ===========================================================
+   记号笔高亮（==文字== / =red=文字==）
+   remark-flexible-markers 输出 <mark class="flexible-marker ...">
+   =========================================================== */
+.prose-notion mark {
+  background: color-mix(in srgb, var(--ctp-yellow) 42%, transparent);
+  color: var(--color-primary);
+  padding: 0.06em 0.3em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .prose-notion mark {
+  /* 深色模式：低透明度暖黄底 + 正常正文色，避免荧光黄字反白刺眼，同时保证 AA 对比度 */
+  background: color-mix(in srgb, var(--ctp-yellow) 26%, transparent);
+  color: var(--color-primary);
+}
+
+/* 带颜色分类的记号笔：=red=文字== → flexible-marker-red */
+.prose-notion mark.flexible-marker-red,
+.prose-notion mark.flexible-marker-maroon,
+.prose-notion mark.flexible-marker-pink,
+.prose-notion mark.flexible-marker-mauve,
+.prose-notion mark.flexible-marker-green,
+.prose-notion mark.flexible-marker-teal,
+.prose-notion mark.flexible-marker-sky,
+.prose-notion mark.flexible-marker-blue,
+.prose-notion mark.flexible-marker-lavender,
+.prose-notion mark.flexible-marker-peach {
+  background: color-mix(in srgb, currentColor 18%, transparent);
+}
+
+/* ===========================================================
+   文字颜色语法糖：{red|文字} → <span class="text-ctp-red">
+   颜色词与 Catppuccin 变量一一对应，深浅模式自动切换
+   =========================================================== */
+.text-ctp-rosewater { color: var(--ctp-rosewater); }
+.text-ctp-flamingo { color: var(--ctp-flamingo); }
+.text-ctp-pink { color: var(--ctp-pink); }
+.text-ctp-mauve { color: var(--ctp-mauve); }
+.text-ctp-red { color: var(--ctp-red); }
+.text-ctp-maroon { color: var(--ctp-maroon); }
+.text-ctp-peach { color: var(--ctp-peach); }
+.text-ctp-yellow { color: var(--ctp-yellow); }
+.text-ctp-green { color: var(--ctp-green); }
+.text-ctp-teal { color: var(--ctp-teal); }
+.text-ctp-sky { color: var(--ctp-sky); }
+.text-ctp-sapphire { color: var(--ctp-sapphire); }
+.text-ctp-blue { color: var(--ctp-blue); }
+.text-ctp-lavender { color: var(--ctp-lavender); }
+
+/* Catppuccin 没有的常用色名，用最接近的官方色派生（{orange文字} / {purple文字} / {gray文字}） */
+.text-ctp-orange { color: var(--ctp-peach); }
+.text-ctp-purple { color: var(--ctp-mauve); }
+.text-ctp-gray { color: var(--ctp-overlay1); }
+
+/* 正文里的浅黄在浅色背景下对比度不足，单独加深一档 */
+:root .prose-notion .text-ctp-yellow {
+  color: color-mix(in srgb, var(--ctp-yellow) 78%, var(--ctp-maroon));
+}
+
+.dark .prose-notion .text-ctp-yellow {
+  color: var(--ctp-yellow);
+}
+
+/* ===========================================================
+   图片图注：![alt](src "图注") → figure.mdx-figure + figcaption
+   =========================================================== */
+.prose-notion figure.mdx-figure {
+  margin: 1.5em 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+}
+
+.prose-notion figure.mdx-figure img {
+  margin: 0;
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.prose-notion figure.mdx-figure figcaption {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-secondary);
+  text-align: center;
+  max-width: 60ch;
+}
+
+/* ===========================================================
+   待办列表：- [ ] / - [x]（remark-gfm 输出 ul.contains-task-list）
+   =========================================================== */
+.prose-notion ul.contains-task-list {
+  list-style: none;
+  padding-left: 0.2em;
+}
+
+.prose-notion li.task-list-item {
+  list-style: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55em;
+  padding-left: 0;
+  margin: 0.35em 0;
+}
+
+.prose-notion li.task-list-item::marker {
+  content: none;
+}
+
+.prose-notion li.task-list-item > input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 auto;
+  width: 1.05em;
+  height: 1.05em;
+  margin: 0.34em 0 0;
+  border: 1.5px solid color-mix(in srgb, var(--color-secondary) 70%, transparent);
+  border-radius: 4px;
+  background: transparent;
+  opacity: 1;
+  cursor: default;
+  position: relative;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.prose-notion li.task-list-item > input[type="checkbox"]:checked {
+  background: var(--ctp-green);
+  border-color: var(--ctp-green);
+}
+
+.prose-notion li.task-list-item > input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 0.3em;
+  top: 0.1em;
+  width: 0.28em;
+  height: 0.55em;
+  border: solid var(--color-on-brand);
+  border-width: 0 1.6px 1.6px 0;
+  transform: rotate(45deg);
+}
+
+.prose-notion li.task-list-item:has(> input[type="checkbox"]:checked) {
+  color: var(--color-secondary);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--color-secondary) 55%, transparent);
+}
+
+/* ===========================================================
+   标题锚点：rehype-autolink-headings 追加的 .heading-anchor
+   =========================================================== */
+.prose-notion :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+}
+
+.prose-notion .heading-anchor {
+  margin-left: 0.4em;
+  font-weight: 400;
+  font-size: 0.85em;
+  color: var(--color-brand);
+  text-decoration: none !important;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  white-space: nowrap;
+}
+
+.prose-notion .heading-anchor::after {
+  content: "#";
+}
+
+/* rehype-autolink-headings 默认会塞一个空的 <span class="icon icon-link">，这里隐藏，统一用 ::after 的 # */
+.prose-notion .heading-anchor > .icon,
+.prose-notion .heading-anchor > svg {
+  display: none;
+}
+
+.prose-notion :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose-notion .heading-anchor:focus-visible {
+  opacity: 0.65;
+}
+
+/* 触屏设备没有 hover，常驻淡显 */
+@media (hover: none) {
+  .prose-notion .heading-anchor {
+    opacity: 0.45;
+  }
+}
+
 /* ===== Line clamp helpers ===== */
 .line-clamp-1 {
   overflow: hidden;
@@ -363,26 +856,79 @@ body {
   -webkit-box-orient: vertical;
 }
 
-/* 标签徽章 —— 悬浮颜色过渡（lvyovo 风格） */
+/* 标签徽章 —— Catppuccin 强调色 + 悬浮颜色过渡（lvyovo 风格）
+   强调色由 --tag-accent 注入（见 src/lib/tag-meta.ts），未注入时回退品牌色；
+   文本色用 accent 与正文色混合，保证浅色模式下 yellow / sky 等亮色也满足可读性。 */
 .tag-badge {
-  background: color-mix(in srgb, var(--color-brand) 15%, transparent);
-  color: var(--color-brand);
+  --tag-accent: var(--color-brand);
+  background: color-mix(in srgb, var(--tag-accent) 14%, transparent);
+  color: color-mix(in srgb, var(--tag-accent) 72%, var(--color-primary));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-accent) 20%, transparent);
   transition:
     color 200ms ease,
     background-color 200ms ease,
+    box-shadow 200ms ease,
     transform 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.tag-badge-category {
-  background: color-mix(in srgb, var(--color-brand-secondary) 15%, transparent);
-  color: var(--color-brand-secondary);
+.dark .tag-badge {
+  background: color-mix(in srgb, var(--tag-accent) 18%, transparent);
+  color: color-mix(in srgb, var(--tag-accent) 88%, #ffffff);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-accent) 26%, transparent);
 }
 .tag-badge:hover {
-  background: color-mix(in srgb, var(--color-brand) 26%, transparent);
+  background: color-mix(in srgb, var(--tag-accent) 26%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-accent) 36%, transparent);
   transform: translateY(-1px);
 }
-.tag-badge-category:hover {
-  background: color-mix(in srgb, var(--color-brand-secondary) 26%, transparent);
-  color: var(--color-brand-secondary);
+.dark .tag-badge:hover {
+  background: color-mix(in srgb, var(--tag-accent) 30%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tag-accent) 42%, transparent);
+}
+/* 分类徽章：形状与标签区分，统一走 Catppuccin 色板 */
+.tag-badge-category {
+  border-radius: 8px;
+}
+
+/* 标签页大号胶囊 */
+.tag-badge-lg {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.tag-badge-count {
+  border-radius: 9999px;
+  padding: 0 0.375rem;
+  font-size: 0.6875rem;
+  line-height: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  background: color-mix(in srgb, var(--tag-accent) 22%, transparent);
+  color: color-mix(in srgb, var(--tag-accent) 78%, var(--color-primary));
+}
+.dark .tag-badge-count {
+  background: color-mix(in srgb, var(--tag-accent) 26%, transparent);
+  color: color-mix(in srgb, var(--tag-accent) 90%, #ffffff);
+}
+
+/* 侧栏标签行前的色点 */
+.tag-dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--tag-accent, var(--color-brand));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tag-accent, var(--color-brand)) 16%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-badge {
+    transition: color 200ms ease, background-color 200ms ease;
+  }
+  .tag-badge:hover {
+    transform: none;
+  }
 }
 
 /* ===== 滚动入场动画（lvyovo 风格） ===== */
@@ -515,7 +1061,279 @@ body {
   to   { transform: scale(1); opacity: 1; }
 }
 
+/* ===========================================================
+   首页 Bento —— 单一 DOM 的响应式布局
+   基础态（<1080px）：9 张卡按 DOM 顺序单列堆叠，全部保留；
+   ≥1080px：恢复原有 1000×660 与各卡绝对坐标。
+   断点用 @media 而非 @container：SiteShell 的 px-4 让内容区比视口
+   窄 32px；1080px 视口下 1000px 舞台居中后，"最新文章"卡的
+   left:-40px 恰好贴到视口左边缘，不会产生横向滚动。
+   =========================================================== */
+.home-bento {
+  display: flex;
+  flex-direction: column;
+  /* 卡片间距 / 宽度上限随视口连续收缩，避免窄屏区间内台阶式跳变；
+     1080px 处 gap 已到 16px、宽度已到 560px，宽屏块再改写为绝对定位 */
+  gap: clamp(12px, 1.5vw, 16px);
+  width: 100%;
+  max-width: clamp(360px, 60vw, 560px);
+  margin: 0 auto;
+}
+.home-bento > :where(.bento-card) {
+  width: 100%;
+}
+
+/* 卡片表面：沿用首页原有取值（原为各卡内联 style） */
+.bento-surface {
+  background: var(--color-glass);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /* 4.45vw 恰好在 1079px 达到 48px，宽屏取值与原设计一致 */
+  border-radius: clamp(28px, 4.45vw, 48px);
+}
+
+/* 堆叠态各卡尺寸 */
+/* LCD 时钟面板：硬件感色值集中在此，深色下同步压低亮度 */
+.clock-lcd {
+  border-radius: 16px;
+  background: var(--clock-lcd-bg);
+  box-shadow: var(--clock-lcd-shadow);
+}
+.clock-lcd-digits,
+.clock-lcd-ghost {
+  font-family: "DSEG7 Classic", "DSEG7-Classic", monospace;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+}
+.clock-lcd-digits {
+  color: var(--clock-lcd-fg);
+}
+.clock-lcd-ghost {
+  color: var(--clock-lcd-ghost);
+}
+
+.bento-clock {
+  height: 120px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.bento-banner {
+  aspect-ratio: 2 / 1;
+}
+.bento-latest {
+  min-height: 160px;
+}
+.bento-calendar {
+  overflow: hidden;
+}
+.bento-random {
+  height: 80px;
+  overflow: hidden;
+}
+.bento-music {
+  height: 80px;
+  overflow: hidden;
+}
+.bento-social {
+  height: 64px;
+}
+
+/* 仅窄屏：日历的 7 列不随卡片宽度拉伸，内容居中收窄 */
+@media (max-width: 1079.98px) {
+  .bento-calendar > div {
+    max-width: 340px;
+    margin-inline: auto;
+  }
+}
+
+/* 断点切换入场动画 —— 只在真正跨越 1080px 时由 BentoTransition 加 .bento-switch，
+   首次加载不加、连续拖动时 700ms 内不重放；动画结束即移除类 */
+@media (prefers-reduced-motion: no-preference) {
+  .bento-switch > :where(.bento-card) {
+    animation: bento-switch-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .bento-switch > :where(.bento-card):nth-child(1) { animation-delay: 0ms; }
+  .bento-switch > :where(.bento-card):nth-child(2) { animation-delay: 24ms; }
+  .bento-switch > :where(.bento-card):nth-child(3) { animation-delay: 48ms; }
+  .bento-switch > :where(.bento-card):nth-child(4) { animation-delay: 72ms; }
+  .bento-switch > :where(.bento-card):nth-child(5) { animation-delay: 96ms; }
+  .bento-switch > :where(.bento-card):nth-child(6) { animation-delay: 120ms; }
+  .bento-switch > :where(.bento-card):nth-child(7) { animation-delay: 144ms; }
+  .bento-switch > :where(.bento-card):nth-child(8) { animation-delay: 168ms; }
+  .bento-switch > :where(.bento-card):nth-child(9) { animation-delay: 192ms; }
+}
+
+@keyframes bento-switch-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 宽屏：与原绝对定位布局逐项一致（顺序由坐标决定，与 DOM 无关） */
+@media (min-width: 1080px) {
+  .home-bento {
+    display: block;
+    position: relative;
+    width: 1000px;
+    height: 660px;
+    max-width: none;
+    margin: 0 auto;
+  }
+  .home-bento > :where(.bento-card) {
+    position: absolute;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+
+  .bento-nav { top: 0; left: 0; width: 280px; height: 430px; }
+  .bento-banner { top: 0; left: 296px; width: 360px; height: 180px; }
+  .bento-hero { top: 196px; left: 296px; width: 360px; height: 290px; }
+  .bento-clock { top: 20px; left: 672px; width: 230px; height: 120px; }
+  .bento-latest { top: 446px; left: -40px; width: 280px; height: 160px; }
+  .bento-social { top: 502px; left: 296px; width: 360px; height: 64px; }
+  .bento-calendar { top: 146px; left: 672px; width: 328px; height: 340px; }
+  .bento-random { top: 582px; left: 296px; width: 280px; height: 80px; }
+  .bento-music { top: 502px; left: 620px; width: 328px; height: 80px; }
+}
+
+/* ===== 侧边栏分类行（图标色块 + 计数胶囊） ===== */
+.cat-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--color-secondary);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* 侧边栏收起态：仅保留图标色块 */
+.cat-row-collapsed {
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.cat-row-collapsed::before {
+  display: none;
+}
+
+/* 左侧激活指示条 */
+.cat-row::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  border-radius: 999px;
+  background: var(--cat, var(--color-brand));
+  opacity: 0;
+  transform: translateY(-50%);
+  transition:
+    height 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
+}
+
+.cat-row:hover {
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 8%, transparent);
+  color: var(--color-primary);
+}
+
+.cat-row:hover::before {
+  height: 44%;
+  opacity: 0.55;
+}
+
+.cat-row[data-active="true"] {
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 12%, transparent);
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.cat-row[data-active="true"]::before {
+  height: 62%;
+  opacity: 1;
+}
+
+.cat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  color: var(--cat, var(--color-brand));
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 14%, transparent);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 200ms ease;
+}
+
+.cat-row:hover .cat-icon,
+.cat-row[data-active="true"] .cat-icon {
+  transform: translateY(-1px) scale(1.07);
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 20%, transparent);
+}
+
+.cat-count {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-tertiary);
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+.cat-row:hover .cat-count,
+.cat-row[data-active="true"] .cat-count {
+  color: color-mix(in srgb, var(--cat, var(--color-brand)) 78%, var(--color-primary));
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 14%, transparent);
+}
+
+/* 深色模式：提亮色块与激活底纹，保证可辨识 */
+.dark .cat-icon {
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 26%, transparent);
+  filter: brightness(1.18) saturate(1.05);
+}
+
+.dark .cat-row:hover {
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 16%, transparent);
+}
+
+.dark .cat-row[data-active="true"] {
+  background: color-mix(in srgb, var(--cat, var(--color-brand)) 22%, transparent);
+}
+
+.dark .cat-count {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .home-bento a {
+    transition: none !important;
+  }
+  .cat-row,
+  .cat-icon {
+    transition: none !important;
+  }
   ::view-transition-old(*),
   ::view-transition-new(*),
   ::view-transition-group(*) {

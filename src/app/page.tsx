@@ -1,31 +1,28 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FileText, Hash, Globe, Archive, Mail, GitBranch } from "lucide-react";
+import { Mail, GitBranch } from "lucide-react";
 import ClockWidget from "@/components/home/ClockWidget";
 import CalendarWidget from "@/components/home/CalendarWidget";
 import MusicPlayer from "@/components/home/MusicPlayer";
 import RandomPost from "@/components/home/RandomPost";
+import BentoTransition from "@/components/home/BentoTransition";
 import { getAllPosts } from "@/lib/posts";
+import { HOME_SHORTCUTS } from "@/lib/nav";
+import { mailtoHref, siteConfig } from "@/lib/site-config";
 
-const NAV_LINKS = [
-  { href: "/posts", label: "近期文章", icon: FileText },
-  { href: "/tags", label: "标签", icon: Hash },
-  { href: "/categories", label: "分类", icon: Globe },
-  { href: "/archives", label: "归档", icon: Archive },
-];
-
+/** 社交入口：底色统一走语义变量，避免各处各写一份色值 */
 const SOCIAL_LINKS = [
   {
-    href: "https://github.com/twojian",
-    label: "GitHub",
+    href: siteConfig.github,
+    label: siteConfig.githubLabel,
     icon: GitBranch,
-    style: { background: "#24292e", color: "#fff" },
+    bg: "var(--color-github)",
   },
   {
-    href: "mailto:twojian6@gmail.com",
-    label: "邮件",
+    href: mailtoHref,
+    label: siteConfig.emailLabel,
     icon: Mail,
-    style: { background: "var(--color-brand)", color: "#fff" },
+    bg: "var(--color-brand)",
   },
 ];
 
@@ -35,78 +32,23 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* ===== Bento (lg+) — absolute positioning, content-fitted sizes ===== */}
-      <div
-        className="relative mx-auto hidden lg:block"
-        style={{ width: "1000px", height: "660px" }}
-      >
-        {/* ── NAV card (spans 2 rows) ── */}
-        <div
-          className="flex flex-col p-6"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: 280,
-            height: 430,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-          }}
-        >
-          <div className="mb-4 flex items-center gap-3">
-            <Image
-              src="/images/avatar.png"
-              alt="Twojian"
-              width={40}
-              height={40}
-              className="rounded-full border-2 border-white/70"
-            />
-            <div>
-              <p className="font-display text-base font-semibold" style={{ color: "var(--color-brand)" }}>
-                Twojian
-              </p>
-              <p className="text-xs" style={{ color: "var(--color-secondary)" }}>
-                less is more
-              </p>
-            </div>
-          </div>
+      {/* ===== Bento —— 单一 DOM：<1080px 纵向堆叠，≥1080px 绝对定位（坐标见 globals.css） ===== */}
+      <div className="home-bento">
+        {/* 断点切换时的一次性入场动画（无 DOM 输出）；见 BentoTransition */}
+        <BentoTransition />
 
-          <p className="mb-3 text-xs uppercase tracking-widest" style={{ color: "var(--color-secondary)" }}>
-            GENERAL
-          </p>
-
-          <nav className="flex flex-col gap-1">
-            {NAV_LINKS.map(({ href, label, icon: Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors hover:bg-white/40"
-                style={{ color: "var(--color-primary)" }}
-              >
-                <Icon size={15} style={{ color: "var(--color-brand)" }} />
-                {label}
-              </Link>
-            ))}
-          </nav>
+        {/* ── ① 时钟 ── */}
+        <div className="bento-card bento-clock">
+          <ClockWidget />
         </div>
 
-        {/* ── BANNER (center-top) ── */}
-        <div
-          className="overflow-hidden p-2"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 296,
-            width: 360,
-            height: 180,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-          }}
-        >
+        {/* ── ② 日历 ── */}
+        <div className="bento-card bento-calendar bento-surface">
+          <CalendarWidget />
+        </div>
+
+        {/* ── ③ 横幅 ── */}
+        <div className="bento-card bento-banner bento-surface overflow-hidden p-2">
           <Image
             src="/images/yantai-banner.jpg"
             alt="Banner"
@@ -118,47 +60,30 @@ export default function HomePage() {
           />
         </div>
 
-        {/* ── HERO card (center, uses original avatar) ── */}
-        <div
-          className="flex flex-col items-center justify-center gap-3 p-6 text-center"
-          style={{
-            position: "absolute",
-            top: 196,
-            left: 296,
-            width: 360,
-            height: 290,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-          }}
-        >
-          {/* Avatar in a soft teal oval — mirrors target site's cat in yellow circle */}
-          <div className="relative flex h-28 w-28 items-center justify-center rounded-full shadow-inner"
-            style={{ background: "rgba(255,235,180,0.55)" }}
-          >
+        {/* ── ④ 头像 ── */}
+        <div className="bento-card bento-hero bento-surface flex flex-col items-center justify-center gap-3 p-6 text-center">
+          {/* Avatar：圆形裁切（rounded-full，不加描边与光环底色） */}
+          <div className="relative flex h-28 w-28 items-center justify-center rounded-full">
             <Image
-              src="/images/avatar.png"
+              src="/images/ayanami.jpg"
               alt="Twojian avatar"
               width={96}
               height={96}
               className="rounded-full object-cover shadow-sm"
-              style={{ border: "3px solid rgba(255,255,255,0.75)" }}
             />
             {/* Online dot */}
             <span
-              className="absolute bottom-0.5 right-0.5 h-4 w-4 rounded-full border-2 border-white"
+              className="absolute bottom-0.5 right-0.5 h-4 w-4 rounded-full border-2 border-[var(--color-on-brand)]"
               style={{ background: "var(--color-brand)" }}
             />
           </div>
 
           <div>
             <p
-              className="font-display text-2xl leading-relaxed"
-              style={{ color: "var(--color-primary)" }}
-            >
+       className="font-display text-2xl leading-relaxed text-fg"
+     >
               I&apos;m{" "}
-              <span className="font-bold" style={{ color: "var(--color-brand)" }}>
+              <span className="font-bold text-brand">
                 twojian
               </span>
               {" ,"}
@@ -170,184 +95,103 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── 时钟 ── */}
-        <div
-          style={{
-            position: "absolute",
-            top: 20,
-            left: 672,
-            width: 230,
-            height: 120,
-            borderRadius: "16px",
-            overflow: "hidden",
-          }}
-        >
-          <ClockWidget />
+        {/* ── ⑤ 导航（宽屏跨两行） ── */}
+        <div className="bento-card bento-nav bento-surface flex flex-col p-6">
+          <div className="mb-4 flex items-center gap-3">
+            <Image
+              src="/images/ayanami.jpg"
+              alt="Twojian"
+              width={40}
+              height={40}
+              className="rounded-full border-2 border-[var(--color-on-brand)] object-cover"
+            />
+            <div>
+              <p className="font-display text-base font-semibold text-brand">
+                {siteConfig.name}
+              </p>
+              <p className="text-xs text-muted">{siteConfig.tagline}</p>
+            </div>
+          </div>
+
+          <p className="mb-3 text-xs uppercase tracking-widest text-muted">
+            GENERAL
+          </p>
+
+          <nav className="flex flex-col gap-1">
+            {HOME_SHORTCUTS.map(({ href, label, icon: Icon }) => (
+              <Link
+        key={href}
+        href={href}
+        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors row-hover text-fg"
+      >
+                <Icon size={15} className="text-brand" />
+                {label}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        {/* ── 最新文章 ── */}
-        <div style={{ position: "absolute", top: 446, left: -40, width: 280, height: 160 }}>
+        {/* ── ⑥ 最新文章 ── */}
+        <div className="bento-card bento-latest bento-surface">
           {latestPost ? (
             <Link href={`/posts/${latestPost.slug}`} className="block h-full">
-              <div
-                className="flex h-full flex-col px-5 py-5"
-                style={{
-                  background: "rgba(255,255,255,0.4)",
-                  backdropFilter: "blur(4px)",
-                  WebkitBackdropFilter: "blur(4px)",
-                  borderRadius: "48px",
-                }}
-              >
-                <p className="mb-2 text-xs font-medium" style={{ color: "var(--color-secondary)" }}>
+              <div className="flex h-full flex-col px-5 py-5">
+                <p className="mb-2 text-xs font-medium text-muted">
                   最新文章
                 </p>
                 <p
-                  className="mb-1 line-clamp-3 flex-1 text-sm font-semibold"
-                  style={{ color: "var(--color-primary)" }}
-                >
+         className="mb-1 line-clamp-3 flex-1 text-sm font-semibold text-fg"
+       >
                   {latestPost.title}
                 </p>
                 {latestPost.summary && (
-                  <p className="mb-2 line-clamp-2 text-xs" style={{ color: "var(--color-secondary)" }}>
+                  <p className="mb-2 line-clamp-2 text-xs text-muted">
                     {latestPost.summary}
                   </p>
                 )}
-                <p className="text-xs" style={{ color: "var(--color-secondary)" }}>
+                <p className="text-xs text-muted">
                   {latestPost.date}
                 </p>
               </div>
             </Link>
           ) : (
-            <div
-              className="h-full px-5 py-5"
-              style={{
-                background: "rgba(255,255,255,0.4)",
-                backdropFilter: "blur(4px)",
-                WebkitBackdropFilter: "blur(4px)",
-                borderRadius: "48px",
-              }}
-            >
-              <p className="text-xs" style={{ color: "var(--color-secondary)" }}>
+            <div className="h-full px-5 py-5">
+              <p className="text-xs text-muted">
                 暂无文章
               </p>
             </div>
           )}
         </div>
 
-        {/* ── SOCIAL links ── */}
-        <div
-          className="flex items-center justify-center gap-3"
-          style={{ position: "absolute", top: 502, left: 296, width: 360, height: 64 }}
-        >
-          {SOCIAL_LINKS.map(({ href, label, icon: Icon, style }) => (
-            <Link
-              key={href}
-              href={href}
-              target={href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium shadow-sm transition-transform hover:scale-105"
-              style={style}
-            >
-              <Icon size={16} />
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        {/* ── CALENDAR (spans 2 rows) ── */}
-        <div
-          style={{
-            position: "absolute",
-            top: 146,
-            left: 672,
-            width: 328,
-            height: 340,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-            overflow: "hidden",
-          }}
-        >
-          <CalendarWidget />
-        </div>
-
-        {/* ── RANDOM post ── */}
-        <div
-          style={{
-            position: "absolute",
-            top: 582,
-            left: 296,
-            width: 280,
-            height: 80,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-            overflow: "hidden",
-          }}
-        >
+        {/* ── ⑦ 随机推荐 ── */}
+        <div className="bento-card bento-random bento-surface overflow-hidden">
           <RandomPost posts={posts} />
         </div>
 
-        {/* ── MUSIC player ── */}
-        <div
-          style={{
-            position: "absolute",
-            top: 502,
-            left: 620,
-            width: 328,
-            height: 80,
-            background: "rgba(255,255,255,0.4)",
-            backdropFilter: "blur(4px)",
-            WebkitBackdropFilter: "blur(4px)",
-            borderRadius: "48px",
-            overflow: "hidden",
-          }}
-        >
+        {/* ── ⑧ 音乐 ── */}
+        <div className="bento-card bento-music bento-surface overflow-hidden">
           <MusicPlayer
             title="One Last Kiss"
             artist="宇多田ヒカル"
             src="/audio/one-last-kiss.mp3"
           />
         </div>
-      </div>
 
-      {/* ===== Mobile hero ===== */}
-      <div className="lg:hidden">
-        <div className="squircle mb-3 overflow-hidden">
-          <Image
-            src="/images/yantai-banner.jpg"
-            alt="Banner"
-            width={1600}
-            height={1067}
-            className="h-auto w-full"
-          />
-        </div>
-        <div className="glass-card-static squircle flex items-center gap-5 px-6 py-7">
-          <Image
-            src="/images/avatar.png"
-            alt="Twojian"
-            width={72}
-            height={72}
-            className="shrink-0 rounded-full border-4 border-white/60 shadow-sm"
-          />
-          <div>
-            <p
-              className="font-display text-2xl leading-relaxed"
-              style={{ color: "var(--color-primary)" }}
+        {/* ── ⑨ 社交 ── */}
+        <div className="bento-card bento-social flex items-center justify-center gap-3">
+          {SOCIAL_LINKS.map(({ href, label, icon: Icon, bg }) => (
+            <Link
+              key={href}
+              href={href}
+              target={href.startsWith("http") ? "_blank" : undefined}
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-onbrand shadow-sm transition-transform hover:scale-105"
+              style={{ background: bg }}
             >
-              I&apos;m{" "}
-              <span className="font-bold" style={{ color: "var(--color-brand)" }}>
-                twojian
-              </span>
-              {" ,"}
-              <br />
-              Nice to
-              <br />
-              meet you!
-            </p>
-          </div>
+              <Icon size={16} />
+              {label}
+            </Link>
+          ))}
         </div>
       </div>
 
