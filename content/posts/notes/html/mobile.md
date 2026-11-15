@@ -1,6 +1,7 @@
 ---
 title: "移动设备网页设计"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---

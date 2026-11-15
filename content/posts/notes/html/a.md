@@ -1,6 +1,7 @@
 ---
 title: "<a>"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---

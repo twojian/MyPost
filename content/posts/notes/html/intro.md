@@ -1,6 +1,7 @@
 ---
 title: "HTML 语言简介"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---

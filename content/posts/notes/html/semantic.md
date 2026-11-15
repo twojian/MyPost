@@ -1,6 +1,7 @@
 ---
 title: "网页的语义结构"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---

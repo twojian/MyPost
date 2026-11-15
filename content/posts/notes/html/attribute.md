@@ -1,6 +1,7 @@
 ---
 title: "网页元素的属性"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---

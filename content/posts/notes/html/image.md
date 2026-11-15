@@ -1,6 +1,7 @@
 ---
 title: "图像标签"
 date: 2026-10-19
+categories: ["技术"]
 tags:
   - "HTML"
 ---
