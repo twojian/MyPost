@@ -1,8 +1,10 @@
 import fs from "fs";
 import path from "path";
+import { notFound } from "next/navigation";
 import matter from "gray-matter";
 import readingTime from "reading-time";
 import GithubSlugger from "github-slugger";
+import { normalizeDate } from "@/lib/utils";
 
 const CONTENT_DIR = path.join(process.cwd(), "content/posts");
 
@@ -37,9 +39,7 @@ export function getAllPosts(): PostMeta[] {
       return {
         slug,
         title: data.title ?? "Untitled",
-        date: data.date
-          ? new Date(data.date).toISOString().split("T")[0]
-          : "1970-01-01",
+        date: normalizeDate(data.date),
         summary: data.summary ?? data.description ?? "",
         tags: data.tags ?? [],
         categories: data.categories ?? [],
@@ -76,7 +76,16 @@ export function getPostBySlug(slug: string) {
   const decodedSlug = decodeSlug(slug);
   const mdxPath = path.join(CONTENT_DIR, `${decodedSlug}.mdx`);
   const mdPath = path.join(CONTENT_DIR, `${decodedSlug}.md`);
-  const filePath = fs.existsSync(mdxPath) ? mdxPath : mdPath;
+  const filePath = fs.existsSync(mdxPath)
+    ? mdxPath
+    : fs.existsSync(mdPath)
+      ? mdPath
+      : null;
+
+  // 文章文件不存在（含不存在的中文 slug、目录路径、被删除的文章）→ 404，避免 readFileSync 抛 ENOENT 变成 500
+  if (!filePath) {
+    notFound();
+  }
 
   const raw = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(raw);
@@ -86,9 +95,7 @@ export function getPostBySlug(slug: string) {
     meta: {
       slug: decodedSlug,
       title: data.title ?? "Untitled",
-      date: data.date
-        ? new Date(data.date).toISOString().split("T")[0]
-        : "1970-01-01",
+      date: normalizeDate(data.date),
       summary: data.summary ?? data.description ?? "",
       tags: data.tags ?? [],
       categories: data.categories ?? [],

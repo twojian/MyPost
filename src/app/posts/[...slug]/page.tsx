@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import remarkGfm from "remark-gfm";
-import rehypeSlug from "rehype-slug";
+import { rehypePlugins, remarkPlugins } from "@/lib/mdx-plugins";
+// 文字颜色语法糖必须在交给 MDX 之前做源码级替换（{red|文字} 不是合法 JS 表达式）
+import { applyTextColors } from "@/lib/text-color";
 import { getAllPosts, getPostBySlug, getPostsByPrefix, isDirectorySlug, extractHeadings } from "@/lib/posts";
 import { mdxComponents } from "@/components/mdx/MDXComponents";
 import PostMeta from "@/components/post/PostMeta";
@@ -44,12 +43,11 @@ export default async function PostPage({ params }: Props) {
     return (
       <>
         <h1
-          className="mb-2 text-2xl font-bold"
-          style={{ color: "var(--color-primary)" }}
-        >
+     className="mb-2 text-2xl font-bold text-fg"
+   >
           {slugPath.split("/").pop()}
         </h1>
-        <p className="mb-6 text-sm" style={{ color: "var(--color-secondary)" }}>
+        <p className="mb-6 text-sm text-muted">
           {posts.length} 篇文章
         </p>
         <PostDateList posts={posts} />
@@ -65,9 +63,8 @@ export default async function PostPage({ params }: Props) {
       {/* Article */}
       <article className="article-surface squircle min-w-0 flex-1 p-6 md:p-12">
         <h1
-          className="mb-4 text-3xl font-bold"
-          style={{ color: "var(--color-primary)" }}
-        >
+     className="mb-4 text-3xl font-bold text-fg"
+   >
           {meta.title}
         </h1>
 
@@ -79,24 +76,24 @@ export default async function PostPage({ params }: Props) {
           categories={meta.categories}
         />
 
-        <hr className="my-6 border-white/30" />
+        <hr className="my-6 border-[var(--color-hairline)]" />
 
         <div className="prose-notion mx-auto w-full max-w-[72ch]">
           <MDXRemote
-            source={content}
+            source={applyTextColors(content)}
             components={mdxComponents}
             options={{
               mdxOptions: {
-                remarkPlugins: [remarkMath, remarkGfm],
-                rehypePlugins: [rehypeSlug, [rehypeKatex, { strict: false }]],
+                remarkPlugins,
+                rehypePlugins,
               },
             }}
           />
         </div>
       </article>
 
-      {/* Right sidebar: TOC + Like — xl screens only */}
-      <div className="hidden xl:flex w-56 shrink-0 flex-col gap-4 sticky top-28">
+      {/* Right sidebar: TOC + Like — lg 以上常显，避免窄窗口下目录整块消失 */}
+      <div className="hidden lg:flex w-52 xl:w-56 shrink-0 flex-col gap-4 sticky top-28">
         <TOCSidebar headings={headings} />
         <LikeButton slug={slugPath} />
       </div>

@@ -31,18 +31,25 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
   }, [headings]);
 
   // Keep only top-level chapters (h2) and their sub-sections (h3).
-  const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+  // 优先取 h2 章节 + h3 小节；若正文一级标题（h1）直接分节、没有 h2/h3
+  // （如 408 笔记、部分长文），退回"最浅一级 + 其下一级"，避免整块目录消失。
+  const hasChapterLevel = headings.some((h) => h.depth === 2 || h.depth === 3);
+  const baseDepth = headings.length
+    ? Math.min(...headings.map((h) => h.depth))
+    : 0;
+  const items = hasChapterLevel
+    ? headings.filter((h) => h.depth === 2 || h.depth === 3)
+    : headings.filter((h) => h.depth <= baseDepth + 1);
   if (!items.length) return null;
 
-  // Find shallowest depth so indentation starts from 0.
+  // 缩进以筛选后的最浅层级为基准
   const minDepth = Math.min(...items.map((h) => h.depth));
 
   return (
     <div className="glass-card-static squircle p-4">
       <p
-        className="mb-3 text-xs font-semibold uppercase tracking-widest"
-        style={{ color: "var(--color-secondary)" }}
-      >
+    className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted"
+  >
         目录
       </p>
       <nav className="flex max-h-[70vh] flex-col gap-1 overflow-y-auto pr-1">
@@ -62,7 +69,7 @@ export default function TOCSidebar({ headings }: { headings: Heading[] }) {
                   history.replaceState(null, "", `#${h.id}`);
                 }
               }}
-              className="press block rounded leading-snug transition-colors hover:text-[var(--color-brand)]"
+              className="press block rounded leading-snug transition-colors hover:text-brand"
               style={{
                 paddingLeft: isSub ? "14px" : "0",
                 fontSize: isSub ? "12px" : "13px",
