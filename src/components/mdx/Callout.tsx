@@ -7,9 +7,9 @@ const variants = {
     bg: "color-mix(in srgb, var(--color-brand) 10%, transparent)",
     border: "var(--color-brand)",
   },
-  warning: { icon: AlertTriangle, bg: "rgba(251, 191, 36, 0.1)", border: "#fbbf24" },
-  success: { icon: CheckCircle, bg: "rgba(34, 197, 94, 0.1)", border: "#22c55e" },
-  error: { icon: XCircle, bg: "rgba(239, 68, 68, 0.1)", border: "#ef4444" },
+  warning: { icon: AlertTriangle, bg: "var(--color-callout-warning-bg)", border: "var(--color-callout-warning-border)" },
+  success: { icon: CheckCircle, bg: "var(--color-callout-success-bg)", border: "var(--color-callout-success-border)" },
+  error: { icon: XCircle, bg: "var(--color-callout-error-bg)", border: "var(--color-callout-error-border)" },
 };
 
 interface Props {

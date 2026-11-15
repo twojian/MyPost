@@ -21,11 +21,8 @@ export default function CodeBlock({ children, ...props }: { children: ReactNode 
       </pre>
       <button
         onClick={handleCopy}
-        className="absolute right-3 top-3 rounded-md p-1.5 opacity-0 transition-opacity group-hover:opacity-100"
-        style={{
-          background: "rgba(255,255,255,0.1)",
-          color: copied ? "var(--color-brand)" : "var(--color-secondary)",
-        }}
+        className="code-copy-btn absolute right-3 top-3 rounded-md p-1.5 opacity-0 transition-opacity group-hover:opacity-100"
+        style={copied ? { color: "var(--color-brand)" } : undefined}
         aria-label="Copy code"
       >
         {copied ? <Check size={14} /> : <Copy size={14} />}
