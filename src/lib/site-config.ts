@@ -21,12 +21,10 @@ export const siteConfig = {
   /** GitHub 主页 */
   github: "https://github.com/twojian",
   /**
-   * 联系邮箱。
+   * 联系邮箱（全站唯一来源）。
    *
-   * 历史上站内存在两个取值，已在此收口为单一来源：
-   * - twojian6@gmail.com   （首页 Bento 社交卡、博客圈页脚原取值）
-   * - twojian0705@163.com  （侧边栏底部名片原取值）
-   * 当前暂统一为 Gmail；若需改回 163，只改这一行即可，其他位置全部自动跟随。
+   * 首页 Bento 社交卡、侧边栏底部名片、博客圈页脚等处的邮箱与 `mailto:` 链接
+   * 一律由此取值派生，页面里不得再写字面量。更换邮箱只改这一行。
    */
   email: "twojian6@gmail.com",
   /** 无障碍标签 */
