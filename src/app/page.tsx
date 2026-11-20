@@ -30,6 +30,23 @@ export default function HomePage() {
   const posts = getAllPosts();
   const latestPost = posts[0] ?? null;
 
+  /**
+   * 贡献热力图数据：按发布日期（YYYY-MM-DD）聚合。
+   * 当日仅 1 篇时记下 slug 供点击跳转；多篇时置空，回退到归档页。
+   */
+  const postsPerDay = posts.reduce<
+    Record<string, { count: number; slug: string | null }>
+  >((acc, post) => {
+    const hit = acc[post.date];
+    if (hit) {
+      hit.count += 1;
+      hit.slug = null;
+    } else {
+      acc[post.date] = { count: 1, slug: post.slug };
+    }
+    return acc;
+  }, {});
+
   return (
     <div className="flex flex-col gap-8">
       {/* ===== Bento —— 单一 DOM：<1080px 纵向堆叠，≥1080px 绝对定位（坐标见 globals.css） ===== */}
@@ -42,9 +59,9 @@ export default function HomePage() {
           <ClockWidget />
         </div>
 
-        {/* ── ② 日历 ── */}
+        {/* ── ② 贡献热力图（原日历卡位） ── */}
         <div className="bento-card bento-calendar bento-surface">
-          <CalendarWidget />
+          <CalendarWidget counts={postsPerDay} />
         </div>
 
         {/* ── ③ 横幅 ── */}

@@ -1138,11 +1138,221 @@ body {
   height: 64px;
 }
 
-/* 仅窄屏：日历的 7 列不随卡片宽度拉伸，内容居中收窄 */
+/* ===== 首页贡献热力图（原月历控件改造） =====
+   色阶只引用 Catppuccin 变量，深浅色各自由 --ctp-green 自动切换，不写死 hex */
+.gh-heat {
+  --gh-cell: 8px;
+  --gh-gap: 2px;
+  --gh-label-w: 16px;
+  --gh-month-h: 12px;
+  --gh-empty: color-mix(in srgb, var(--color-secondary) 18%, transparent);
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 18px 16px;
+}
+
+.gh-heat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.gh-heat-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+}
+.gh-heat-sum {
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-secondary);
+}
+
+/* 矩阵在卡片垂直方向居中，避免高卡片下方留大片空白 */
+.gh-heat-body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-height: 0;
+}
+
+/* 52 列在卡片内放不下时横向滚动；滚动条隐藏，避免破坏玻璃卡片外观 */
+.gh-heat-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.gh-heat-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.gh-blocks {
+  display: flex;
+  width: max-content;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gh-block {
+  display: grid;
+  grid-template-columns: var(--gh-label-w) auto;
+  grid-template-rows: var(--gh-month-h) auto;
+  column-gap: 6px;
+  row-gap: 3px;
+}
+
+.gh-months {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--gh-cell);
+  gap: var(--gh-gap);
+  align-items: end;
+  overflow: hidden;
+  font-size: 9px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--color-tertiary);
+}
+.gh-month {
+  overflow: hidden;
+}
+
+.gh-weekdays {
+  grid-column: 1;
+  grid-row: 2;
+  display: grid;
+  grid-template-rows: repeat(7, var(--gh-cell));
+  gap: var(--gh-gap);
+  font-size: 9px;
+  line-height: var(--gh-cell);
+  text-align: right;
+  color: var(--color-tertiary);
+}
+.gh-weekday {
+  overflow: hidden;
+}
+
+.gh-grid {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, var(--gh-cell));
+  grid-auto-columns: var(--gh-cell);
+  gap: var(--gh-gap);
+}
+
+.gh-cell,
+.gh-swatch {
+  border-radius: 2px;
+  background: var(--gh-empty);
+}
+.gh-heat .gh-cell[data-level="1"],
+.gh-swatch[data-level="1"] {
+  background: color-mix(in srgb, var(--ctp-green) 28%, transparent);
+}
+.gh-heat .gh-cell[data-level="2"],
+.gh-swatch[data-level="2"] {
+  background: color-mix(in srgb, var(--ctp-green) 50%, transparent);
+}
+.gh-heat .gh-cell[data-level="3"],
+.gh-swatch[data-level="3"] {
+  background: color-mix(in srgb, var(--ctp-green) 74%, transparent);
+}
+.gh-heat .gh-cell[data-level="4"],
+.gh-swatch[data-level="4"] {
+  background: var(--ctp-green);
+}
+
+/* 今天：一圈描边定位，不占额外尺寸 */
+.gh-heat .gh-cell[data-today] {
+  box-shadow: 0 0 0 1px var(--color-brand);
+}
+.gh-heat .gh-cell:hover {
+  box-shadow: 0 0 0 1px var(--color-tertiary);
+}
+.gh-heat .gh-cell[data-future] {
+  background: transparent;
+}
+.gh-heat .gh-cell[data-link] {
+  cursor: pointer;
+}
+
+.gh-heat-foot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--color-tertiary);
+}
+.gh-heat-eyebrow {
+  line-height: 1;
+}
+.gh-swatch {
+  width: 9px;
+  height: 9px;
+}
+.gh-heat-note {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.gh-stats {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--color-secondary);
+  white-space: nowrap;
+}
+.gh-stats b {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-primary);
+}
+.gh-stat-sep {
+  width: 1px;
+  height: 9px;
+  align-self: center;
+  background: var(--color-border);
+}
+
+/* tooltip：fixed 定位，脱离卡片 overflow 裁剪，滚动容器内也能完整显示 */
+.gh-tip {
+  position: fixed;
+  z-index: 80;
+  transform: translate(-50%, calc(-100% - 8px));
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-secondary);
+  padding: 4px 8px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-primary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+/* 仅窄屏：格子放大到可点按尺寸，52 列超出后由 .gh-heat-scroll 横向滚动 */
 @media (max-width: 1079.98px) {
-  .bento-calendar > div {
-    max-width: 340px;
-    margin-inline: auto;
+  .gh-heat {
+    --gh-cell: 11px;
+    --gh-gap: 3px;
+    --gh-label-w: 18px;
+    --gh-month-h: 14px;
+  }
+  .gh-heat .gh-months,
+  .gh-heat .gh-weekdays {
+    font-size: 10px;
   }
 }
 
