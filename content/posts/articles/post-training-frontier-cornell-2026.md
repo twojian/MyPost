@@ -258,8 +258,8 @@ DeepSeek R1（2025.01）、Beam（2026.10）与 Inkling 2 Small（2026.11）账�
 | 代表模型 | 发布时间 | 参数规模（总 / 激活） | Pre-training 算力 | Post-training RL 算力 | RL / 预训练 |
 |---|---|---|---|---|---|
 | DeepSeek R1 | 2025.01 | 671B / 37B active | 2.66M H800 GPUh | 0.14M H800 GPUh | **~5%** |
-| Beam | 2026.10 | 501B / 23B active | <4.1M（~1,055 GB300 集群 <1 周） | ~7.1M（10.5K GB300 4 周） | **>1.7x** |
-| Inkling 2 Small | 2026.11 | 594B / 17B active | <0.11M\*（~1,500 GPUs <5 天） | ~0.44M（2,048 GPUs 9 天） | **~4x\*** |
+| Beam | 2026.10 | 501B / 23B active | &lt;4.1M（~1,055 GB300 集群 &lt;1 周） | ~7.1M（10.5K GB300 4 周） | **>1.7x** |
+| Inkling 2 Small | 2026.11 | 594B / 17B active | &lt;0.11M\*（~1,500 GPUs &lt;5 天） | ~0.44M（2,048 GPUs 9 天） | **~4x\*** |
 
 ---
 
@@ -272,14 +272,14 @@ DeepSeek R1（2025.01）、Beam（2026.10）与 Inkling 2 Small（2026.11）账�
 | 模型 | 算力对比 | 倍数 |
 |---|---|---|
 | DeepSeek R1（2025.01）671B / 37B active | 2.66M vs 0.14M GPUh | ~0.05x（RL 占预训练 ~5%） |
-| Beam（2026.10）501B / 23B active | <4.1M vs ~7.1M GPUh | >1.7x（1,055 GB300 集群持续跑 4 周） |
-| Inkling 2 Small（2026.11）594B / 17B active | <0.11M vs ~0.44M GPUh | ~4x\*（2,048 GPUs 跑 9 天 RL） |
+| Beam（2026.10）501B / 23B active | &lt;4.1M vs ~7.1M GPUh | >1.7x（1,055 GB300 集群持续跑 4 周） |
+| Inkling 2 Small（2026.11）594B / 17B active | &lt;0.11M vs ~0.44M GPUh | ~4x\*（2,048 GPUs 跑 9 天 RL） |
 
 ---
 
 ### 重要口径说明
 
-在 RL 阶段大量 GPU 时间消耗在自回归采样（Rollout）而非稠密矩阵乘上，因此其实际 FLOPS 占比仍低于 GPU-hours 占比；Inkling 2 Small 预训练极短（<3 天），体现「高复用基座 + 长周期 RL」的新算力配比。
+在 RL 阶段大量 GPU 时间消耗在自回归采样（Rollout）而非稠密矩阵乘上，因此其实际 FLOPS 占比仍低于 GPU-hours 占比；Inkling 2 Small 预训练极短（&lt;3 天），体现「高复用基座 + 长周期 RL」的新算力配比。
 
 ---
 
@@ -792,10 +792,10 @@ AI 辅助（AL3）与 Claude 主导（AL4）占比变化，堆叠柱状图：
 | 时间 | AL3 辅助 | AL4（Claude 主导） | 备注 |
 |---|---|---|---|
 | 2025.08 | 约 43% | — | — |
-| 2026.02 | 合计约 90%+ | <1% | AL4 极小 |
+| 2026.02 | 合计约 90%+ | &lt;1% | AL4 极小 |
 | 2026.08 | ~69% | 26% | 合计 >95% |
 
-> 半年内 Claude 主导研发任务（AL4）从 <1% 升至 26%，AL3 与 AL4 合计覆盖超 95% 内部研发工作流。
+> 半年内 Claude 主导研发任务（AL4）从 &lt;1% 升至 26%，AL3 与 AL4 合计覆盖超 95% 内部研发工作流。
 
 **原演讲核心判断：** 「LLM 极大加速产出（Output），但几乎不加速理解（Understanding）。」
 
