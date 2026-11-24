@@ -1,4 +1,4 @@
----
+﻿---
 title: "开源大模型后训练的前沿难题：Cornell 2026 演讲全译"
 date: 2026-11-23
 summary: "Nathan Lambert（Trillium Labs）16 页演讲全译：后训练配方四代演进、算力分配反转、产业分工与六大开放难题。"
@@ -86,6 +86,10 @@ tags:
 
 ### 示意图：双向缩放定律 · o1 AIME 准确率趋势
 
+![图 01-1　双向缩放定律 · o1 AIME 准确率趋势](/images/notes/c26/n01.png)
+
+*图 01-1　双向缩放定律 · o1 AIME 准确率趋势*
+
 OpenAI o1 证明后训练存在 **Train-time RL** 与 **Test-time 思考** 两套正交的算力扩展轴。
 
 - 纵轴：AIME 数学竞赛型准确率（0% → 100%）
@@ -109,6 +113,10 @@ OpenAI o1 证明后训练存在 **Train-time RL** 与 **Test-time 思考** 两�
 
 ### 一、后训练三大优化方法与核心闭环
 
+![图 02-1　后训练三大优化方法与核心闭环](/images/notes/c26/n02.png)
+
+*图 02-1　后训练三大优化方法与核心闭环*
+
 **INPUT｜Base 预训练基座**
 掌握语言规律与世界知识，但尚不能按指令稳定交互。目标：预训练基座 → 对齐与推理成品。
 
@@ -124,6 +132,10 @@ OpenAI o1 证明后训练存在 **Train-time RL** 与 **Test-time 思考** 两�
 ---
 
 ### 二、四年四代配方演进：一年变化超过前三年
+
+![图 02-2　四年四代配方演进](/images/notes/c26/n03.png)
+
+*图 02-2　四年四代配方演进*
 
 从单线聊天对齐 → 垂直专家分域与融合。
 
@@ -150,11 +162,19 @@ OpenAI o1 证明后训练存在 **Train-time RL** 与 **Test-time 思考** 两�
 
 ### 2022-23 · 第一代｜InstructGPT · 单线串行流水线
 
+![图 03-1　第一代 InstructGPT 单线串行流水线](/images/notes/c26/n04.png)
+
+*图 03-1　第一代 InstructGPT 单线串行流水线*
+
 预训练基座 → **1. 人工示范 SFT**（指令微调初始策略）→ **2. 奖励模型（RM）**（人类成对偏好排序打分）→ **3. PPO 强化学习**（KL 约束下优化策略）
 
 ---
 
 ### 2025 · 第二代｜DeepSeek R1 · 多步思维推理 16 步
+
+![图 03-2　第二代 DeepSeek R1 双路线](/images/notes/c26/n05.png)
+
+*图 03-2　第二代 DeepSeek R1 双路线*
 
 1. **冷启动 SFT** —— 可读性、格式规范
 2. **推理导向 RL** —— 数学 / 代码能力提升
@@ -169,6 +189,10 @@ OpenAI o1 证明后训练存在 **Train-time RL** 与 **Test-time 思考** 两�
 ---
 
 ### 2026 · 第三代主流｜MOPD · 多教师在策略蒸馏
+
+![图 03-3　第三代 MOPD 多教师在策略蒸馏](/images/notes/c26/n06.png)
+
+*图 03-3　第三代 MOPD 多教师在策略蒸馏*
 
 **Multi-teacher On-Policy Distillation**
 
@@ -198,6 +222,10 @@ SemiAnalysis 追踪显示：OpenAI 与 Anthropic 的集群重心已从「算力�
 ---
 
 ### Anthropic + OpenAI 合计集群算力占比
+
+![图 04-1　Anthropic + OpenAI 合计集群算力占比](/images/notes/c26/n07.png)
+
+*图 04-1　Anthropic + OpenAI 合计集群算力占比*
 
 **Post-training / RL：~5% → 55%，成为算力主力**
 
@@ -235,6 +263,10 @@ DeepSeek R1（2025.01）、Beam（2026.10）与 Inkling 2 Small（2026.11）账�
 ---
 
 ### RL 相比预训练 GPU-hours 倍数对比（以 Pre-training = 1.0x 为基准）
+
+![图 05-1　RL 相对预训练 GPU-hours 倍数对比](/images/notes/c26/n08.png)
+
+*图 05-1　RL 相对预训练 GPU-hours 倍数对比*
 
 | 模型 | 算力对比 | 倍数 |
 |---|---|---|
@@ -336,6 +368,10 @@ DeepSeek R1（2025.01）、Beam（2026.10）与 Inkling 2 Small（2026.11）账�
 
 ### Legal Agent Bench 保留集 All-Pass Rate（同成本对比）
 
+![图 07-1　Legal Agent Bench 保留集 All-Pass Rate（同成本对比）](/images/notes/c26/n09.png)
+
+*图 07-1　Legal Agent Bench 保留集 All-Pass Rate（同成本对比）*
+
 - Kimi K3 原版：**1.0x（基准）**
 - Harvey Tenet：**~2.0x**
 
@@ -383,6 +419,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 
 ### 后训练主路线：大约每两年一次代际切换
 
+![图 08-1　后训练主路线时间轴](/images/notes/c26/n10.png)
+
+*图 08-1　后训练主路线时间轴*
+
 | 时间 | 路线 | 关键特征 |
 |---|---|---|
 | 2022-23 | RLHF / DPO | 基础对齐；聊天交互普及 |
@@ -415,6 +455,14 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### 做法对比：传统外部脚本 vs CLM 自编辑上下文
+
+![图 09-1　传统外部脚本方式](/images/notes/c26/n11.png)
+
+*图 09-1　传统外部脚本方式*
+
+![图 09-2　CLM 自编辑上下文方案](/images/notes/c26/n12.png)
+
+*图 09-2　CLM 自编辑上下文方案*
 
 **传统方式：模型被动接受外部规则预装的上下文**
 
@@ -497,6 +545,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 
 ### 工程实例：TMax 九轴任务生成 → 审计 / 修复闭环
 
+![图 11-1　九轴任务生成到审计修复闭环](/images/notes/c26/n13.png)
+
+*图 11-1　九轴任务生成到审计修复闭环*
+
 **STEP 1｜九轴任务设计空间**
 
 - 工具类型 · 领域场景 · 故障模式
@@ -542,6 +594,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### Claude Opus 4.7 vs 4.6 Effort-Token 效率曲线（Apr. 2026）
+
+![图 12-1　Claude Opus 4.7 vs 4.6 Effort-Token 效率曲线](/images/notes/c26/n14.png)
+
+*图 12-1　Claude Opus 4.7 vs 4.6 Effort-Token 效率曲线*
 
 全档位领先。
 
@@ -589,6 +645,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 
 ### 3,000 步代码任务训练曲线：NGU vs 标准 GRPO（Noukhovitch et al., 2026）
 
+![图 13-1　3,000 步代码任务训练曲线：NGU vs 标准 GRPO](/images/notes/c26/n15.png)
+
+*图 13-1　3,000 步代码任务训练曲线：NGU vs 标准 GRPO*
+
 - 纵轴：0% – 100%
 - 横轴：0 – 3,000 步
 - **NGU 持续升至 ~94%**
@@ -598,6 +658,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### NGU 核心机制对比：用概率扩容打捞稀缺正样本
+
+![图 13-2　NGU 核心机制对比](/images/notes/c26/n16.png)
+
+*图 13-2　NGU 核心机制对比*
 
 | 方案 | 机制 | 结果 |
 |---|---|---|
@@ -623,6 +687,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### ScaleRL S 形拟合曲线示意图（Khatri et al., 2025）· Sigmoidal Fit
+
+![图 14-1　ScaleRL S 形拟合曲线（Sigmoidal Fit）](/images/notes/c26/n17.png)
+
+*图 14-1　ScaleRL S 形拟合曲线（Sigmoidal Fit）*
 
 - 纵轴：可验证任务通过率 / 得分
 - 横轴：RL 训练算力投入（Log Compute）
@@ -669,6 +737,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 
 ### 图一｜OpenAI GPT-5.6 Sol · SEC-Bench Pro · Jul. 2026
 
+![图 15-1　并行换延迟：轮次—通过率曲线](/images/notes/c26/n18.png)
+
+*图 15-1　并行换延迟：轮次—通过率曲线*
+
 并行度换取低墙钟延迟（Wall-clock Latency）示意图。
 
 - 纵轴：安全评测得分
@@ -679,6 +751,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### 图二｜Anthropic Claude Opus 5.5 · Lean 定理证明 · Sep. 2026
+
+![图 15-2　并行换延迟：柱状对比](/images/notes/c26/n19.png)
+
+*图 15-2　并行换延迟：柱状对比*
 
 1 / 10 / 30 / 100 Agents × 2h / 6h / 24h 窗口扩展规律。
 
@@ -705,6 +781,10 @@ Context Language Models (CLM) 在 Qwen3.5-9B 上运行在线强化学习，让�
 ---
 
 ### 图一｜Anthropic 内部研发自动化指数（Aug 2025 – Aug 2028）
+
+![图 16-1　Anthropic 内部研发自动化指数](/images/notes/c26/n20.png)
+
+*图 16-1　Anthropic 内部研发自动化指数*
 
 AI 辅助（AL3）与 Claude 主导（AL4）占比变化，堆叠柱状图：
 
